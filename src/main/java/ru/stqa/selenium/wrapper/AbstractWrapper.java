@@ -112,7 +112,7 @@ public abstract class AbstractWrapper<T> implements WrapsSomething<T> {
       public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         try {
           if (wrapperInterfaces.contains(method.getDeclaringClass())) {
-            boolean isUnwrap = method.getName().equals("getWrappedElement");
+            boolean isUnwrap = method.getName().equals("getWrappedOriginal");
             if (! isUnwrap) {
               beforeMethod(method, args);
             }
