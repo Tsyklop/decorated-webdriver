@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <script type="text/javascript" src="jquery-2.0.2.js"></script>
+<script type='text/javascript'>//<![CDATA[
+
+function updateText(text) {
+  $("#text").text(text);
+}
+
+function replaceOtherButtons() {
+  $("#b2").remove();
+  var b2 = $('<input id="b2" type="button" value="Button 2" onclick="updateText(\'button2\')" />');
+  b2.appendTo("#f");
+
+  $("#b3").remove();
+  var b3 = $('<input id="b3" type="button" value="Button 3" onclick="updateText(\'button3\')" />');
+  b3.appendTo("#div3");
+
+  $("#div4").remove();
+  var div4 = $('<div id="div4"><input id="b4" type="button" value="Button 4" onclick="updateText(\'button4\')" /></div>');
+  div4.appendTo("#f");
+}
+//]]>
+</script>
+
+</head>
+
+<body>
+  <form id="f">
+    <input id="b1" type="button" value="Button 1" onclick="replaceOtherButtons()"/>
+    <input id="b2" type="button" value="Button 2" onclick="updateText('button2')" />
+    <div id="div3"><input id="b3" type="button" value="Button 3" onclick="updateText('button3')" /></div>
+    <div id="div4"><input id="b4" type="button" value="Button 4" onclick="updateText('button4')" /></div>
+  </form>
+
+  <span id="text"></span>
+
+</body>
+
+</html>
+

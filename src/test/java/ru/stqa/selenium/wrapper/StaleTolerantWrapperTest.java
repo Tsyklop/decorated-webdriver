@@ -16,24 +16,37 @@
 
 package ru.stqa.selenium.wrapper;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class StaleTolerantWrapperTest {
+public class StaleTolerantWrapperTest extends TestBase {
 
-  //@Test
-  public void testCanRediscoverAReplacedElement() {
-    WebDriver original = new FirefoxDriver();
+  private WebDriver original;
+  private WebDriver driver;
 
+  @Before
+  public void setUp() {
+    original = new HtmlUnitDriver(true);
     StaleTolerantWrapper wrapper = new StaleTolerantWrapper(original);
-    WebDriver driver = wrapper.getDriver();
+    driver = wrapper.getDriver();
+  }
 
-    driver.get("http://fiddle.jshell.net/barancev/5Z9bd/show/light/");
+  @After
+  public void tearDown() {
+    driver.quit();
+  }
+
+  @Test
+  public void testCanRediscoverAReplacedElement() {
+    driver.get(testServer.page("/staleness.html"));
     WebElement button1 = driver.findElement(By.id("b1"));
     WebElement button2 = driver.findElement(By.id("b2"));
 
@@ -41,18 +54,11 @@ public class StaleTolerantWrapperTest {
     button2.click();
 
     assertThat(driver.findElement(By.id("text")).getText(), is("button2"));
-
-    driver.quit();
   }
 
-  //@Test
+  @Test
   public void testCanRediscoverAReplacedChildElement() {
-    WebDriver original = new FirefoxDriver();
-
-    StaleTolerantWrapper wrapper = new StaleTolerantWrapper(original);
-    WebDriver driver = wrapper.getDriver();
-
-    driver.get("http://fiddle.jshell.net/barancev/5Z9bd/show/light/");
+    driver.get(testServer.page("/staleness.html"));
     WebElement button1 = driver.findElement(By.id("b1"));
     WebElement button3 = driver.findElement(By.id("div3")).findElement(By.id("b3"));
 
@@ -60,18 +66,11 @@ public class StaleTolerantWrapperTest {
     button3.click();
 
     assertThat(driver.findElement(By.id("text")).getText(), is("button3"));
-
-    driver.quit();
   }
 
-  //@Test
+  @Test
   public void testCanRediscoverAReplacedSubtree() {
-    WebDriver original = new FirefoxDriver();
-
-    StaleTolerantWrapper wrapper = new StaleTolerantWrapper(original);
-    WebDriver driver = wrapper.getDriver();
-
-    driver.get("http://fiddle.jshell.net/barancev/5Z9bd/show/light/");
+    driver.get(testServer.page("/staleness.html"));
     WebElement button1 = driver.findElement(By.id("b1"));
     WebElement button4 = driver.findElement(By.id("div4")).findElement(By.id("b4"));
 
@@ -79,8 +78,6 @@ public class StaleTolerantWrapperTest {
     button4.click();
 
     assertThat(driver.findElement(By.id("text")).getText(), is("button4"));
-
-    driver.quit();
   }
 
 }
