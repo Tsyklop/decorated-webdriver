@@ -30,46 +30,46 @@ public class DecoratedTargetLocator extends DecoratedWebDriverChild<WebDriver.Ta
   @Override
   public WebDriver frame(int frameIndex) {
     getOriginal().frame(frameIndex);
-    return new Decorator<WebDriver>().activate(getDriverWrapper());
+    return activate(getDriverWrapper());
   }
 
   @Override
   public WebDriver frame(String frameName) {
     getOriginal().frame(frameName);
-    return new Decorator<WebDriver>().activate(getDriverWrapper());
+    return activate(getDriverWrapper());
   }
 
   @Override
   public WebDriver frame(WebElement frameElement) {
     getOriginal().frame(frameElement);
-    return new Decorator<WebDriver>().activate(getDriverWrapper());
+    return activate(getDriverWrapper());
   }
 
   @Override
   public WebDriver parentFrame() {
     getOriginal().parentFrame();
-    return new Decorator<WebDriver>().activate(getDriverWrapper());
+    return activate(getDriverWrapper());
   }
 
   @Override
   public WebDriver window(String windowName) {
     getOriginal().window(windowName);
-    return new Decorator<WebDriver>().activate(getDriverWrapper());
+    return activate(getDriverWrapper());
   }
 
   @Override
   public WebDriver defaultContent() {
     getOriginal().defaultContent();
-    return new Decorator<WebDriver>().activate(getDriverWrapper());
+    return activate(getDriverWrapper());
   }
 
   @Override
   public WebElement activeElement() {
-    return getDriverWrapper().wrapElement(getOriginal().activeElement());
+    return getDriverWrapper().activate(getDriverWrapper().createDecorated(getOriginal().activeElement()));
   }
 
   @Override
   public Alert alert() {
-    return getDriverWrapper().wrapAlert(getOriginal().alert());
+    return activate(getDriverWrapper().createDecorated(getOriginal().alert()));
   }
 }

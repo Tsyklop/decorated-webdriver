@@ -17,7 +17,7 @@
 
 package ru.stqa.selenium.wrapper;
 
-public class DecoratedWebDriverChild<T> extends DecoratedByReflection<T> {
+public class DecoratedWebDriverChild<T> extends AbstractDecorated<T> {
 
   private final DecoratedWebDriver decoratedDriver;
 

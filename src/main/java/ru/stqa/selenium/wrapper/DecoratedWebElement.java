@@ -90,7 +90,7 @@ public class DecoratedWebElement extends DecoratedWebDriverChild<WebElement> imp
 
   @Override
   public WebElement findElement(final By by) {
-    return getDriverWrapper().wrapElement(getOriginal().findElement(by));
+    return getDriverWrapper().activate(getDriverWrapper().createDecorated(getOriginal().findElement(by)));
   }
 
   @Override
@@ -120,7 +120,7 @@ public class DecoratedWebElement extends DecoratedWebDriverChild<WebElement> imp
 
   public Coordinates getCoordinates() {
     Locatable locatable = (Locatable) getOriginal();
-    return getDriverWrapper().wrapCoordinates(locatable.getCoordinates());
+    return new Decorator<Coordinates>().activate(getDriverWrapper().createDecorated(locatable.getCoordinates()));
   }
 
   @Override

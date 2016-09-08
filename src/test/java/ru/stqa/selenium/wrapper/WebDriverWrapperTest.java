@@ -72,8 +72,7 @@ public class WebDriverWrapperTest {
       counter = clickCounter;
     }
 
-    @Override
-    protected WebElement wrapElement(WebElement element) {
+    protected DecoratedWebElement createDecorated(WebElement element) {
       return new DecoratedWebElement(this, element) {
         @Override
         public void click() {

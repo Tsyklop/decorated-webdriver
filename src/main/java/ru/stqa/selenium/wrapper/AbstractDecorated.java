@@ -20,11 +20,11 @@ import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class DecoratedByReflection<T> implements Decorated<T> {
+public abstract class AbstractDecorated<T> implements Decorated<T> {
 
   private T original;
 
-  public DecoratedByReflection(final T original) {
+  public AbstractDecorated(final T original) {
     this.original = original;
   }
 
@@ -34,6 +34,10 @@ public abstract class DecoratedByReflection<T> implements Decorated<T> {
 
   protected void setOriginal(final T original) {
     this.original = original;
+  }
+
+  protected <X> X activate(Decorated<X> decorated) {
+    return new Decorator<X>().activate(decorated);
   }
 
   protected Object unwrap(Object result) {
@@ -79,8 +83,8 @@ public abstract class DecoratedByReflection<T> implements Decorated<T> {
   public boolean equals(Object o) {
     if (this == o) return true;
 
-    if (o instanceof DecoratedByReflection) {
-      DecoratedByReflection that = (DecoratedByReflection) o;
+    if (o instanceof AbstractDecorated) {
+      AbstractDecorated that = (AbstractDecorated) o;
       return original.equals(that.original);
 
     } else {
