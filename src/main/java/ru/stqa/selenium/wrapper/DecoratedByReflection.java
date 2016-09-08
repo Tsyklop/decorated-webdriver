@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Alexei Barantsev
+ * Copyright 2016 Alexei Barantsev
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,21 +22,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class AbstractWrapper<T> implements WrapsSomething<T> {
+public abstract class DecoratedByReflection<T> implements Decorated<T> {
 
   private T original;
-  private final WebDriverWrapper driverWrapper;
+  private final DecoratedWebDriver driverWrapper;
 
-  public AbstractWrapper(final WebDriverWrapper driverWrapper, final T original) {
+  public DecoratedByReflection(final DecoratedWebDriver driver, final T original) {
     this.original = original;
-    if (this instanceof WebDriverWrapper) {
-      this.driverWrapper = (WebDriverWrapper) this;
+    if (this instanceof DecoratedWebDriver) {
+      this.driverWrapper = (DecoratedWebDriver) this;
     } else {
-      this.driverWrapper = driverWrapper;
+      this.driverWrapper = driver;
     }
   }
 
-  public final T getWrappedOriginal() {
+  public final T getOriginal() {
     return original;
   }
 
@@ -44,7 +44,7 @@ public abstract class AbstractWrapper<T> implements WrapsSomething<T> {
     this.original = original;
   }
 
-  public WebDriverWrapper getDriverWrapper() {
+  public DecoratedWebDriver getDriverWrapper() {
     return driverWrapper;
   }
 
@@ -57,10 +57,10 @@ public abstract class AbstractWrapper<T> implements WrapsSomething<T> {
    * @param wrapperClass         the class of a wrapper
    * @return                     a proxy that wraps the original object
    */
-  public static <T> T wrapOriginal(final WebDriverWrapper driverWrapper, final T original, final Class<? extends AbstractWrapper<T>> wrapperClass) {
-    AbstractWrapper<T> wrapper;
-    Constructor<? extends AbstractWrapper<T>> constructor = null;
-    if (driverWrapper == null) { // top level WebDriverWrapper
+  public static <T> T wrapOriginal(final DecoratedWebDriver driverWrapper, final T original, final Class<? extends Decorated<T>> wrapperClass) {
+    Decorated<T> wrapper;
+    Constructor<? extends Decorated<T>> constructor = null;
+    if (driverWrapper == null) { // top level DecoratedWebDriver
       constructor = findMatchingConstructor(wrapperClass, original.getClass());
       if (constructor == null) {
         throw new Error("Wrapper class " + wrapperClass + " does not provide an appropriate constructor");
@@ -81,7 +81,7 @@ public abstract class AbstractWrapper<T> implements WrapsSomething<T> {
       }
       if (constructor == null) {
         try {
-          constructor = findMatchingConstructor(wrapperClass, WebDriverWrapper.class, original.getClass());
+          constructor = findMatchingConstructor(wrapperClass, DecoratedWebDriver.class, original.getClass());
         } catch (Exception e) {
           throw new Error("Can't create a new wrapper object", e);
         }
@@ -95,7 +95,7 @@ public abstract class AbstractWrapper<T> implements WrapsSomething<T> {
         throw new Error("Can't create a new wrapper object", e);
       }
     }
-    return wrapper.wrapOriginal();
+    return wrapper.getDecorated();
   }
 
   /**
@@ -104,15 +104,15 @@ public abstract class AbstractWrapper<T> implements WrapsSomething<T> {
    *
    * @return a proxy that wraps the original object
    */
-  public final T wrapOriginal() {
-    final T original = getWrappedOriginal();
+  public final T getDecorated() {
+    final T original = getOriginal();
     final Set<Class<?>> wrapperInterfaces = extractInterfaces(this);
 
     final InvocationHandler handler = new InvocationHandler() {
       public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         try {
           if (wrapperInterfaces.contains(method.getDeclaringClass())) {
-            boolean isUnwrap = method.getName().equals("getWrappedOriginal");
+            boolean isUnwrap = method.getName().equals("getOriginal");
             if (! isUnwrap) {
               beforeMethod(method, args);
             }
@@ -140,14 +140,14 @@ public abstract class AbstractWrapper<T> implements WrapsSomething<T> {
   }
 
   protected Object unwrap(Object result) {
-    if (result instanceof WrapsSomething) {
-      return ((WrapsSomething) result).getWrappedOriginal();
+    if (result instanceof Decorated) {
+      return ((Decorated) result).getOriginal();
     }
     if (result instanceof List) {
       List<Object> newList = new ArrayList<Object>();
       for (Object o : (List) result) {
-        if (o instanceof WrapsSomething) {
-          newList.add(((WrapsSomething) o).getWrappedOriginal());
+        if (o instanceof Decorated) {
+          newList.add(((Decorated) o).getOriginal());
         } else {
           newList.add(o);
         }
@@ -173,12 +173,12 @@ public abstract class AbstractWrapper<T> implements WrapsSomething<T> {
     return getDriverWrapper().onErrorGlobal(this, method, e, args);
   }
 
-  private static <T> Constructor<? extends AbstractWrapper<T>> findMatchingConstructor(
-      Class<? extends AbstractWrapper<T>> wrapperClass, Class<?>... classes)
+  private static <T> Constructor<? extends Decorated<T>> findMatchingConstructor(
+    Class<? extends Decorated<T>> wrapperClass, Class<?>... classes)
   {
     for (Constructor<?> ctor : wrapperClass.getConstructors()) {
       if (isMatchingConstructor(ctor, classes)) {
-        return (Constructor<? extends AbstractWrapper<T>>) ctor;
+        return (Constructor<? extends Decorated<T>>) ctor;
       }
     }
     return null;
@@ -233,8 +233,8 @@ public abstract class AbstractWrapper<T> implements WrapsSomething<T> {
   public boolean equals(Object o) {
     if (this == o) return true;
 
-    if (o instanceof AbstractWrapper) {
-      AbstractWrapper that = (AbstractWrapper) o;
+    if (o instanceof DecoratedByReflection) {
+      DecoratedByReflection that = (DecoratedByReflection) o;
       return original.equals(that.original);
 
     } else {

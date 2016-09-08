@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Alexei Barantsev
+ * Copyright 2016 Alexei Barantsev
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,7 @@
 
 package ru.stqa.selenium.wrapper;
 
-public interface WrapsSomething<T> {
-
-  T getWrappedOriginal();
-
+public interface Decorated<T> {
+  T getOriginal();
+  T getDecorated();
 }

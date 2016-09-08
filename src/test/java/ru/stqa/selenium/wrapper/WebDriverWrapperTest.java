@@ -36,7 +36,7 @@ public class WebDriverWrapperTest {
     final WebDriver driver = mock(WebDriver.class);
     assertThat(driver, not(instanceOf(SomeOtherInterface.class)));
 
-    final WebDriver wrapper = WebDriverWrapper.wrapDriver(driver, SimpleWebDriverWrapper.class);
+    final WebDriver wrapper = DecoratedWebDriver.wrapDriver(driver, SimpleDecoratedWebDriver.class);
     assertThat(wrapper, not(instanceOf(SomeOtherInterface.class)));
   }
 
@@ -45,12 +45,12 @@ public class WebDriverWrapperTest {
     final WebDriver driver = mock(ExtendedDriver.class);
     assertThat(driver, instanceOf(SomeOtherInterface.class));
 
-    final WebDriver wrapper = WebDriverWrapper.wrapDriver(driver, SimpleWebDriverWrapper.class);
+    final WebDriver wrapper = DecoratedWebDriver.wrapDriver(driver, SimpleDecoratedWebDriver.class);
     assertThat(wrapper, instanceOf(SomeOtherInterface.class));
   }
 
-  private static class SimpleWebDriverWrapper extends WebDriverWrapper {
-    public SimpleWebDriverWrapper(final WebDriver driver) {
+  private static class SimpleDecoratedWebDriver extends DecoratedWebDriver {
+    public SimpleDecoratedWebDriver(final WebDriver driver) {
       super(driver);
     }
   }
@@ -70,7 +70,7 @@ public class WebDriverWrapperTest {
     when(mockedElement2.isDisplayed()).thenReturn(true);
 
     final AtomicInteger counter = new AtomicInteger();
-    final WebDriver driver = new ClickCountingDriver(mockedDriver, counter).getDriver();
+    final WebDriver driver = new ClickCountingDriverDecorated(mockedDriver, counter).getDriver();
 
     // check for element wrapped by the driver
     final WebElement firstElement = driver.findElement(By.name("foo"));
@@ -92,17 +92,17 @@ public class WebDriverWrapperTest {
     verify(mockedElement2, times(1)).isDisplayed();
   }
 
-  private static class ClickCountingDriver extends WebDriverWrapper {
+  private static class ClickCountingDriverDecorated extends DecoratedWebDriver {
     private final AtomicInteger counter;
 
-    private ClickCountingDriver(final WebDriver driver, final AtomicInteger clickCounter) {
+    private ClickCountingDriverDecorated(final WebDriver driver, final AtomicInteger clickCounter) {
       super(driver);
       counter = clickCounter;
     }
 
     @Override
     protected WebElement wrapElement(WebElement element) {
-      return new WebElementWrapper(this, element) {
+      return new DecoratedWebElement(this, element) {
         @Override
         public void click() {
           super.click();
@@ -118,7 +118,7 @@ public class WebDriverWrapperTest {
 
     when(mockedDriver.findElement(By.name("foo"))).thenThrow(NoSuchElementException.class);
 
-    final WebDriver driver = new WebDriverWrapper(mockedDriver).getDriver();
+    final WebDriver driver = new DecoratedWebDriver(mockedDriver).getDriver();
 
     driver.findElement(By.name("foo"));
   }
@@ -129,7 +129,7 @@ public class WebDriverWrapperTest {
 
     when(mockedDriver.findElement(By.name("foo"))).thenThrow(NoSuchElementException.class);
 
-    final WebDriver driver = new WebDriverWrapper(mockedDriver) {
+    final WebDriver driver = new DecoratedWebDriver(mockedDriver) {
       @Override
       protected Object onError(Method method, InvocationTargetException e, Object[] args) {
         return null;
