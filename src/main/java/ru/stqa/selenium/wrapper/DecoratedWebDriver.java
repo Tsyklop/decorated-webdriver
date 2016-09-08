@@ -25,7 +25,6 @@ import org.openqa.selenium.internal.WrapsDriver;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -33,15 +32,13 @@ import java.util.Set;
 /**
  * This class allows to extend WebDriver by adding new functionality to a wrapper.
  * Example of use:
- * <code>WebDriver driver = DecoratedWebDriver.wrapDriver(originalDriver, MyWebDriverWrapper.class);</code>
+ * <code>WebDriver driver = DecoratedWebDriver.decorate(originalDriver, MyWebDriverWrapper.class);</code>
  * or
  * <code>MyWebDriverWrapper wrapper = new MyWebDriverWrapper(originalDriver, otherParameter);<br>
  * WebDriver driver = new MyWebDriverWrapper(originalDriver, otherParameter).getDriver();</code>
  */
 public class DecoratedWebDriver extends DecoratedByReflection<WebDriver>
     implements WebDriver, WrapsDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen {
-
-  private WebDriver enhancedDriver = null;
 
   public DecoratedWebDriver(WebDriver driver) {
     super(null, driver);
@@ -52,7 +49,7 @@ public class DecoratedWebDriver extends DecoratedByReflection<WebDriver>
   }
 
   protected WebElement wrapElement(final WebElement element) {
-    return DecoratedWebElement.wrapOriginal(this, element, getElementWrapperClass());
+    return new Decorator<WebElement>().decorate(this, element, getElementWrapperClass());
   }
 
   protected List<WebElement> wrapElements(final List<WebElement> elements) {
@@ -67,7 +64,7 @@ public class DecoratedWebDriver extends DecoratedByReflection<WebDriver>
   }
 
   protected TargetLocator wrapTargetLocator(final TargetLocator targetLocator) {
-    return DecoratedTargetLocator.wrapOriginal(this, targetLocator, getTargetLocatorWrapperClass());
+    return new Decorator<TargetLocator>().decorate(this, targetLocator, getTargetLocatorWrapperClass());
   }
 
   protected Class<? extends DecoratedAlert> getAlertWrapperClass() {
@@ -75,7 +72,7 @@ public class DecoratedWebDriver extends DecoratedByReflection<WebDriver>
   }
 
   protected Alert wrapAlert(final Alert alert) {
-    return DecoratedAlert.wrapOriginal(this, alert, getAlertWrapperClass());
+    return new Decorator<Alert>().decorate(this, alert, getAlertWrapperClass());
   }
 
   protected Class<? extends DecoratedNavigation> getNavigationWrapperClass() {
@@ -83,7 +80,7 @@ public class DecoratedWebDriver extends DecoratedByReflection<WebDriver>
   }
 
   protected Navigation wrapNavigation(final Navigation navigator) {
-    return DecoratedNavigation.wrapOriginal(this, navigator, getNavigationWrapperClass());
+    return new Decorator<Navigation>().decorate(this, navigator, getNavigationWrapperClass());
   }
 
   protected Class<? extends DecoratedOptions> getOptionsWrapperClass() {
@@ -91,7 +88,7 @@ public class DecoratedWebDriver extends DecoratedByReflection<WebDriver>
   }
 
   protected Options wrapOptions(final Options options) {
-    return DecoratedOptions.wrapOriginal(this, options, getOptionsWrapperClass());
+    return new Decorator<Options>().decorate(this, options, getOptionsWrapperClass());
   }
 
   protected Class<? extends DecoratedTimeouts> getTimeoutsWrapperClass() {
@@ -99,7 +96,7 @@ public class DecoratedWebDriver extends DecoratedByReflection<WebDriver>
   }
 
   protected Timeouts wrapTimeouts(final Timeouts timeouts) {
-    return DecoratedTimeouts.wrapOriginal(this, timeouts, getTimeoutsWrapperClass());
+    return new Decorator<Timeouts>().decorate(this, timeouts, getTimeoutsWrapperClass());
   }
 
   protected Class<? extends DecoratedWindow> getWindowWrapperClass() {
@@ -107,7 +104,7 @@ public class DecoratedWebDriver extends DecoratedByReflection<WebDriver>
   }
 
   protected Window wrapWindow(final Window window) {
-    return DecoratedWindow.wrapOriginal(this, window, getWindowWrapperClass());
+    return new Decorator<Window>().decorate(this, window, getWindowWrapperClass());
   }
 
   protected Class<? extends DecoratedCoordinates> getCoordinatesWrapperClass() {
@@ -115,7 +112,7 @@ public class DecoratedWebDriver extends DecoratedByReflection<WebDriver>
   }
 
   protected Coordinates wrapCoordinates(final Coordinates coordinates) {
-    return DecoratedCoordinates.wrapOriginal(this, coordinates, getCoordinatesWrapperClass());
+    return new Decorator<Coordinates>().decorate(this, coordinates, getCoordinatesWrapperClass());
   }
 
   protected Class<? extends DecoratedKeyboard> getKeyboardWrapperClass() {
@@ -123,7 +120,7 @@ public class DecoratedWebDriver extends DecoratedByReflection<WebDriver>
   }
 
   protected Keyboard wrapKeyboard(final Keyboard keyboard) {
-    return DecoratedKeyboard.wrapOriginal(this, keyboard, getKeyboardWrapperClass());
+    return new Decorator<Keyboard>().decorate(this, keyboard, getKeyboardWrapperClass());
   }
 
   protected Class<? extends DecoratedMouse> getMouseWrapperClass() {
@@ -131,7 +128,7 @@ public class DecoratedWebDriver extends DecoratedByReflection<WebDriver>
   }
 
   protected Mouse wrapMouse(final Mouse mouse) {
-    return DecoratedMouse.wrapOriginal(this, mouse, getMouseWrapperClass());
+    return new Decorator<Mouse>().decorate(this, mouse, getMouseWrapperClass());
   }
 
   protected Class<? extends DecoratedTouchScreen> getTouchScreenWrapperClass() {
@@ -139,7 +136,7 @@ public class DecoratedWebDriver extends DecoratedByReflection<WebDriver>
   }
 
   protected TouchScreen wrapTouchScreen(final TouchScreen touchScreen) {
-    return DecoratedTouchScreen.wrapOriginal(this, touchScreen, getTouchScreenWrapperClass());
+    return new Decorator<TouchScreen>().decorate(this, touchScreen, getTouchScreenWrapperClass());
   }
 
   // TODO: implement proper wrapping for arbitrary objects
@@ -172,72 +169,72 @@ public class DecoratedWebDriver extends DecoratedByReflection<WebDriver>
 
   @Override
   public void get(String url) {
-    getWrappedDriver().get(url);
+    getOriginal().get(url);
   }
 
   @Override
   public String getCurrentUrl() {
-    return getWrappedDriver().getCurrentUrl();
+    return getOriginal().getCurrentUrl();
   }
 
   @Override
   public String getTitle() {
-    return getWrappedDriver().getTitle();
+    return getOriginal().getTitle();
   }
 
   @Override
   public WebElement findElement(final By by) {
-    return wrapElement(getWrappedDriver().findElement(by));
+    return wrapElement(getOriginal().findElement(by));
   }
 
   @Override
   public List<WebElement> findElements(final By by) {
-    return wrapElements(getWrappedDriver().findElements(by));
+    return wrapElements(getOriginal().findElements(by));
   }
 
   @Override
   public String getPageSource() {
-    return getWrappedDriver().getPageSource();
+    return getOriginal().getPageSource();
   }
 
   @Override
   public void close() {
-    getWrappedDriver().close();
+    getOriginal().close();
   }
 
   @Override
   public void quit() {
-    getWrappedDriver().quit();
+    getOriginal().quit();
   }
 
   @Override
   public Set<String> getWindowHandles() {
-    return getWrappedDriver().getWindowHandles();
+    return getOriginal().getWindowHandles();
   }
 
   @Override
   public String getWindowHandle() {
-    return getWrappedDriver().getWindowHandle();
+    return getOriginal().getWindowHandle();
   }
 
   @Override
   public TargetLocator switchTo() {
-    return wrapTargetLocator(getWrappedDriver().switchTo());
+    return wrapTargetLocator(getOriginal().switchTo());
   }
 
   @Override
   public Navigation navigate() {
-    return wrapNavigation(getWrappedDriver().navigate());
+    return wrapNavigation(getOriginal().navigate());
   }
 
   @Override
   public Options manage() {
-    return wrapOptions(getWrappedDriver().manage());
+    return wrapOptions(getOriginal().manage());
   }
 
   @Override
   public Object executeScript(String script, Object... args) {
-    WebDriver driver = getWrappedDriver();
+    WebDriver driver = getOriginal();
     if (driver instanceof JavascriptExecutor) {
       return wrapObject(((JavascriptExecutor) driver).executeScript(script, args));
     } else {
@@ -247,7 +244,7 @@ public class DecoratedWebDriver extends DecoratedByReflection<WebDriver>
 
   @Override
   public Object executeAsyncScript(String script, Object... args) {
-    WebDriver driver = getWrappedDriver();
+    WebDriver driver = getOriginal();
     if (driver instanceof JavascriptExecutor) {
       return wrapObject(((JavascriptExecutor) driver).executeAsyncScript(script, args));
     } else {
@@ -257,40 +254,17 @@ public class DecoratedWebDriver extends DecoratedByReflection<WebDriver>
 
   @Override
   public Keyboard getKeyboard() {
-    return wrapKeyboard(((HasInputDevices) getWrappedDriver()).getKeyboard());
+    return wrapKeyboard(((HasInputDevices) getOriginal()).getKeyboard());
   }
 
   @Override
   public Mouse getMouse() {
-    return wrapMouse(((HasInputDevices) getWrappedDriver()).getMouse());
+    return wrapMouse(((HasInputDevices) getOriginal()).getMouse());
   }
 
   @Override
   public TouchScreen getTouch() {
-    return wrapTouchScreen(((HasTouchScreen) getWrappedDriver()).getTouch());
-  }
-
-  /**
-   * Builds a {@link Proxy} implementing all interfaces of original driver. It will delegate calls to
-   * wrapper when wrapper implements the requested method otherwise to original driver.
-   *
-   * @param driver               the underlying driver
-   * @param wrapperClass         the class of a wrapper
-   * @return                     a proxy that wraps the original driver
-   */
-  public static WebDriver wrapDriver(final WebDriver driver, final Class<? extends DecoratedWebDriver> wrapperClass) {
-    return wrapOriginal(null, driver, wrapperClass);
-  }
-
-  /**
-   * Builds a {@link Proxy} implementing all interfaces of original driver. It will delegate calls to
-   * wrapper when wrapper implements the requested method otherwise to original driver.
-   */
-  public WebDriver getDriver() {
-    if (enhancedDriver == null) {
-      enhancedDriver = getDecorated();
-    }
-    return enhancedDriver;
+    return wrapTouchScreen(((HasTouchScreen) getOriginal()).getTouch());
   }
 
 }

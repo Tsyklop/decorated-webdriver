@@ -18,9 +18,7 @@ package ru.stqa.selenium.wrapper;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public abstract class DecoratedByReflection<T> implements Decorated<T> {
 
@@ -40,103 +38,12 @@ public abstract class DecoratedByReflection<T> implements Decorated<T> {
     return original;
   }
 
-  protected void setWrappedOriginal(final T original) {
+  protected void setOriginal(final T original) {
     this.original = original;
   }
 
   public DecoratedWebDriver getDriverWrapper() {
     return driverWrapper;
-  }
-
-  /**
-   * Builds a {@link java.lang.reflect.Proxy} implementing all interfaces of original object. It will delegate calls to
-   * wrapper when wrapper implements the requested method otherwise to original object.
-   *
-   * @param driverWrapper        the underlying driver's wrapper
-   * @param original             the underlying original object
-   * @param wrapperClass         the class of a wrapper
-   * @return                     a proxy that wraps the original object
-   */
-  public static <T> T wrapOriginal(final DecoratedWebDriver driverWrapper, final T original, final Class<? extends Decorated<T>> wrapperClass) {
-    Decorated<T> wrapper;
-    Constructor<? extends Decorated<T>> constructor = null;
-    if (driverWrapper == null) { // top level DecoratedWebDriver
-      constructor = findMatchingConstructor(wrapperClass, original.getClass());
-      if (constructor == null) {
-        throw new Error("Wrapper class " + wrapperClass + " does not provide an appropriate constructor");
-      }
-      try {
-        wrapper = constructor.newInstance(original);
-      } catch (Exception e) {
-        throw new Error("Can't create a new wrapper object", e);
-      }
-
-    } else { // enclosed wrapper
-      if (wrapperClass.getEnclosingClass() != null) {
-        try {
-          constructor = findMatchingConstructor(wrapperClass, wrapperClass.getEnclosingClass(), original.getClass());
-        } catch (Exception e) {
-          throw new Error("Can't create a new wrapper object", e);
-        }
-      }
-      if (constructor == null) {
-        try {
-          constructor = findMatchingConstructor(wrapperClass, DecoratedWebDriver.class, original.getClass());
-        } catch (Exception e) {
-          throw new Error("Can't create a new wrapper object", e);
-        }
-      }
-      if (constructor == null) {
-        throw new Error("Wrapper class " + wrapperClass + " does not provide an appropriate constructor");
-      }
-      try {
-        wrapper = constructor.newInstance(driverWrapper, original);
-      } catch (Exception e) {
-        throw new Error("Can't create a new wrapper object", e);
-      }
-    }
-    return wrapper.getDecorated();
-  }
-
-  /**
-   * Builds a {@link java.lang.reflect.Proxy} implementing all interfaces of original object. It will delegate calls to
-   * wrapper when wrapper implements the requested method otherwise to original object.
-   *
-   * @return a proxy that wraps the original object
-   */
-  public final T getDecorated() {
-    final T original = getOriginal();
-    final Set<Class<?>> wrapperInterfaces = extractInterfaces(this);
-
-    final InvocationHandler handler = new InvocationHandler() {
-      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        try {
-          if (wrapperInterfaces.contains(method.getDeclaringClass())) {
-            boolean isUnwrap = method.getName().equals("getOriginal");
-            if (! isUnwrap) {
-              beforeMethod(method, args);
-            }
-            Object result = callMethod(method, args);
-            if (! isUnwrap) {
-              afterMethod(method, result, args);
-            }
-            return result;
-          }
-          return method.invoke(original, args);
-        } catch (InvocationTargetException e) {
-          return onError(method, e, args);
-        }
-      }
-    };
-
-    Set<Class<?>> allInterfaces = extractInterfaces(original);
-    allInterfaces.addAll(wrapperInterfaces);
-    Class<?>[] allInterfacesArray = allInterfaces.toArray(new Class<?>[allInterfaces.size()]);
-
-    return (T) Proxy.newProxyInstance(
-        this.getClass().getClassLoader(),
-        allInterfaces.toArray(allInterfacesArray),
-        handler);
   }
 
   protected Object unwrap(Object result) {
@@ -157,76 +64,25 @@ public abstract class DecoratedByReflection<T> implements Decorated<T> {
     return result;
   }
 
-  protected void beforeMethod(Method method, Object[] args) {
+  public void beforeMethod(Method method, Object[] args) {
     getDriverWrapper().beforeMethodGlobal(this, method, args);
   }
 
-  protected Object callMethod(Method method, Object[] args) throws Throwable {
+  public Object callMethod(Method method, Object[] args) throws Throwable {
     return getDriverWrapper().callMethodGlobal(this, method, args);
   }
 
-  protected void afterMethod(Method method, Object res, Object[] args) {
+  public void afterMethod(Method method, Object res, Object[] args) {
     getDriverWrapper().afterMethodGlobal(this, method, unwrap(res), args);
   }
 
-  protected Object onError(Method method, InvocationTargetException e, Object[] args) throws Throwable {
+  public Object onError(Method method, InvocationTargetException e, Object[] args) throws Throwable {
     return getDriverWrapper().onErrorGlobal(this, method, e, args);
-  }
-
-  private static <T> Constructor<? extends Decorated<T>> findMatchingConstructor(
-    Class<? extends Decorated<T>> wrapperClass, Class<?>... classes)
-  {
-    for (Constructor<?> ctor : wrapperClass.getConstructors()) {
-      if (isMatchingConstructor(ctor, classes)) {
-        return (Constructor<? extends Decorated<T>>) ctor;
-      }
-    }
-    return null;
-  }
-
-  private static boolean isMatchingConstructor(Constructor<?> ctor, Class<?>... classes) {
-    Class<?>[] parameterTypes = ctor.getParameterTypes();
-    if (parameterTypes.length != classes.length) {
-      return false;
-    }
-    for (int i = 0; i < parameterTypes.length; i++) {
-      if (! parameterTypes[i].isAssignableFrom(classes[i])) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  private static Set<Class<?>> extractInterfaces(final Object object) {
-    return extractInterfaces(object.getClass());
-  }
-
-  private static Set<Class<?>> extractInterfaces(final Class<?> clazz) {
-    Set<Class<?>> allInterfaces = new HashSet<Class<?>>();
-    extractInterfaces(allInterfaces, clazz);
-
-    return allInterfaces;
-  }
-
-  private static void extractInterfaces(final Set<Class<?>> collector, final Class<?> clazz) {
-    if (clazz == null || Object.class.equals(clazz)) {
-      return;
-    }
-
-    final Class<?>[] classes = clazz.getInterfaces();
-    for (Class<?> interfaceClass : classes) {
-      collector.add(interfaceClass);
-      for (Class<?> superInterface : interfaceClass.getInterfaces()) {
-        collector.add(superInterface);
-        extractInterfaces(collector, superInterface);
-      }
-    }
-    extractInterfaces(collector, clazz.getSuperclass());
   }
 
   @Override
   public String toString() {
-    return "Wrapper for {" + original + '}';
+    return String.format("Decorated {$s}", original);
   }
 
   @Override

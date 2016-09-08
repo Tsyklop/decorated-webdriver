@@ -30,37 +30,37 @@ public class DecoratedTargetLocator extends DecoratedByReflection<WebDriver.Targ
   @Override
   public WebDriver frame(int frameIndex) {
     getOriginal().frame(frameIndex);
-    return getDriverWrapper().getDriver();
+    return new Decorator<WebDriver>().activate(getDriverWrapper());
   }
 
   @Override
   public WebDriver frame(String frameName) {
     getOriginal().frame(frameName);
-    return getDriverWrapper().getDriver();
+    return new Decorator<WebDriver>().activate(getDriverWrapper());
   }
 
   @Override
   public WebDriver frame(WebElement frameElement) {
     getOriginal().frame(frameElement);
-    return getDriverWrapper().getDriver();
+    return new Decorator<WebDriver>().activate(getDriverWrapper());
   }
 
   @Override
   public WebDriver parentFrame() {
     getOriginal().parentFrame();
-    return getDriverWrapper().getDriver();
+    return new Decorator<WebDriver>().activate(getDriverWrapper());
   }
 
   @Override
   public WebDriver window(String windowName) {
     getOriginal().window(windowName);
-    return getDriverWrapper().getDriver();
+    return new Decorator<WebDriver>().activate(getDriverWrapper());
   }
 
   @Override
   public WebDriver defaultContent() {
     getOriginal().defaultContent();
-    return getDriverWrapper().getDriver();
+    return new Decorator<WebDriver>().activate(getDriverWrapper());
   }
 
   @Override

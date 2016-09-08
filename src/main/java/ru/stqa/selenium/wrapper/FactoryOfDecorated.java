@@ -16,14 +16,6 @@
 
 package ru.stqa.selenium.wrapper;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-public interface Decorated<T> {
-  T getOriginal();
-
-  void beforeMethod(Method method, Object[] args);
-  Object callMethod(Method method, Object[] args) throws Throwable ;
-  void afterMethod(Method method, Object result, Object[] args);
-  Object onError(Method method, InvocationTargetException e, Object[] args) throws Throwable ;
+public interface FactoryOfDecorated<T> {
+  Decorated<T> create(T original, DecoratedWebDriver topParent);
 }

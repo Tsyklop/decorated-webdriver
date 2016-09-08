@@ -32,34 +32,6 @@ import static org.mockito.Mockito.*;
 public class WebDriverWrapperTest {
 
   @Test
-  public void shouldNotAddInterfacesNotAvailableInTheOriginalDriver() {
-    final WebDriver driver = mock(WebDriver.class);
-    assertThat(driver, not(instanceOf(SomeOtherInterface.class)));
-
-    final WebDriver wrapper = DecoratedWebDriver.wrapDriver(driver, SimpleDecoratedWebDriver.class);
-    assertThat(wrapper, not(instanceOf(SomeOtherInterface.class)));
-  }
-
-  @Test
-  public void shouldRespectInterfacesAvailableInTheOriginalDriver() {
-    final WebDriver driver = mock(ExtendedDriver.class);
-    assertThat(driver, instanceOf(SomeOtherInterface.class));
-
-    final WebDriver wrapper = DecoratedWebDriver.wrapDriver(driver, SimpleDecoratedWebDriver.class);
-    assertThat(wrapper, instanceOf(SomeOtherInterface.class));
-  }
-
-  private static class SimpleDecoratedWebDriver extends DecoratedWebDriver {
-    public SimpleDecoratedWebDriver(final WebDriver driver) {
-      super(driver);
-    }
-  }
-
-  private static interface SomeOtherInterface {}
-
-  private static interface ExtendedDriver extends WebDriver, SomeOtherInterface {}
-
-  @Test
   public void canWrapASingleMethod() {
     final WebDriver mockedDriver = mock(WebDriver.class);
     final WebElement mockedElement = mock(WebElement.class, "element1");
@@ -70,7 +42,7 @@ public class WebDriverWrapperTest {
     when(mockedElement2.isDisplayed()).thenReturn(true);
 
     final AtomicInteger counter = new AtomicInteger();
-    final WebDriver driver = new ClickCountingDriverDecorated(mockedDriver, counter).getDriver();
+    final WebDriver driver = new Decorator<WebDriver>().activate(new ClickCountingDriver(mockedDriver, counter));
 
     // check for element wrapped by the driver
     final WebElement firstElement = driver.findElement(By.name("foo"));
@@ -92,10 +64,10 @@ public class WebDriverWrapperTest {
     verify(mockedElement2, times(1)).isDisplayed();
   }
 
-  private static class ClickCountingDriverDecorated extends DecoratedWebDriver {
+  private static class ClickCountingDriver extends DecoratedWebDriver {
     private final AtomicInteger counter;
 
-    private ClickCountingDriverDecorated(final WebDriver driver, final AtomicInteger clickCounter) {
+    private ClickCountingDriver(final WebDriver driver, final AtomicInteger clickCounter) {
       super(driver);
       counter = clickCounter;
     }
@@ -118,7 +90,7 @@ public class WebDriverWrapperTest {
 
     when(mockedDriver.findElement(By.name("foo"))).thenThrow(NoSuchElementException.class);
 
-    final WebDriver driver = new DecoratedWebDriver(mockedDriver).getDriver();
+    final WebDriver driver = new Decorator<WebDriver>().activate(new DecoratedWebDriver(mockedDriver));
 
     driver.findElement(By.name("foo"));
   }
@@ -129,12 +101,12 @@ public class WebDriverWrapperTest {
 
     when(mockedDriver.findElement(By.name("foo"))).thenThrow(NoSuchElementException.class);
 
-    final WebDriver driver = new DecoratedWebDriver(mockedDriver) {
+    final WebDriver driver = new Decorator<WebDriver>().activate(new DecoratedWebDriver(mockedDriver) {
       @Override
-      protected Object onError(Method method, InvocationTargetException e, Object[] args) {
+      public Object onError(Method method, InvocationTargetException e, Object[] args) {
         return null;
       }
-    }.getDriver();
+    });
 
     assertThat(driver.findElement(By.name("foo")), is(nullValue()));
   }
