@@ -42,6 +42,10 @@ public abstract class DecoratedByReflection<T> implements Decorated<T> {
     this.original = original;
   }
 
+  public Topmost getTopmostDecorated() {
+    return driverWrapper;
+  }
+
   public DecoratedWebDriver getDriverWrapper() {
     return driverWrapper;
   }
@@ -65,19 +69,19 @@ public abstract class DecoratedByReflection<T> implements Decorated<T> {
   }
 
   public void beforeMethod(Method method, Object[] args) {
-    getDriverWrapper().beforeMethodGlobal(this, method, args);
+    getTopmostDecorated().beforeMethodGlobal(this, method, args);
   }
 
   public Object callMethod(Method method, Object[] args) throws Throwable {
-    return getDriverWrapper().callMethodGlobal(this, method, args);
+    return getTopmostDecorated().callMethodGlobal(this, method, args);
   }
 
   public void afterMethod(Method method, Object res, Object[] args) {
-    getDriverWrapper().afterMethodGlobal(this, method, unwrap(res), args);
+    getTopmostDecorated().afterMethodGlobal(this, method, unwrap(res), args);
   }
 
   public Object onError(Method method, InvocationTargetException e, Object[] args) throws Throwable {
-    return getDriverWrapper().onErrorGlobal(this, method, e, args);
+    return getTopmostDecorated().onErrorGlobal(this, method, e, args);
   }
 
   @Override

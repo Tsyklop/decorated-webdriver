@@ -23,72 +23,6 @@ import java.util.Set;
 
 public class Decorator<T> {
 
-  /**
-   * Builds a {@link java.lang.reflect.Proxy} implementing all interfaces of original object. It will delegate calls to
-   * wrapper when wrapper implements the requested method otherwise to original object.
-   *
-   * @param driverWrapper        the underlying driver's wrapper
-   * @param original             the underlying original object
-   * @param wrapperClass         the class of a wrapper
-   * @return                     a proxy that wraps the original object
-   */
-  public T decorate(final DecoratedWebDriver driverWrapper, final T original, final Class<? extends Decorated<T>> wrapperClass) {
-    Decorated<T> wrapper;
-    Constructor<? extends Decorated<T>> constructor = null;
-    if (driverWrapper == null) { // top level DecoratedWebDriver
-      constructor = findMatchingConstructor(wrapperClass, original.getClass());
-      if (constructor == null) {
-        throw new Error("Wrapper class " + wrapperClass + " does not provide an appropriate constructor");
-      }
-      try {
-        wrapper = constructor.newInstance(original);
-      } catch (Exception e) {
-        throw new Error("Can't create a new wrapper object", e);
-      }
-
-    } else { // enclosed wrapper
-      if (wrapperClass.getEnclosingClass() != null) {
-        try {
-          constructor = findMatchingConstructor(wrapperClass, wrapperClass.getEnclosingClass(), original.getClass());
-        } catch (Exception e) {
-          throw new Error("Can't create a new wrapper object", e);
-        }
-      }
-      if (constructor == null) {
-        try {
-          constructor = findMatchingConstructor(wrapperClass, DecoratedWebDriver.class, original.getClass());
-        } catch (Exception e) {
-          throw new Error("Can't create a new wrapper object", e);
-        }
-      }
-      if (constructor == null) {
-        throw new Error("Wrapper class " + wrapperClass + " does not provide an appropriate constructor");
-      }
-      try {
-        wrapper = constructor.newInstance(driverWrapper, original);
-      } catch (Exception e) {
-        throw new Error("Can't create a new wrapper object", e);
-      }
-    }
-    return activate(wrapper);
-  }
-
-  public final T decorate(final T original, final Class<? extends Decorated<T>> classOfDecorated) {
-    Constructor<? extends Decorated<T>> constructor = findMatchingConstructor(classOfDecorated, original.getClass());
-    if (constructor == null) {
-      throw new Error(String.format("Class %s does not provide an appropriate constructor to decorate %s",
-        classOfDecorated, original.getClass()));
-    }
-    final Decorated<T> decorated;
-    try {
-      decorated = constructor.newInstance(original);
-    } catch (Exception e) {
-      throw new Error("Can't create a new wrapper object", e);
-    }
-
-    return activate(decorated);
-  }
-
   public final T activate(final Decorated<T> decorated) {
     final Set<Class<?>> decoratedInterfaces = extractInterfaces(decorated);
 
@@ -122,30 +56,6 @@ public class Decorator<T> {
       this.getClass().getClassLoader(),
       allInterfaces.toArray(allInterfacesArray),
       handler);
-  }
-
-  private static <T> Constructor<? extends Decorated<T>> findMatchingConstructor(
-    Class<? extends Decorated<T>> wrapperClass, Class<?>... classes)
-  {
-    for (Constructor<?> ctor : wrapperClass.getConstructors()) {
-      if (isMatchingConstructor(ctor, classes)) {
-        return (Constructor<? extends Decorated<T>>) ctor;
-      }
-    }
-    return null;
-  }
-
-  private static boolean isMatchingConstructor(Constructor<?> ctor, Class<?>... classes) {
-    Class<?>[] parameterTypes = ctor.getParameterTypes();
-    if (parameterTypes.length != classes.length) {
-      return false;
-    }
-    for (int i = 0; i < parameterTypes.length; i++) {
-      if (! parameterTypes[i].isAssignableFrom(classes[i])) {
-        return false;
-      }
-    }
-    return true;
   }
 
   private static Set<Class<?>> extractInterfaces(final Object object) {

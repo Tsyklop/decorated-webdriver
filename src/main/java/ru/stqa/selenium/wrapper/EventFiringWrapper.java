@@ -43,14 +43,14 @@ public class EventFiringWrapper extends DecoratedWebDriver {
   }
 
   @Override
-  protected void beforeMethodGlobal(DecoratedByReflection target, Method method, Object[] args) {
+  public void beforeMethodGlobal(Decorated<?> target, Method method, Object[] args) {
     for (WebDriverListener listener : listeners) {
       fireBeforeEvent(listener, target, method, args);
     }
     super.beforeMethodGlobal(target, method, args);
   }
 
-  private void fireBeforeEvent(WebDriverListener listener, DecoratedByReflection target, Method method, Object[] args) {
+  private void fireBeforeEvent(WebDriverListener listener, Decorated<?> target, Method method, Object[] args) {
     String methodName = createEventMethodName("before", method.getName());
 
     int argsLength = args != null ? args.length : 0;
@@ -67,14 +67,14 @@ public class EventFiringWrapper extends DecoratedWebDriver {
   }
 
   @Override
-  protected void afterMethodGlobal(DecoratedByReflection target, Method method, Object res, Object[] args) {
+  public void afterMethodGlobal(Decorated<?> target, Method method, Object res, Object[] args) {
     super.afterMethodGlobal(target, method, res, args);
     for (WebDriverListener listener : listeners) {
       fireAfterEvent(listener, target, method, res, args);
     }
   }
 
-  private void fireAfterEvent(WebDriverListener listener, DecoratedByReflection target, Method method, Object res, Object[] args) {
+  private void fireAfterEvent(WebDriverListener listener, Decorated<?> target, Method method, Object res, Object[] args) {
     String methodName = createEventMethodName("after", method.getName());
 
     boolean isVoid = method.getReturnType() == Void.TYPE;

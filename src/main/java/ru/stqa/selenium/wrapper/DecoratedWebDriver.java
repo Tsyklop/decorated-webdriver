@@ -38,18 +38,23 @@ import java.util.Set;
  * WebDriver driver = new MyWebDriverWrapper(originalDriver, otherParameter).getDriver();</code>
  */
 public class DecoratedWebDriver extends DecoratedByReflection<WebDriver>
-    implements WebDriver, WrapsDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen {
+    implements Topmost, WebDriver, WrapsDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen {
 
   public DecoratedWebDriver(WebDriver driver) {
     super(null, driver);
   }
 
-  protected Class<? extends DecoratedWebElement> getElementWrapperClass() {
-    return DecoratedWebElement.class;
+  protected FactoryOfDecorated<WebElement, DecoratedWebDriver> getDecoratedWebElementFactory() {
+    return new FactoryOfDecorated<WebElement, DecoratedWebDriver>() {
+      @Override
+      public DecoratedWebElement create(WebElement original, DecoratedWebDriver topmost) {
+        return new DecoratedWebElement(topmost, original);
+      }
+    };
   }
 
   protected WebElement wrapElement(final WebElement element) {
-    return new Decorator<WebElement>().decorate(this, element, getElementWrapperClass());
+    return new Decorator<WebElement>().activate(getDecoratedWebElementFactory().create(element, this));
   }
 
   protected List<WebElement> wrapElements(final List<WebElement> elements) {
@@ -59,84 +64,134 @@ public class DecoratedWebDriver extends DecoratedByReflection<WebDriver>
     return elements;
   }
 
-  protected Class<? extends DecoratedTargetLocator> getTargetLocatorWrapperClass() {
-    return DecoratedTargetLocator.class;
+  protected FactoryOfDecorated<TargetLocator, DecoratedWebDriver> getDecoratedTargetLocatorFactory() {
+    return new FactoryOfDecorated<TargetLocator, DecoratedWebDriver>() {
+      @Override
+      public DecoratedTargetLocator create(TargetLocator original, DecoratedWebDriver topmost) {
+        return new DecoratedTargetLocator(topmost, original);
+      }
+    };
   }
 
   protected TargetLocator wrapTargetLocator(final TargetLocator targetLocator) {
-    return new Decorator<TargetLocator>().decorate(this, targetLocator, getTargetLocatorWrapperClass());
+    return new Decorator<TargetLocator>().activate(getDecoratedTargetLocatorFactory().create(targetLocator, this));
   }
 
-  protected Class<? extends DecoratedAlert> getAlertWrapperClass() {
-    return DecoratedAlert.class;
+  protected FactoryOfDecorated<Alert, DecoratedWebDriver> getDecoratedAlertFactory() {
+    return new FactoryOfDecorated<Alert, DecoratedWebDriver>() {
+      @Override
+      public DecoratedAlert create(Alert original, DecoratedWebDriver topmost) {
+        return new DecoratedAlert(topmost, original);
+      }
+    };
   }
 
   protected Alert wrapAlert(final Alert alert) {
-    return new Decorator<Alert>().decorate(this, alert, getAlertWrapperClass());
+    return new Decorator<Alert>().activate(getDecoratedAlertFactory().create(alert, this));
   }
 
-  protected Class<? extends DecoratedNavigation> getNavigationWrapperClass() {
-    return DecoratedNavigation.class;
+  protected FactoryOfDecorated<Navigation, DecoratedWebDriver> getDecoratedNavigationFactory() {
+    return new FactoryOfDecorated<Navigation, DecoratedWebDriver>() {
+      @Override
+      public DecoratedNavigation create(Navigation original, DecoratedWebDriver topmost) {
+        return new DecoratedNavigation(topmost, original);
+      }
+    };
   }
 
   protected Navigation wrapNavigation(final Navigation navigator) {
-    return new Decorator<Navigation>().decorate(this, navigator, getNavigationWrapperClass());
+    return new Decorator<Navigation>().activate(getDecoratedNavigationFactory().create(navigator, this));
   }
 
-  protected Class<? extends DecoratedOptions> getOptionsWrapperClass() {
-    return DecoratedOptions.class;
+  protected FactoryOfDecorated<Options, DecoratedWebDriver> getDecoratedOptionsFactory() {
+    return new FactoryOfDecorated<Options, DecoratedWebDriver>() {
+      @Override
+      public DecoratedOptions create(Options original, DecoratedWebDriver topmost) {
+        return new DecoratedOptions(topmost, original);
+      }
+    };
   }
 
   protected Options wrapOptions(final Options options) {
-    return new Decorator<Options>().decorate(this, options, getOptionsWrapperClass());
+    return new Decorator<Options>().activate(getDecoratedOptionsFactory().create(options, this));
   }
 
-  protected Class<? extends DecoratedTimeouts> getTimeoutsWrapperClass() {
-    return DecoratedTimeouts.class;
+  protected FactoryOfDecorated<Timeouts, DecoratedWebDriver> getDecoratedTimeoutsFactory() {
+    return new FactoryOfDecorated<Timeouts, DecoratedWebDriver>() {
+      @Override
+      public DecoratedTimeouts create(Timeouts original, DecoratedWebDriver topmost) {
+        return new DecoratedTimeouts(topmost, original);
+      }
+    };
   }
 
   protected Timeouts wrapTimeouts(final Timeouts timeouts) {
-    return new Decorator<Timeouts>().decorate(this, timeouts, getTimeoutsWrapperClass());
+    return new Decorator<Timeouts>().activate(getDecoratedTimeoutsFactory().create(timeouts, this));
   }
 
-  protected Class<? extends DecoratedWindow> getWindowWrapperClass() {
-    return DecoratedWindow.class;
+  protected FactoryOfDecorated<Window, DecoratedWebDriver> getDecoratedWindowFactory() {
+    return new FactoryOfDecorated<Window, DecoratedWebDriver>() {
+      @Override
+      public DecoratedWindow create(Window original, DecoratedWebDriver topmost) {
+        return new DecoratedWindow(topmost, original);
+      }
+    };
   }
 
   protected Window wrapWindow(final Window window) {
-    return new Decorator<Window>().decorate(this, window, getWindowWrapperClass());
+    return new Decorator<Window>().activate(getDecoratedWindowFactory().create(window, this));
   }
 
-  protected Class<? extends DecoratedCoordinates> getCoordinatesWrapperClass() {
-    return DecoratedCoordinates.class;
+  protected FactoryOfDecorated<Coordinates, DecoratedWebDriver> getDecoratedCoordinatesFactory() {
+    return new FactoryOfDecorated<Coordinates, DecoratedWebDriver>() {
+      @Override
+      public DecoratedCoordinates create(Coordinates original, DecoratedWebDriver topmost) {
+        return new DecoratedCoordinates(topmost, original);
+      }
+    };
   }
 
   protected Coordinates wrapCoordinates(final Coordinates coordinates) {
-    return new Decorator<Coordinates>().decorate(this, coordinates, getCoordinatesWrapperClass());
+    return new Decorator<Coordinates>().activate(getDecoratedCoordinatesFactory().create(coordinates, this));
   }
 
-  protected Class<? extends DecoratedKeyboard> getKeyboardWrapperClass() {
-    return DecoratedKeyboard.class;
+  protected FactoryOfDecorated<Keyboard, DecoratedWebDriver> getDecoratedKeyboardFactory() {
+    return new FactoryOfDecorated<Keyboard, DecoratedWebDriver>() {
+      @Override
+      public DecoratedKeyboard create(Keyboard original, DecoratedWebDriver topmost) {
+        return new DecoratedKeyboard(topmost, original);
+      }
+    };
   }
 
   protected Keyboard wrapKeyboard(final Keyboard keyboard) {
-    return new Decorator<Keyboard>().decorate(this, keyboard, getKeyboardWrapperClass());
+    return new Decorator<Keyboard>().activate(getDecoratedKeyboardFactory().create(keyboard, this));
   }
 
-  protected Class<? extends DecoratedMouse> getMouseWrapperClass() {
-    return DecoratedMouse.class;
+  protected FactoryOfDecorated<Mouse, DecoratedWebDriver> getDecoratedMouseFactory() {
+    return new FactoryOfDecorated<Mouse, DecoratedWebDriver>() {
+      @Override
+      public DecoratedMouse create(Mouse original, DecoratedWebDriver topmost) {
+        return new DecoratedMouse(topmost, original);
+      }
+    };
   }
 
   protected Mouse wrapMouse(final Mouse mouse) {
-    return new Decorator<Mouse>().decorate(this, mouse, getMouseWrapperClass());
+    return new Decorator<Mouse>().activate(getDecoratedMouseFactory().create(mouse, this));
   }
 
-  protected Class<? extends DecoratedTouchScreen> getTouchScreenWrapperClass() {
-    return DecoratedTouchScreen.class;
+  protected FactoryOfDecorated<TouchScreen, DecoratedWebDriver> getDecoratedTouchScreenFactory() {
+    return new FactoryOfDecorated<TouchScreen, DecoratedWebDriver>() {
+      @Override
+      public DecoratedTouchScreen create(TouchScreen original, DecoratedWebDriver topmost) {
+        return new DecoratedTouchScreen(topmost, original);
+      }
+    };
   }
 
   protected TouchScreen wrapTouchScreen(final TouchScreen touchScreen) {
-    return new Decorator<TouchScreen>().decorate(this, touchScreen, getTouchScreenWrapperClass());
+    return new Decorator<TouchScreen>().activate(getDecoratedTouchScreenFactory().create(touchScreen, this));
   }
 
   // TODO: implement proper wrapping for arbitrary objects
@@ -148,17 +203,17 @@ public class DecoratedWebDriver extends DecoratedByReflection<WebDriver>
     }
   }
 
-  protected void beforeMethodGlobal(DecoratedByReflection target, Method method, Object[] args) {
+  public void beforeMethodGlobal(Decorated<?> target, Method method, Object[] args) {
   }
 
-  protected Object callMethodGlobal(DecoratedByReflection target, Method method, Object[] args) throws Throwable {
+  public Object callMethodGlobal(Decorated<?> target, Method method, Object[] args) throws Throwable {
     return method.invoke(target, args);
   }
 
-  protected void afterMethodGlobal(DecoratedByReflection target, Method method, Object res, Object[] args) {
+  public void afterMethodGlobal(Decorated<?> target, Method method, Object res, Object[] args) {
   }
 
-  protected Object onErrorGlobal(DecoratedByReflection target, Method method, InvocationTargetException e, Object[] args) throws Throwable {
+  public Object onErrorGlobal(Decorated<?> target, Method method, InvocationTargetException e, Object[] args) throws Throwable {
     throw Throwables.propagate(e.getTargetException());
   }
 

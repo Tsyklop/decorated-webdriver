@@ -16,6 +16,14 @@
 
 package ru.stqa.selenium.wrapper;
 
-public interface FactoryOfDecorated<T, TM extends Topmost> {
-  Decorated<T> create(T original, TM topmost);
+import com.google.common.base.Throwables;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+public interface Topmost {
+  void beforeMethodGlobal(Decorated<?> target, Method method, Object[] args);
+  Object callMethodGlobal(Decorated<?> target, Method method, Object[] args) throws Throwable;
+  void afterMethodGlobal(Decorated<?> target, Method method, Object res, Object[] args);
+  Object onErrorGlobal(Decorated<?> target, Method method, InvocationTargetException e, Object[] args) throws Throwable;
 }
