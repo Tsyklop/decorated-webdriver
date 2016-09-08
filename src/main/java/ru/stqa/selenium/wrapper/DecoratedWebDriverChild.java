@@ -17,26 +17,22 @@
 
 package ru.stqa.selenium.wrapper;
 
-import org.openqa.selenium.interactions.Keyboard;
+public class DecoratedWebDriverChild<T> extends DecoratedByReflection<T> {
 
-public class DecoratedKeyboard extends DecoratedWebDriverChild<Keyboard> implements Keyboard {
+  private final DecoratedWebDriver decoratedDriver;
 
-  public DecoratedKeyboard(final DecoratedWebDriver driverWrapper, final Keyboard keyboard) {
-    super(driverWrapper, keyboard);
+  public DecoratedWebDriverChild(DecoratedWebDriver decoratedDriver, T original) {
+    super(original);
+    this.decoratedDriver = decoratedDriver;
   }
 
   @Override
-  public void sendKeys(CharSequence... charSequences) {
-    getOriginal().sendKeys(charSequences);
+  public Topmost getTopmostDecorated() {
+    return decoratedDriver;
   }
 
-  @Override
-  public void pressKey(CharSequence charSequence) {
-    getOriginal().pressKey(charSequence);
+  public DecoratedWebDriver getDriverWrapper() {
+    return decoratedDriver;
   }
 
-  @Override
-  public void releaseKey(CharSequence charSequence) {
-    getOriginal().releaseKey(charSequence);
-  }
 }

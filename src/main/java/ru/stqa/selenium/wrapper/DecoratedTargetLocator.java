@@ -21,7 +21,7 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class DecoratedTargetLocator extends DecoratedByReflection<WebDriver.TargetLocator> implements WebDriver.TargetLocator {
+public class DecoratedTargetLocator extends DecoratedWebDriverChild<WebDriver.TargetLocator> implements WebDriver.TargetLocator {
 
   public DecoratedTargetLocator(final DecoratedWebDriver driverWrapper, final WebDriver.TargetLocator targetLocator) {
     super(driverWrapper, targetLocator);

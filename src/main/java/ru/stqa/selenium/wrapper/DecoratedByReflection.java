@@ -23,15 +23,9 @@ import java.util.List;
 public abstract class DecoratedByReflection<T> implements Decorated<T> {
 
   private T original;
-  private final DecoratedWebDriver driverWrapper;
 
-  public DecoratedByReflection(final DecoratedWebDriver driver, final T original) {
+  public DecoratedByReflection(final T original) {
     this.original = original;
-    if (this instanceof DecoratedWebDriver) {
-      this.driverWrapper = (DecoratedWebDriver) this;
-    } else {
-      this.driverWrapper = driver;
-    }
   }
 
   public final T getOriginal() {
@@ -40,14 +34,6 @@ public abstract class DecoratedByReflection<T> implements Decorated<T> {
 
   protected void setOriginal(final T original) {
     this.original = original;
-  }
-
-  public Topmost getTopmostDecorated() {
-    return driverWrapper;
-  }
-
-  public DecoratedWebDriver getDriverWrapper() {
-    return driverWrapper;
   }
 
   protected Object unwrap(Object result) {

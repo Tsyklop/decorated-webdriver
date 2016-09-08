@@ -20,7 +20,7 @@ package ru.stqa.selenium.wrapper;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.interactions.internal.Coordinates;
 
-public class DecoratedCoordinates extends DecoratedByReflection<Coordinates> implements Coordinates {
+public class DecoratedCoordinates extends DecoratedWebDriverChild<Coordinates> implements Coordinates {
 
   public DecoratedCoordinates(final DecoratedWebDriver driverWrapper, final Coordinates coordinates) {
     super(driverWrapper, coordinates);

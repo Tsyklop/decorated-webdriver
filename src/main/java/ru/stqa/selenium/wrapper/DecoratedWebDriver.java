@@ -41,7 +41,12 @@ public class DecoratedWebDriver extends DecoratedByReflection<WebDriver>
     implements Topmost, WebDriver, WrapsDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen {
 
   public DecoratedWebDriver(WebDriver driver) {
-    super(null, driver);
+    super(driver);
+  }
+
+  @Override
+  public Topmost getTopmostDecorated() {
+    return this;
   }
 
   protected FactoryOfDecorated<WebElement, DecoratedWebDriver> getDecoratedWebElementFactory() {

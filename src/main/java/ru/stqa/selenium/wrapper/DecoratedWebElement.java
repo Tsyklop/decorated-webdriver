@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * Simple {@link DecoratedWebElement} delegating all calls to the wrapped {@link WebElement}.
  */
-public class DecoratedWebElement extends DecoratedByReflection<WebElement> implements WebElement, WrapsElement, Locatable {
+public class DecoratedWebElement extends DecoratedWebDriverChild<WebElement> implements WebElement, WrapsElement, Locatable {
 
   public DecoratedWebElement(final DecoratedWebDriver driverWrapper, final WebElement element) {
     super(driverWrapper, element);

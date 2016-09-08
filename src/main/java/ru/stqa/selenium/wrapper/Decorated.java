@@ -22,6 +22,8 @@ import java.lang.reflect.Method;
 public interface Decorated<T> {
   T getOriginal();
 
+  Topmost getTopmostDecorated();
+
   void beforeMethod(Method method, Object[] args);
   Object callMethod(Method method, Object[] args) throws Throwable ;
   void afterMethod(Method method, Object result, Object[] args);

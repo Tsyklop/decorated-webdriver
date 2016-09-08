@@ -21,7 +21,7 @@ import org.openqa.selenium.WebDriver;
 
 import java.net.URL;
 
-public class DecoratedNavigation extends DecoratedByReflection<WebDriver.Navigation> implements WebDriver.Navigation {
+public class DecoratedNavigation extends DecoratedWebDriverChild<WebDriver.Navigation> implements WebDriver.Navigation {
 
   public DecoratedNavigation(final DecoratedWebDriver driverWrapper, final WebDriver.Navigation navigator) {
     super(driverWrapper, navigator);
