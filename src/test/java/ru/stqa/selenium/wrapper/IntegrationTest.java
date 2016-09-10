@@ -15,6 +15,7 @@
  */
 package ru.stqa.selenium.wrapper;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -29,8 +30,9 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
-public class WebDriverWrapperTest {
+public class IntegrationTest {
 
+  @Ignore
   @Test
   public void canWrapASingleMethod() {
     final WebDriver mockedDriver = mock(WebDriver.class);
@@ -83,6 +85,7 @@ public class WebDriverWrapperTest {
     }
   }
 
+  @Ignore
   @Test(expected = NoSuchElementException.class)
   public void canPropagateExceptions() {
     final WebDriver mockedDriver = mock(WebDriver.class);
@@ -94,6 +97,7 @@ public class WebDriverWrapperTest {
     driver.findElement(By.name("foo"));
   }
 
+  @Ignore
   @Test
   public void canPreventExceptions() {
     final WebDriver mockedDriver = mock(WebDriver.class);

@@ -55,6 +55,7 @@ public class DecoratedWebDriver extends AbstractDecorated<WebDriver>
 
   protected List<WebElement> wrapElements(final List<WebElement> elements) {
     for (ListIterator<WebElement> iterator = elements.listIterator(); iterator.hasNext(); ) {
+      // TODO: WTF?
       iterator.set(activate(createDecorated(iterator.next())));
     }
     return elements;

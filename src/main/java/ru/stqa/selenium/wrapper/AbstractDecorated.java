@@ -76,7 +76,7 @@ public abstract class AbstractDecorated<T> implements Decorated<T> {
 
   @Override
   public String toString() {
-    return String.format("Decorated {$s}", original);
+    return String.format("Decorated {%s}", original);
   }
 
   @Override
