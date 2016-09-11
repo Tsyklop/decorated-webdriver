@@ -21,10 +21,10 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.Beta;
 import org.openqa.selenium.security.Credentials;
 
-public class DecoratedAlert extends DecoratedWebDriverChild<Alert> implements Alert {
+public class DecoratedAlert extends AbstractDecoratedChild<Alert,DecoratedWebDriver> implements Alert {
 
-  public DecoratedAlert(final DecoratedWebDriver driverWrapper, final Alert alert) {
-    super(driverWrapper, alert);
+  public DecoratedAlert(final Alert alert, final DecoratedWebDriver driverWrapper) {
+    super(alert, driverWrapper);
   }
 
   @Override

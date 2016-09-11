@@ -20,10 +20,10 @@ package ru.stqa.selenium.decorated;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.interactions.internal.Coordinates;
 
-public class DecoratedCoordinates extends DecoratedWebDriverChild<Coordinates> implements Coordinates {
+public class DecoratedCoordinates extends AbstractDecoratedChild<Coordinates,DecoratedWebDriver> implements Coordinates {
 
-  public DecoratedCoordinates(final DecoratedWebDriver driverWrapper, final Coordinates coordinates) {
-    super(driverWrapper, coordinates);
+  public DecoratedCoordinates(final Coordinates coordinates, final DecoratedWebDriver driverWrapper) {
+    super(coordinates, driverWrapper);
   }
 
   @Override
@@ -43,6 +43,6 @@ public class DecoratedCoordinates extends DecoratedWebDriverChild<Coordinates> i
 
   @Override
   public Object getAuxiliary() {
-    return getDriverWrapper().wrapObject(getOriginal().getAuxiliary());
+    return getTopmostDecorated().wrapObject(getOriginal().getAuxiliary());
   }
 }

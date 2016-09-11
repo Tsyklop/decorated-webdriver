@@ -76,7 +76,7 @@ public class IntegrationTest {
     }
 
     protected DecoratedWebElement createDecorated(WebElement element) {
-      return new DecoratedWebElement(this, element) {
+      return new DecoratedWebElement(element, this) {
         @Override
         public void click() {
           super.click();

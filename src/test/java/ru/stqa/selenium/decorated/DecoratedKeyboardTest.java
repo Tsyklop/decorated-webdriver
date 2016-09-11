@@ -36,7 +36,7 @@ public class DecoratedKeyboardTest {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
       mockedKeyboard = mock(Keyboard.class);
-      decoratedKeyboard = new DecoratedKeyboard(decoratedDriver, mockedKeyboard);
+      decoratedKeyboard = new DecoratedKeyboard(mockedKeyboard, decoratedDriver);
     }
   }
 

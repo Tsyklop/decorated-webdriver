@@ -38,7 +38,7 @@ public class DecoratedCoordinatesTest {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
       mockedCoords = mock(Coordinates.class);
-      decoratedCoords = new DecoratedCoordinates(decoratedDriver, mockedCoords);
+      decoratedCoords = new DecoratedCoordinates(mockedCoords, decoratedDriver);
     }
   }
 

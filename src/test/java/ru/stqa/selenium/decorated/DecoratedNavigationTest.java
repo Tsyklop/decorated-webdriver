@@ -38,7 +38,7 @@ public class DecoratedNavigationTest {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
       mockedNavigation = mock(WebDriver.Navigation.class);
-      decoratedNavigation = new DecoratedNavigation(decoratedDriver, mockedNavigation);
+      decoratedNavigation = new DecoratedNavigation(mockedNavigation, decoratedDriver);
     }
   }
 

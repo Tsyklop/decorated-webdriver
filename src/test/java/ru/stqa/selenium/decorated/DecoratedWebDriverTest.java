@@ -54,7 +54,6 @@ public class DecoratedWebDriverTest {
 
     assertThat(fixture.mockedDriver, sameInstance(fixture.decoratedDriver.getOriginal()));
     assertThat(fixture.mockedDriver, sameInstance(fixture.decoratedDriver.getWrappedDriver()));
-    assertThat(fixture.decoratedDriver, sameInstance(fixture.decoratedDriver.getTopmostDecorated()));
   }
 
   // TODO: Implement TakesScreenshot and add the test

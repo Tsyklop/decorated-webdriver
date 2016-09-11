@@ -37,7 +37,7 @@ public class DecoratedWindowTest {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
       mockedWindow = mock(WebDriver.Window.class);
-      decoratedWindow = new DecoratedWindow(decoratedDriver, mockedWindow);
+      decoratedWindow = new DecoratedWindow(mockedWindow, decoratedDriver);
     }
   }
 

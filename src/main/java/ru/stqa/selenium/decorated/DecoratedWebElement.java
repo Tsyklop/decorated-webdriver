@@ -27,10 +27,11 @@ import java.util.List;
 /**
  * Simple {@link DecoratedWebElement} delegating all calls to the wrapped {@link WebElement}.
  */
-public class DecoratedWebElement extends DecoratedWebDriverChild<WebElement> implements WebElement, WrapsElement, Locatable {
+public class DecoratedWebElement extends AbstractDecoratedChild<WebElement,DecoratedWebDriver>
+  implements WebElement, WrapsElement, Locatable {
 
-  public DecoratedWebElement(final DecoratedWebDriver driverWrapper, final WebElement element) {
-    super(driverWrapper, element);
+  public DecoratedWebElement(final WebElement element, final DecoratedWebDriver driverWrapper) {
+    super(element, driverWrapper);
   }
 
   @Override
@@ -85,12 +86,12 @@ public class DecoratedWebElement extends DecoratedWebDriverChild<WebElement> imp
 
   @Override
   public List<WebElement> findElements(final By by) {
-    return getDriverWrapper().wrapElements(getOriginal().findElements(by));
+    return getTopmostDecorated().wrapElements(getOriginal().findElements(by));
   }
 
   @Override
   public WebElement findElement(final By by) {
-    return getDriverWrapper().activate(getDriverWrapper().createDecorated(getOriginal().findElement(by)));
+    return getTopmostDecorated().activate(getTopmostDecorated().createDecorated(getOriginal().findElement(by)));
   }
 
   @Override
@@ -120,7 +121,7 @@ public class DecoratedWebElement extends DecoratedWebDriverChild<WebElement> imp
 
   public Coordinates getCoordinates() {
     Locatable locatable = (Locatable) getOriginal();
-    return new Decorator<Coordinates>().activate(getDriverWrapper().createDecorated(locatable.getCoordinates()));
+    return new Decorator<Coordinates>().activate(getTopmostDecorated().createDecorated(locatable.getCoordinates()));
   }
 
   @Override

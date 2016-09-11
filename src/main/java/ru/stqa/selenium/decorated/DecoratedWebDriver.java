@@ -34,20 +34,15 @@ import java.util.Set;
  * <code>MyWebDriverWrapper decorated = new MyWebDriverWrapper(originalDriver, otherParameter);<br>
  * WebDriver driver = new MyWebDriverWrapper(originalDriver, otherParameter).getDriver();</code>
  */
-public class DecoratedWebDriver extends AbstractDecorated<WebDriver>
-    implements Topmost, WebDriver, WrapsDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen {
+public class DecoratedWebDriver extends AbstractDecoratedTopmost<WebDriver>
+    implements DecoratedTopmost, WebDriver, WrapsDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen {
 
   public DecoratedWebDriver(WebDriver driver) {
     super(driver);
   }
 
-  @Override
-  public final Topmost getTopmostDecorated() {
-    return this;
-  }
-
   protected Decorated<WebElement> createDecorated(WebElement original) {
-    return new DecoratedWebElement(DecoratedWebDriver.this, original);
+    return new DecoratedWebElement(original, DecoratedWebDriver.this);
   }
 
   protected List<WebElement> wrapElements(final List<WebElement> elements) {
@@ -59,43 +54,43 @@ public class DecoratedWebDriver extends AbstractDecorated<WebDriver>
   }
 
   protected Decorated<TargetLocator> createDecorated(final TargetLocator original) {
-    return new DecoratedTargetLocator(DecoratedWebDriver.this, original);
+    return new DecoratedTargetLocator(original, DecoratedWebDriver.this);
   }
 
   protected Decorated<Alert> createDecorated(final Alert original) {
-    return new DecoratedAlert(DecoratedWebDriver.this, original);
+    return new DecoratedAlert(original, DecoratedWebDriver.this);
   }
 
   protected Decorated<Navigation> createDecorated(final Navigation original) {
-    return new DecoratedNavigation(DecoratedWebDriver.this, original);
+    return new DecoratedNavigation(original, DecoratedWebDriver.this);
   }
 
   protected Decorated<Options> createDecorated(final Options original) {
-    return new DecoratedOptions(DecoratedWebDriver.this, original);
+    return new DecoratedOptions(original, DecoratedWebDriver.this);
   }
 
   protected Decorated<Timeouts> createDecorated(final Timeouts original) {
-    return new DecoratedTimeouts(DecoratedWebDriver.this, original);
+    return new DecoratedTimeouts(original, DecoratedWebDriver.this);
   }
 
   protected Decorated<Window> createDecorated(final Window original) {
-    return new DecoratedWindow(DecoratedWebDriver.this, original);
+    return new DecoratedWindow(original, DecoratedWebDriver.this);
   }
 
   protected Decorated<Coordinates> createDecorated(final Coordinates original) {
-    return new DecoratedCoordinates(DecoratedWebDriver.this, original);
+    return new DecoratedCoordinates(original, DecoratedWebDriver.this);
   }
 
   protected Decorated<Keyboard> createDecorated(final Keyboard original) {
-    return new DecoratedKeyboard(DecoratedWebDriver.this, original);
+    return new DecoratedKeyboard(original, DecoratedWebDriver.this);
   }
 
   protected Decorated<Mouse> createDecorated(final Mouse original) {
-    return new DecoratedMouse(DecoratedWebDriver.this, original);
+    return new DecoratedMouse(original, DecoratedWebDriver.this);
   }
 
   protected Decorated<TouchScreen> createDecorated(final TouchScreen original) {
-    return new DecoratedTouchScreen(DecoratedWebDriver.this, original);
+    return new DecoratedTouchScreen(original, DecoratedWebDriver.this);
   }
 
   // TODO: implement proper wrapping for arbitrary objects

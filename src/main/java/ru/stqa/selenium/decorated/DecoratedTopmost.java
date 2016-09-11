@@ -21,7 +21,7 @@ import com.google.common.base.Throwables;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public interface Topmost {
+public interface DecoratedTopmost {
   default void beforeMethodGlobal(Decorated<?> target, Method method, Object[] args) {};
   default Object callMethodGlobal(Decorated<?> target, Method method, Object[] args) throws Throwable {
     return method.invoke(target, args);

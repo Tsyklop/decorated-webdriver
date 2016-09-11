@@ -23,10 +23,10 @@ import org.openqa.selenium.logging.Logs;
 
 import java.util.Set;
 
-public class DecoratedOptions extends DecoratedWebDriverChild<WebDriver.Options> implements WebDriver.Options {
+public class DecoratedOptions extends AbstractDecoratedChild<WebDriver.Options,DecoratedWebDriver> implements WebDriver.Options {
 
-  public DecoratedOptions(final DecoratedWebDriver driverWrapper, final WebDriver.Options options) {
-    super(driverWrapper, options);
+  public DecoratedOptions(final WebDriver.Options options, final DecoratedWebDriver driverWrapper) {
+    super(options, driverWrapper);
   }
 
   @Override
@@ -61,7 +61,7 @@ public class DecoratedOptions extends DecoratedWebDriverChild<WebDriver.Options>
 
   @Override
   public WebDriver.Timeouts timeouts() {
-    return new Decorator<WebDriver.Timeouts>().activate(getDriverWrapper().createDecorated(getOriginal().timeouts()));
+    return new Decorator<WebDriver.Timeouts>().activate(getTopmostDecorated().createDecorated(getOriginal().timeouts()));
   }
 
   @Override
@@ -71,7 +71,7 @@ public class DecoratedOptions extends DecoratedWebDriverChild<WebDriver.Options>
 
   @Override
   public WebDriver.Window window() {
-    return new Decorator<WebDriver.Window>().activate(getDriverWrapper().createDecorated(getOriginal().window()));
+    return new Decorator<WebDriver.Window>().activate(getTopmostDecorated().createDecorated(getOriginal().window()));
   }
 
   @Override

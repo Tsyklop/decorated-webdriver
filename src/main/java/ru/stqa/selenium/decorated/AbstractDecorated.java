@@ -14,6 +14,7 @@
  *  limitations under the License.
  *
  */
+
 package ru.stqa.selenium.decorated;
 
 import java.lang.reflect.InvocationTargetException;
@@ -58,22 +59,6 @@ public abstract class AbstractDecorated<T> implements Decorated<T> {
       return newList;
     }
     return result;
-  }
-
-  public void beforeMethod(Method method, Object[] args) {
-    getTopmostDecorated().beforeMethodGlobal(this, method, args);
-  }
-
-  public Object callMethod(Method method, Object[] args) throws Throwable {
-    return getTopmostDecorated().callMethodGlobal(this, method, args);
-  }
-
-  public void afterMethod(Method method, Object res, Object[] args) {
-    getTopmostDecorated().afterMethodGlobal(this, method, unwrap(res), args);
-  }
-
-  public Object onError(Method method, InvocationTargetException e, Object[] args) throws Throwable {
-    return getTopmostDecorated().onErrorGlobal(this, method, e, args);
   }
 
   @Override

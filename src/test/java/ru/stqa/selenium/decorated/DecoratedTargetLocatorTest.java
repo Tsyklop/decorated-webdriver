@@ -38,7 +38,7 @@ public class DecoratedTargetLocatorTest {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
       mockedTarget = mock(WebDriver.TargetLocator.class);
-      decoratedTarget = new DecoratedTargetLocator(decoratedDriver, mockedTarget);
+      decoratedTarget = new DecoratedTargetLocator(mockedTarget, decoratedDriver);
     }
   }
 

@@ -37,7 +37,7 @@ public class DecoratedMouseTest {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
       mockedMouse = mock(Mouse.class);
-      decoratedMouse = new DecoratedMouse(decoratedDriver, mockedMouse);
+      decoratedMouse = new DecoratedMouse(mockedMouse, decoratedDriver);
     }
   }
 

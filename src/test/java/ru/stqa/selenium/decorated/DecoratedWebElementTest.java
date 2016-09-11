@@ -40,7 +40,7 @@ public class DecoratedWebElementTest {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
       mockedElement = mock(WebElement.class, withSettings().extraInterfaces(Locatable.class));
-      decoratedElement = new DecoratedWebElement(decoratedDriver, mockedElement);
+      decoratedElement = new DecoratedWebElement(mockedElement, decoratedDriver);
     }
   }
 

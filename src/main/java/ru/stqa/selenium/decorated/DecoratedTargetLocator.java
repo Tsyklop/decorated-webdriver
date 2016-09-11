@@ -21,55 +21,55 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class DecoratedTargetLocator extends DecoratedWebDriverChild<WebDriver.TargetLocator> implements WebDriver.TargetLocator {
+public class DecoratedTargetLocator extends AbstractDecoratedChild<WebDriver.TargetLocator,DecoratedWebDriver> implements WebDriver.TargetLocator {
 
-  public DecoratedTargetLocator(final DecoratedWebDriver driverWrapper, final WebDriver.TargetLocator targetLocator) {
-    super(driverWrapper, targetLocator);
+  public DecoratedTargetLocator(final WebDriver.TargetLocator targetLocator, final DecoratedWebDriver driverWrapper) {
+    super(targetLocator, driverWrapper);
   }
 
   @Override
   public WebDriver frame(int frameIndex) {
     getOriginal().frame(frameIndex);
-    return activate(getDriverWrapper());
+    return activate(getTopmostDecorated());
   }
 
   @Override
   public WebDriver frame(String frameName) {
     getOriginal().frame(frameName);
-    return activate(getDriverWrapper());
+    return activate(getTopmostDecorated());
   }
 
   @Override
   public WebDriver frame(WebElement frameElement) {
     getOriginal().frame(frameElement);
-    return activate(getDriverWrapper());
+    return activate(getTopmostDecorated());
   }
 
   @Override
   public WebDriver parentFrame() {
     getOriginal().parentFrame();
-    return activate(getDriverWrapper());
+    return activate(getTopmostDecorated());
   }
 
   @Override
   public WebDriver window(String windowName) {
     getOriginal().window(windowName);
-    return activate(getDriverWrapper());
+    return activate(getTopmostDecorated());
   }
 
   @Override
   public WebDriver defaultContent() {
     getOriginal().defaultContent();
-    return activate(getDriverWrapper());
+    return activate(getTopmostDecorated());
   }
 
   @Override
   public WebElement activeElement() {
-    return getDriverWrapper().activate(getDriverWrapper().createDecorated(getOriginal().activeElement()));
+    return getTopmostDecorated().activate(getTopmostDecorated().createDecorated(getOriginal().activeElement()));
   }
 
   @Override
   public Alert alert() {
-    return activate(getDriverWrapper().createDecorated(getOriginal().alert()));
+    return activate(getTopmostDecorated().createDecorated(getOriginal().alert()));
   }
 }

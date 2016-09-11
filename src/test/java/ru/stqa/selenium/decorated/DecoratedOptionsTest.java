@@ -42,7 +42,7 @@ public class DecoratedOptionsTest {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
       mockedOptions = mock(WebDriver.Options.class);
-      decoratedOptions = new DecoratedOptions(decoratedDriver, mockedOptions);
+      decoratedOptions = new DecoratedOptions(mockedOptions, decoratedDriver);
     }
   }
 

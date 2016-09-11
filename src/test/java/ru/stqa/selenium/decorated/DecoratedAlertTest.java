@@ -38,7 +38,7 @@ public class DecoratedAlertTest {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
       mockedAlert = mock(Alert.class);
-      decoratedAlert = new DecoratedAlert(decoratedDriver, mockedAlert);
+      decoratedAlert = new DecoratedAlert(mockedAlert, decoratedDriver);
     }
   }
 

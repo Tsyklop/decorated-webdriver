@@ -37,7 +37,7 @@ public class DecoratedTouchScreenTest {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
       mockedTouchScreen = mock(TouchScreen.class);
-      decoratedTouchScreen = new DecoratedTouchScreen(decoratedDriver, mockedTouchScreen);
+      decoratedTouchScreen = new DecoratedTouchScreen(mockedTouchScreen, decoratedDriver);
     }
   }
 

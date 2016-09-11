@@ -39,7 +39,7 @@ public class DecoratedTimeoutsTest {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
       mockedTimeouts = mock(WebDriver.Timeouts.class);
-      decoratedTimeouts = new DecoratedTimeouts(decoratedDriver, mockedTimeouts);
+      decoratedTimeouts = new DecoratedTimeouts(mockedTimeouts, decoratedDriver);
     }
   }
 
