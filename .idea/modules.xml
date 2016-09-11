@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/webdriver-wrapper.iml" filepath="$PROJECT_DIR$/webdriver-wrapper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/decorated-webdriver-base.iml" filepath="$PROJECT_DIR$/decorated-webdriver-base.iml" />
     </modules>
   </component>
 </project>
