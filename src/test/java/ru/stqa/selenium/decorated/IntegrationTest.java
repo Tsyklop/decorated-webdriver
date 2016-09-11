@@ -33,7 +33,6 @@ import static org.mockito.Mockito.*;
 
 public class IntegrationTest {
 
-  @Ignore
   @Test
   public void canWrapASingleMethod() {
     final WebDriver mockedDriver = mock(WebDriver.class);
@@ -86,7 +85,6 @@ public class IntegrationTest {
     }
   }
 
-  @Ignore
   @Test(expected = NoSuchElementException.class)
   public void canPropagateExceptions() {
     final WebDriver mockedDriver = mock(WebDriver.class);
@@ -98,7 +96,6 @@ public class IntegrationTest {
     driver.findElement(By.name("foo"));
   }
 
-  @Ignore
   @Test
   public void canPreventExceptions() {
     final WebDriver mockedDriver = mock(WebDriver.class);
