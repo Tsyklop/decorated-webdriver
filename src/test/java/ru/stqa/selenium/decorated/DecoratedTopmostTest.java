@@ -54,6 +54,31 @@ public class DecoratedTopmostTest {
     }
   }
 
+  static class DecoratedSemiTarget extends AbstractDecoratedTopmost<Target> {
+    public DecoratedSemiTarget(Target original) {
+      super(original);
+    }
+  }
+
+  static class SemiFixture {
+
+    DecoratedSemiTarget deco;
+
+    public SemiFixture(Target original) {
+      deco = new DecoratedSemiTarget(original) { };
+    }
+  }
+
+  @Test
+  public void testDoesNotDelegateDomesticMethods() throws Throwable {
+    Target target = mock(Target.class);
+    when(target.hello("who")).thenReturn("world");
+    SemiFixture fixture = new SemiFixture(target);
+    Target decorated = new Decorator<Target>().activate(fixture.deco);
+
+    assertThat(decorated.hello("who"), equalTo("world"));
+  }
+
   @Test
   public void testDelegatesToGlobal() throws Throwable {
     Target target = mock(Target.class);
