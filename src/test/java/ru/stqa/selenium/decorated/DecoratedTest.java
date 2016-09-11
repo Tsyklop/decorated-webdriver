@@ -18,6 +18,9 @@ package ru.stqa.selenium.decorated;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertEquals;
@@ -72,4 +75,50 @@ public class DecoratedTest {
     Fixture<String> fixture = new Fixture<>("test");
     assertEquals(fixture.deco.hashCode(), "test".hashCode());
   }
+
+  @Test
+  public void testUnwrapUnwrapped() {
+    Fixture<String> fixture = new Fixture<>("");
+    Object obj = new Object();
+    assertThat(fixture.deco.unwrap(obj), sameInstance(obj));
+
+  }
+
+  static class DecoratedString extends AbstractDecoratedTopmost<String> {
+    public DecoratedString(String original) {
+      super(original);
+    }
+  }
+
+  @Test
+  public void testUnwrapWrapped() {
+    Fixture<String> fixture = new Fixture<>("");
+    String test = "test";
+    Decorated<String> decorated = new DecoratedString(test);
+    assertThat(fixture.deco.unwrap(decorated), sameInstance(test));
+  }
+
+  @Test
+  public void testUnwrapListOfUnwrapped() {
+    Fixture<String> fixture = new Fixture<>("");
+    String test = "test";
+    List<Object> list = new ArrayList<>();
+    list.add(test);
+    List<Object> unwrapped = (List<Object>) fixture.deco.unwrap(list);
+    assertThat(unwrapped.size(), equalTo(1));
+    assertThat(unwrapped.get(0), sameInstance(test));
+  }
+
+  @Test
+  public void testUnwrapListOfWrapped() {
+    Fixture<String> fixture = new Fixture<>("");
+    String test = "test";
+    Decorated<String> decorated = new DecoratedString(test);
+    List<Object> list = new ArrayList<>();
+    list.add(decorated);
+    List<Object> unwrapped = (List<Object>) fixture.deco.unwrap(list);
+    assertThat(unwrapped.size(), equalTo(1));
+    assertThat(unwrapped.get(0), sameInstance(test));
+  }
+
 }
