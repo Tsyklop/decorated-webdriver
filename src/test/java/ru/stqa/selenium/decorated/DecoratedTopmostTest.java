@@ -17,16 +17,14 @@
 package ru.stqa.selenium.decorated;
 
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
-import org.openqa.selenium.WebDriverException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.any;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class DecoratedTopmostTest {

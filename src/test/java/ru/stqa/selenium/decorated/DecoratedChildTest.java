@@ -32,15 +32,6 @@ import static org.mockito.Mockito.*;
 
 public class DecoratedChildTest {
 
-  static class Fixture<T> {
-
-    AbstractDecoratedTopmost<T> deco;
-
-    public Fixture(T original) {
-      deco = new AbstractDecoratedTopmost<T>(original) { };
-    }
-  }
-
   interface Target {
     String hello(String who);
   }
