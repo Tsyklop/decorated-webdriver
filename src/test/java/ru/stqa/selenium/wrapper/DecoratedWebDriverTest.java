@@ -22,7 +22,6 @@ import org.junit.rules.ExpectedException;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.*;
 import org.openqa.selenium.interactions.internal.Coordinates;
-import org.openqa.selenium.internal.Locatable;
 
 import java.util.ArrayList;
 import java.util.HashSet;

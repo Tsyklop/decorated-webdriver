@@ -16,20 +16,17 @@
 
 package ru.stqa.selenium.wrapper;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
-import org.openqa.selenium.WebElement;
+import org.mockito.InOrder;
+import org.openqa.selenium.WebDriverException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyObject;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
 
 public class DecoratedTest {
@@ -128,7 +125,8 @@ public class DecoratedTest {
   public void testDelegatesToTopmost() throws Throwable {
     Target target = mock(Target.class);
     TargetFixture fixture = new TargetFixture(target);
-    when(fixture.topmost.callMethodGlobal(any(Decorated.class), any(Method.class), any(Object[].class))).thenReturn("test");
+    when(target.hello("world")).thenReturn("test");
+    when(fixture.topmost.callMethodGlobal(any(Decorated.class), any(Method.class), any(Object[].class))).thenCallRealMethod();
     Target decorated = new Decorator<Target>().activate(fixture.deco);
 
     ArgumentCaptor<Decorated> tBefore = ArgumentCaptor.forClass(Decorated.class);
@@ -137,20 +135,38 @@ public class DecoratedTest {
     ArgumentCaptor<Method> mBefore = ArgumentCaptor.forClass(Method.class);
     ArgumentCaptor<Method> mCall = ArgumentCaptor.forClass(Method.class);
     ArgumentCaptor<Method> mAfter = ArgumentCaptor.forClass(Method.class);
+    ArgumentCaptor<Object[]> argsBefore = ArgumentCaptor.forClass(Object[].class);
+    ArgumentCaptor<Object[]> argsCall = ArgumentCaptor.forClass(Object[].class);
+    ArgumentCaptor<Object[]> argsAfter = ArgumentCaptor.forClass(Object[].class);
+    ArgumentCaptor<Object> resAfter = ArgumentCaptor.forClass(Object.class);
 
     assertThat(decorated.hello("world"), equalTo("test"));
 
-    verify(fixture.topmost, times(1)).beforeMethodGlobal(tBefore.capture(), mBefore.capture(), any(Object[].class));
-    verify(fixture.topmost, times(1)).callMethodGlobal(tCall.capture(), mCall.capture(), any(Object[].class));
-    verify(fixture.topmost, times(1)).afterMethodGlobal(tAfter.capture(), mAfter.capture(), anyObject(), any(Object[].class));
+    InOrder inOrder = inOrder(fixture.topmost);
+    inOrder.verify(fixture.topmost, times(1)).beforeMethodGlobal(tBefore.capture(), mBefore.capture(), argsBefore.capture());
+    inOrder.verify(fixture.topmost, times(1)).callMethodGlobal(tCall.capture(), mCall.capture(), argsCall.capture());
+    inOrder.verify(fixture.topmost, times(1)).afterMethodGlobal(tAfter.capture(), mAfter.capture(), resAfter.capture(), argsAfter.capture());
+    verify(fixture.topmost, times(0)).onErrorGlobal(any(Decorated.class), any(Method.class), any(InvocationTargetException.class), any(Object[].class));
+
+    assertThat(tBefore.getValue(), sameInstance(fixture.deco));
+    assertThat(tCall.getValue(), sameInstance(fixture.deco));
+    assertThat(tAfter.getValue(), sameInstance(fixture.deco));
+    assertThat(mBefore.getValue().getName(), equalTo("hello"));
+    assertThat(mCall.getValue().getName(), equalTo("hello"));
+    assertThat(mAfter.getValue().getName(), equalTo("hello"));
+    assertThat(argsBefore.getValue(), equalTo(new Object[]{"world"}));
+    assertThat(argsCall.getValue(), equalTo(new Object[]{"world"}));
+    assertThat(argsAfter.getValue(), equalTo(new Object[]{"world"}));
+    assertThat(resAfter.getValue(), equalTo("test"));
   }
 
-  @Ignore
   @Test
   public void testCanPropagateExceptions() throws Throwable {
     Target target = mock(Target.class);
     TargetFixture fixture = new TargetFixture(target);
-    when(fixture.topmost.callMethodGlobal(any(Decorated.class), any(Method.class), any(Object[].class))).thenThrow(InvocationTargetException.class);
+    when(target.hello("world")).thenThrow(WebDriverException.class);
+    when(fixture.topmost.callMethodGlobal(any(Decorated.class), any(Method.class), any(Object[].class))).thenCallRealMethod();
+    when(fixture.topmost.onErrorGlobal(any(Decorated.class), any(Method.class), any(InvocationTargetException.class), any(Object[].class))).thenCallRealMethod();
     Target decorated = new Decorator<Target>().activate(fixture.deco);
 
     ArgumentCaptor<Decorated> tBefore = ArgumentCaptor.forClass(Decorated.class);
@@ -159,15 +175,37 @@ public class DecoratedTest {
     ArgumentCaptor<Method> mBefore = ArgumentCaptor.forClass(Method.class);
     ArgumentCaptor<Method> mCall = ArgumentCaptor.forClass(Method.class);
     ArgumentCaptor<Method> mAfter = ArgumentCaptor.forClass(Method.class);
+    ArgumentCaptor<Object[]> argsBefore = ArgumentCaptor.forClass(Object[].class);
+    ArgumentCaptor<Object[]> argsCall = ArgumentCaptor.forClass(Object[].class);
+    ArgumentCaptor<Object[]> argsAfter = ArgumentCaptor.forClass(Object[].class);
+    ArgumentCaptor<InvocationTargetException> exAfter = ArgumentCaptor.forClass(InvocationTargetException.class);
 
+    boolean thrown = false;
     try {
       decorated.hello("world");
-    } catch (Error expected) {
+    } catch (Throwable expected) {
+      thrown = true;
+      assertThat(expected, instanceOf(WebDriverException.class));
     }
+    assertTrue(thrown);
 
-    verify(fixture.topmost, times(1)).beforeMethodGlobal(tBefore.capture(), mBefore.capture(), any(Object[].class));
-    verify(fixture.topmost, times(1)).callMethodGlobal(tCall.capture(), mCall.capture(), any(Object[].class));
-    verify(fixture.topmost, times(1)).onErrorGlobal(tAfter.capture(), mAfter.capture(), any(InvocationTargetException.class), any(Object[].class));
+    InOrder inOrder = inOrder(fixture.topmost);
+    inOrder.verify(fixture.topmost, times(1)).beforeMethodGlobal(tBefore.capture(), mBefore.capture(), argsBefore.capture());
+    inOrder.verify(fixture.topmost, times(1)).callMethodGlobal(tCall.capture(), mCall.capture(), argsCall.capture());
+    inOrder.verify(fixture.topmost, times(1)).onErrorGlobal(tAfter.capture(), mAfter.capture(), exAfter.capture(), argsAfter.capture());
+    verify(fixture.topmost, times(0)).afterMethodGlobal(any(Decorated.class), any(Method.class), any(Object.class), any(Object[].class));
+
+
+    assertThat(tBefore.getValue(), sameInstance(fixture.deco));
+    assertThat(tCall.getValue(), sameInstance(fixture.deco));
+    assertThat(tAfter.getValue(), sameInstance(fixture.deco));
+    assertThat(mBefore.getValue().getName(), equalTo("hello"));
+    assertThat(mCall.getValue().getName(), equalTo("hello"));
+    assertThat(mAfter.getValue().getName(), equalTo("hello"));
+    assertThat(argsBefore.getValue(), equalTo(new Object[]{"world"}));
+    assertThat(argsCall.getValue(), equalTo(new Object[]{"world"}));
+    assertThat(argsAfter.getValue(), equalTo(new Object[]{"world"}));
+    assertThat(exAfter.getValue().getTargetException(), instanceOf(WebDriverException.class));
   }
 
 }

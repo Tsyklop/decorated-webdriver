@@ -22,8 +22,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public interface Topmost {
-  void beforeMethodGlobal(Decorated<?> target, Method method, Object[] args);
-  Object callMethodGlobal(Decorated<?> target, Method method, Object[] args) throws Throwable;
-  void afterMethodGlobal(Decorated<?> target, Method method, Object res, Object[] args);
-  Object onErrorGlobal(Decorated<?> target, Method method, InvocationTargetException e, Object[] args) throws Throwable;
+  default void beforeMethodGlobal(Decorated<?> target, Method method, Object[] args) {};
+  default Object callMethodGlobal(Decorated<?> target, Method method, Object[] args) throws Throwable {
+    return method.invoke(target, args);
+  };
+  default void afterMethodGlobal(Decorated<?> target, Method method, Object res, Object[] args) {};
+  default Object onErrorGlobal(Decorated<?> target, Method method, InvocationTargetException e, Object[] args) throws Throwable {
+    throw Throwables.propagate(e.getTargetException());
+  };
 }

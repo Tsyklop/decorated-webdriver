@@ -17,14 +17,11 @@
 
 package ru.stqa.selenium.wrapper;
 
-import com.google.common.base.Throwables;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.*;
 import org.openqa.selenium.interactions.internal.Coordinates;
 import org.openqa.selenium.internal.WrapsDriver;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -108,20 +105,6 @@ public class DecoratedWebDriver extends AbstractDecorated<WebDriver>
     } else {
       return object;
     }
-  }
-
-  public void beforeMethodGlobal(Decorated<?> target, Method method, Object[] args) {
-  }
-
-  public Object callMethodGlobal(Decorated<?> target, Method method, Object[] args) throws Throwable {
-    return method.invoke(target, args);
-  }
-
-  public void afterMethodGlobal(Decorated<?> target, Method method, Object res, Object[] args) {
-  }
-
-  public Object onErrorGlobal(Decorated<?> target, Method method, InvocationTargetException e, Object[] args) throws Throwable {
-    throw Throwables.propagate(e.getTargetException());
   }
 
   @Override

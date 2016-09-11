@@ -17,14 +17,11 @@
 package ru.stqa.selenium.wrapper;
 
 import org.junit.Test;
-import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.security.Credentials;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;

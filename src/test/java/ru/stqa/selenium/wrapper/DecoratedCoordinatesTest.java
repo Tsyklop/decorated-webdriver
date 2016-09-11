@@ -16,7 +16,6 @@
 
 package ru.stqa.selenium.wrapper;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
