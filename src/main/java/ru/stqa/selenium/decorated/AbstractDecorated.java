@@ -36,8 +36,9 @@ public abstract class AbstractDecorated<T> implements Decorated<T> {
     this.original = original;
   }
 
-  protected <X> X activate(Decorated<X> decorated) {
-    return new Activator<X>().activate(decorated);
+  @Override
+  final public T getActivated() {
+    return new Activator<T>().activate(this);
   }
 
   protected Object unwrap(Object result) {

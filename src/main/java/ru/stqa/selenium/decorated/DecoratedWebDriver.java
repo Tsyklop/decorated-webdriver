@@ -48,7 +48,7 @@ public class DecoratedWebDriver extends AbstractDecoratedTopmost<WebDriver>
   protected List<WebElement> wrapElements(final List<WebElement> elements) {
     for (ListIterator<WebElement> iterator = elements.listIterator(); iterator.hasNext(); ) {
       // TODO: WTF?
-      iterator.set(activate(createDecorated(iterator.next())));
+      iterator.set(createDecorated(iterator.next()).getActivated());
     }
     return elements;
   }
@@ -96,7 +96,7 @@ public class DecoratedWebDriver extends AbstractDecoratedTopmost<WebDriver>
   // TODO: implement proper wrapping for arbitrary objects
   Object wrapObject(final Object object) {
     if (object instanceof WebElement) {
-      return activate(createDecorated((WebElement) object));
+      return createDecorated((WebElement) object).getActivated();
     } else {
       return object;
     }
@@ -124,7 +124,7 @@ public class DecoratedWebDriver extends AbstractDecoratedTopmost<WebDriver>
 
   @Override
   public WebElement findElement(final By by) {
-    return activate(createDecorated(getOriginal().findElement(by)));
+    return createDecorated(getOriginal().findElement(by)).getActivated();
   }
 
   @Override
@@ -159,17 +159,17 @@ public class DecoratedWebDriver extends AbstractDecoratedTopmost<WebDriver>
 
   @Override
   public TargetLocator switchTo() {
-    return activate(createDecorated(getOriginal().switchTo()));
+    return createDecorated(getOriginal().switchTo()).getActivated();
   }
 
   @Override
   public Navigation navigate() {
-    return activate(createDecorated(getOriginal().navigate()));
+    return createDecorated(getOriginal().navigate()).getActivated();
   }
 
   @Override
   public Options manage() {
-    return activate(createDecorated(getOriginal().manage()));
+    return createDecorated(getOriginal().manage()).getActivated();
   }
 
   @Override
@@ -194,17 +194,17 @@ public class DecoratedWebDriver extends AbstractDecoratedTopmost<WebDriver>
 
   @Override
   public Keyboard getKeyboard() {
-    return activate(createDecorated(((HasInputDevices) getOriginal()).getKeyboard()));
+    return createDecorated(((HasInputDevices) getOriginal()).getKeyboard()).getActivated();
   }
 
   @Override
   public Mouse getMouse() {
-    return activate(createDecorated(((HasInputDevices) getOriginal()).getMouse()));
+    return createDecorated(((HasInputDevices) getOriginal()).getMouse()).getActivated();
   }
 
   @Override
   public TouchScreen getTouch() {
-    return activate(createDecorated(((HasTouchScreen) getOriginal()).getTouch()));
+    return createDecorated(((HasTouchScreen) getOriginal()).getTouch()).getActivated();
   }
 
 }

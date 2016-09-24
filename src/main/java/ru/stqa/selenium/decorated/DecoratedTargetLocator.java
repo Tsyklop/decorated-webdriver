@@ -30,46 +30,46 @@ public class DecoratedTargetLocator extends AbstractDecoratedChild<WebDriver.Tar
   @Override
   public WebDriver frame(int frameIndex) {
     getOriginal().frame(frameIndex);
-    return activate(getTopmostDecorated());
+    return getTopmostDecorated().getActivated();
   }
 
   @Override
   public WebDriver frame(String frameName) {
     getOriginal().frame(frameName);
-    return activate(getTopmostDecorated());
+    return getTopmostDecorated().getActivated();
   }
 
   @Override
   public WebDriver frame(WebElement frameElement) {
     getOriginal().frame(frameElement);
-    return activate(getTopmostDecorated());
+    return getTopmostDecorated().getActivated();
   }
 
   @Override
   public WebDriver parentFrame() {
     getOriginal().parentFrame();
-    return activate(getTopmostDecorated());
+    return getTopmostDecorated().getActivated();
   }
 
   @Override
   public WebDriver window(String windowName) {
     getOriginal().window(windowName);
-    return activate(getTopmostDecorated());
+    return getTopmostDecorated().getActivated();
   }
 
   @Override
   public WebDriver defaultContent() {
     getOriginal().defaultContent();
-    return activate(getTopmostDecorated());
+    return getTopmostDecorated().getActivated();
   }
 
   @Override
   public WebElement activeElement() {
-    return getTopmostDecorated().activate(getTopmostDecorated().createDecorated(getOriginal().activeElement()));
+    return getTopmostDecorated().createDecorated(getOriginal().activeElement()).getActivated();
   }
 
   @Override
   public Alert alert() {
-    return activate(getTopmostDecorated().createDecorated(getOriginal().alert()));
+    return getTopmostDecorated().createDecorated(getOriginal().alert()).getActivated();
   }
 }

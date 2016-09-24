@@ -91,7 +91,7 @@ public class DecoratedWebElement extends AbstractDecoratedChild<WebElement,Decor
 
   @Override
   public WebElement findElement(final By by) {
-    return getTopmostDecorated().activate(getTopmostDecorated().createDecorated(getOriginal().findElement(by)));
+    return getTopmostDecorated().createDecorated(getOriginal().findElement(by)).getActivated();
   }
 
   @Override
