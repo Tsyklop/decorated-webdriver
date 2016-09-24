@@ -37,7 +37,7 @@ public abstract class AbstractDecorated<T> implements Decorated<T> {
   }
 
   protected <X> X activate(Decorated<X> decorated) {
-    return new Decorator<X>().activate(decorated);
+    return new Activator<X>().activate(decorated);
   }
 
   protected Object unwrap(Object result) {

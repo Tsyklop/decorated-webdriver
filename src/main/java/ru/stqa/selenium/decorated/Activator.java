@@ -24,7 +24,7 @@ import java.lang.reflect.Proxy;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Decorator<T> {
+public class Activator<T> {
 
   public final T activate(final Decorated<T> decorated) {
     final Set<Class<?>> decoratedInterfaces = extractInterfaces(decorated);

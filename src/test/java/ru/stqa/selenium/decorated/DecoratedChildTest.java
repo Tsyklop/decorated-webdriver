@@ -65,7 +65,7 @@ public class DecoratedChildTest {
     TargetFixture fixture = new TargetFixture(target);
     when(target.hello("world")).thenReturn("test");
     when(fixture.topmost.callMethodGlobal(any(Decorated.class), any(Method.class), any(Object[].class))).thenCallRealMethod();
-    Target decorated = new Decorator<Target>().activate(fixture.deco);
+    Target decorated = new Activator<Target>().activate(fixture.deco);
 
     ArgumentCaptor<Decorated> tBefore = ArgumentCaptor.forClass(Decorated.class);
     ArgumentCaptor<Decorated> tCall = ArgumentCaptor.forClass(Decorated.class);
@@ -105,7 +105,7 @@ public class DecoratedChildTest {
     when(target.hello("world")).thenThrow(WebDriverException.class);
     when(fixture.topmost.callMethodGlobal(any(Decorated.class), any(Method.class), any(Object[].class))).thenCallRealMethod();
     when(fixture.topmost.onErrorGlobal(any(Decorated.class), any(Method.class), any(InvocationTargetException.class), any(Object[].class))).thenCallRealMethod();
-    Target decorated = new Decorator<Target>().activate(fixture.deco);
+    Target decorated = new Activator<Target>().activate(fixture.deco);
 
     ArgumentCaptor<Decorated> tBefore = ArgumentCaptor.forClass(Decorated.class);
     ArgumentCaptor<Decorated> tCall = ArgumentCaptor.forClass(Decorated.class);

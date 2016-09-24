@@ -74,7 +74,7 @@ public class DecoratedTopmostTest {
     Target target = mock(Target.class);
     when(target.hello("who")).thenReturn("world");
     SemiFixture fixture = new SemiFixture(target);
-    Target decorated = new Decorator<Target>().activate(fixture.deco);
+    Target decorated = new Activator<Target>().activate(fixture.deco);
 
     assertThat(decorated.hello("who"), equalTo("world"));
   }
@@ -85,7 +85,7 @@ public class DecoratedTopmostTest {
     Fixture fixture = new Fixture(target);
     when(target.hello("world")).thenReturn("test");
     AbstractDecoratedTopmost<Target> spy = spy(fixture.deco);
-    Target decorated = new Decorator<Target>().activate(spy);
+    Target decorated = new Activator<Target>().activate(spy);
 
     assertThat(decorated.hello("world"), equalTo("test"));
 
@@ -104,7 +104,7 @@ public class DecoratedTopmostTest {
     Fixture fixture = new Fixture(target);
     when(target.hello("world")).thenThrow(RuntimeException.class);
     AbstractDecoratedTopmost<Target> spy = spy(fixture.deco);
-    Target decorated = new Decorator<Target>().activate(spy);
+    Target decorated = new Activator<Target>().activate(spy);
 
     boolean thrown = false;
     try {

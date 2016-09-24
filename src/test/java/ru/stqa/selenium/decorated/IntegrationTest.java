@@ -15,7 +15,6 @@
  */
 package ru.stqa.selenium.decorated;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -44,7 +43,7 @@ public class IntegrationTest {
     when(mockedElement2.isDisplayed()).thenReturn(true);
 
     final AtomicInteger counter = new AtomicInteger();
-    final WebDriver driver = new Decorator<WebDriver>().activate(new ClickCountingDriver(mockedDriver, counter));
+    final WebDriver driver = new Activator<WebDriver>().activate(new ClickCountingDriver(mockedDriver, counter));
 
     // check for element wrapped by the driver
     final WebElement firstElement = driver.findElement(By.name("foo"));
@@ -91,7 +90,7 @@ public class IntegrationTest {
 
     when(mockedDriver.findElement(By.name("foo"))).thenThrow(NoSuchElementException.class);
 
-    final WebDriver driver = new Decorator<WebDriver>().activate(new DecoratedWebDriver(mockedDriver));
+    final WebDriver driver = new Activator<WebDriver>().activate(new DecoratedWebDriver(mockedDriver));
 
     driver.findElement(By.name("foo"));
   }
@@ -102,7 +101,7 @@ public class IntegrationTest {
 
     when(mockedDriver.findElement(By.name("foo"))).thenThrow(NoSuchElementException.class);
 
-    final WebDriver driver = new Decorator<WebDriver>().activate(new DecoratedWebDriver(mockedDriver) {
+    final WebDriver driver = new Activator<WebDriver>().activate(new DecoratedWebDriver(mockedDriver) {
       @Override
       public Object onError(Method method, InvocationTargetException e, Object[] args) {
         return null;

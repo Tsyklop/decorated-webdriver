@@ -61,7 +61,7 @@ public class DecoratedOptions extends AbstractDecoratedChild<WebDriver.Options,D
 
   @Override
   public WebDriver.Timeouts timeouts() {
-    return new Decorator<WebDriver.Timeouts>().activate(getTopmostDecorated().createDecorated(getOriginal().timeouts()));
+    return new Activator<WebDriver.Timeouts>().activate(getTopmostDecorated().createDecorated(getOriginal().timeouts()));
   }
 
   @Override
@@ -71,7 +71,7 @@ public class DecoratedOptions extends AbstractDecoratedChild<WebDriver.Options,D
 
   @Override
   public WebDriver.Window window() {
-    return new Decorator<WebDriver.Window>().activate(getTopmostDecorated().createDecorated(getOriginal().window()));
+    return new Activator<WebDriver.Window>().activate(getTopmostDecorated().createDecorated(getOriginal().window()));
   }
 
   @Override

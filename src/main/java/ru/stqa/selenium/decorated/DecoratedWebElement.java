@@ -121,7 +121,7 @@ public class DecoratedWebElement extends AbstractDecoratedChild<WebElement,Decor
 
   public Coordinates getCoordinates() {
     Locatable locatable = (Locatable) getOriginal();
-    return new Decorator<Coordinates>().activate(getTopmostDecorated().createDecorated(locatable.getCoordinates()));
+    return new Activator<Coordinates>().activate(getTopmostDecorated().createDecorated(locatable.getCoordinates()));
   }
 
   @Override
