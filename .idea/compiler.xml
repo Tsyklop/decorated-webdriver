@@ -22,11 +22,13 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="decorated-webdriver" />
         <module name="decorated-webdriver-base" />
         <module name="webdriver-wrapper" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="decorated-webdriver" target="1.8" />
       <module name="decorated-webdriver-base" target="1.8" />
       <module name="webdriver-wrapper" target="1.8" />
     </bytecodeTargetLevel>

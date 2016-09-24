@@ -2,13 +2,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>ru.stqa.selenium</groupId>
-  <artifactId>decorated-webdriver-base</artifactId>
+  <artifactId>decorated-webdriver</artifactId>
   <version>3.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>decorated-webdriver-base</name>
   <description>The base set of classes to implement WebDriver extensions following Decorator design pattern</description>
-  <url>https://github.com/barancev/decorated-webdriver-base</url>
+  <url>https://github.com/barancev/decorated-webdriver</url>
 
   <licenses>
     <license>
@@ -19,9 +19,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:git@github.com:barancev/decorated-webdriver-base.git</connection>
-    <developerConnection>scm:git:git@github.com:barancev/decorated-webdriver-base.git</developerConnection>
-    <url>https://github.com/barancev/decorated-webdriver-base</url>
+    <connection>scm:git:git@github.com:barancev/decorated-webdriver.git</connection>
+    <developerConnection>scm:git:git@github.com:barancev/decorated-webdriver.git</developerConnection>
+    <url>https://github.com/barancev/decorated-webdriver</url>
     <tag>HEAD</tag>
   </scm>
 
