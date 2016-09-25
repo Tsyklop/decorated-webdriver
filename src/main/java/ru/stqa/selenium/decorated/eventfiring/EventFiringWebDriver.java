@@ -119,7 +119,7 @@ public class EventFiringWebDriver extends DecoratedWebDriver {
       return false;
     }
     for (int i = 0; i < params.length; i++) {
-      if (! params[i].isAssignableFrom(args[i].getClass())) {
+      if (! Primitives.wrap(params[i]).isAssignableFrom(args[i].getClass())) {
         return false;
       }
     }
