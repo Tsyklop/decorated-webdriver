@@ -758,6 +758,128 @@ public class WebDriverListenerTest {
     verifyNoMoreInteractions(fixture.listener);
   }
 
+  @Test
+  public void canFireEventForAddCookie() {
+    Fixture fixture = new Fixture();
+
+    final WebDriver.Options options = mock(WebDriver.Options.class);
+    Cookie cookie = new Cookie("name", "value");
+
+    when(fixture.mockedDriver.manage()).thenReturn(options);
+
+    fixture.driver.manage().addCookie(cookie);
+
+    verify(fixture.mockedDriver, times(1)).manage();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(options, times(1)).addCookie(cookie);
+    verifyNoMoreInteractions(options);
+    verify(fixture.listener, times(1)).beforeAddCookie(options, cookie);
+    verify(fixture.listener, times(1)).afterAddCookie(options, cookie);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForDeleteCookieNamed() {
+    Fixture fixture = new Fixture();
+
+    final WebDriver.Options options = mock(WebDriver.Options.class);
+
+    when(fixture.mockedDriver.manage()).thenReturn(options);
+
+    fixture.driver.manage().deleteCookieNamed("name");
+
+    verify(fixture.mockedDriver, times(1)).manage();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(options, times(1)).deleteCookieNamed("name");
+    verifyNoMoreInteractions(options);
+    verify(fixture.listener, times(1)).beforeDeleteCookieNamed(options, "name");
+    verify(fixture.listener, times(1)).afterDeleteCookieNamed(options, "name");
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForDeleteCookie() {
+    Fixture fixture = new Fixture();
+
+    final WebDriver.Options options = mock(WebDriver.Options.class);
+    Cookie cookie = new Cookie("name", "value");
+
+    when(fixture.mockedDriver.manage()).thenReturn(options);
+
+    fixture.driver.manage().deleteCookie(cookie);
+
+    verify(fixture.mockedDriver, times(1)).manage();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(options, times(1)).deleteCookie(cookie);
+    verifyNoMoreInteractions(options);
+    verify(fixture.listener, times(1)).beforeDeleteCookie(options, cookie);
+    verify(fixture.listener, times(1)).afterDeleteCookie(options, cookie);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForDeleteAllCookies() {
+    Fixture fixture = new Fixture();
+
+    final WebDriver.Options options = mock(WebDriver.Options.class);
+
+    when(fixture.mockedDriver.manage()).thenReturn(options);
+
+    fixture.driver.manage().deleteAllCookies();
+
+    verify(fixture.mockedDriver, times(1)).manage();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(options, times(1)).deleteAllCookies();
+    verifyNoMoreInteractions(options);
+    verify(fixture.listener, times(1)).beforeDeleteAllCookies(options);
+    verify(fixture.listener, times(1)).afterDeleteAllCookies(options);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForGetCookies() {
+    Fixture fixture = new Fixture();
+
+    final WebDriver.Options options = mock(WebDriver.Options.class);
+    Cookie cookie = new Cookie("name", "value");
+    Set<Cookie> cookies = new HashSet<>();
+    cookies.add(cookie);
+
+    when(fixture.mockedDriver.manage()).thenReturn(options);
+    when(options.getCookies()).thenReturn(cookies);
+
+    assertEquals(fixture.driver.manage().getCookies(), cookies);
+
+    verify(fixture.mockedDriver, times(1)).manage();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(options, times(1)).getCookies();
+    verifyNoMoreInteractions(options);
+    verify(fixture.listener, times(1)).beforeGetCookies(options);
+    verify(fixture.listener, times(1)).afterGetCookies(cookies, options);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForGetCookieNamed() {
+    Fixture fixture = new Fixture();
+
+    final WebDriver.Options options = mock(WebDriver.Options.class);
+    Cookie cookie = new Cookie("name", "value");
+
+    when(fixture.mockedDriver.manage()).thenReturn(options);
+    when(options.getCookieNamed("test")).thenReturn(cookie);
+
+    assertEquals(fixture.driver.manage().getCookieNamed("test"), cookie);
+
+    verify(fixture.mockedDriver, times(1)).manage();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(options, times(1)).getCookieNamed("test");
+    verifyNoMoreInteractions(options);
+    verify(fixture.listener, times(1)).beforeGetCookieNamed(options, "test");
+    verify(fixture.listener, times(1)).afterGetCookieNamed(cookie, options, "test");
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
 /* @Test
   public void canFireEventForAlertAccept() {
     final WebDriver mockedDriver = mock(WebDriver.class);
