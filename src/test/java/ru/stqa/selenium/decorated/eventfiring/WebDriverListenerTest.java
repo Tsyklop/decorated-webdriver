@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -880,24 +881,73 @@ public class WebDriverListenerTest {
     verifyNoMoreInteractions(fixture.listener);
   }
 
-/* @Test
-  public void canFireEventForAlertAccept() {
-    final WebDriver mockedDriver = mock(WebDriver.class);
-    final WebDriver.TargetLocator mockedTarget = mock(WebDriver.TargetLocator.class);
-    final Alert mockedAlert = mock(Alert.class);
-    final WebDriverListener mockedListener = mock(WebDriverListener.class);
-    when(mockedDriver.switchTo()).thenReturn(mockedTarget);
-    when(mockedTarget.alert()).thenReturn(mockedAlert);
+  @Test
+  public void canFireEventForImplicitlyWait() {
+    Fixture fixture = new Fixture();
 
-    EventFiringWebDriver wrapper = new EventFiringWebDriver(mockedDriver);
-    wrapper.addListener(mockedListener);
-    final WebDriver driver = wrapper.getDriver();
+    final WebDriver.Options options = mock(WebDriver.Options.class);
+    final WebDriver.Timeouts timeouts = mock(WebDriver.Timeouts.class);
 
-    driver.switchTo().alert().accept();
+    when(fixture.mockedDriver.manage()).thenReturn(options);
+    when(options.timeouts()).thenReturn(timeouts);
 
-    verify(mockedAlert, times(1)).accept();
-    verify(mockedListener, times(1)).beforeAccept(mockedAlert);
-    verify(mockedListener, times(1)).afterAccept(mockedAlert);
+    fixture.driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+    verify(fixture.mockedDriver, times(1)).manage();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(options, times(1)).timeouts();
+    verifyNoMoreInteractions(options);
+    verify(timeouts, times(1)).implicitlyWait(10, TimeUnit.SECONDS);
+    verifyNoMoreInteractions(timeouts);
+    verify(fixture.listener, times(1)).beforeImplicitlyWait(timeouts, 10, TimeUnit.SECONDS);
+    verify(fixture.listener, times(1)).afterImplicitlyWait(timeouts, 10, TimeUnit.SECONDS);
+    verifyNoMoreInteractions(fixture.listener);
   }
-*/
+
+  @Test
+  public void canFireEventForSetScriptTimeout() {
+    Fixture fixture = new Fixture();
+
+    final WebDriver.Options options = mock(WebDriver.Options.class);
+    final WebDriver.Timeouts timeouts = mock(WebDriver.Timeouts.class);
+
+    when(fixture.mockedDriver.manage()).thenReturn(options);
+    when(options.timeouts()).thenReturn(timeouts);
+
+    fixture.driver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
+
+    verify(fixture.mockedDriver, times(1)).manage();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(options, times(1)).timeouts();
+    verifyNoMoreInteractions(options);
+    verify(timeouts, times(1)).setScriptTimeout(10, TimeUnit.SECONDS);
+    verifyNoMoreInteractions(timeouts);
+    verify(fixture.listener, times(1)).beforeSetScriptTimeout(timeouts, 10, TimeUnit.SECONDS);
+    verify(fixture.listener, times(1)).afterSetScriptTimeout(timeouts, 10, TimeUnit.SECONDS);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForPageLoadTimeout() {
+    Fixture fixture = new Fixture();
+
+    final WebDriver.Options options = mock(WebDriver.Options.class);
+    final WebDriver.Timeouts timeouts = mock(WebDriver.Timeouts.class);
+
+    when(fixture.mockedDriver.manage()).thenReturn(options);
+    when(options.timeouts()).thenReturn(timeouts);
+
+    fixture.driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+
+    verify(fixture.mockedDriver, times(1)).manage();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(options, times(1)).timeouts();
+    verifyNoMoreInteractions(options);
+    verify(timeouts, times(1)).pageLoadTimeout(10, TimeUnit.SECONDS);
+    verifyNoMoreInteractions(timeouts);
+    verify(fixture.listener, times(1)).beforePageLoadTimeout(timeouts, 10, TimeUnit.SECONDS);
+    verify(fixture.listener, times(1)).afterPageLoadTimeout(timeouts, 10, TimeUnit.SECONDS);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
 }

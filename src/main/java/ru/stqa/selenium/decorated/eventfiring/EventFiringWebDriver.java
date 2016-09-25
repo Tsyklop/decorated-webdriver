@@ -81,7 +81,8 @@ public class EventFiringWebDriver extends DecoratedWebDriver {
   private void fireAfterEvent(WebDriverListener listener, Decorated<?> target, Method method, Object res, Object[] args) {
     String methodName = createEventMethodName("after", method.getName());
 
-    boolean isVoid = method.getReturnType() == Void.TYPE;
+    boolean isVoid = method.getReturnType() == Void.TYPE
+      || method.getReturnType() == WebDriver.Timeouts.class;
     int shift = isVoid  ? 0 : 1;
 
     int argsLength = args != null ? args.length : 0;
@@ -115,7 +116,7 @@ public class EventFiringWebDriver extends DecoratedWebDriver {
 
   private boolean parametersMatch(Method m, Object[] args) {
     Class<?>[] params = m.getParameterTypes();
-    if (! (params.length == args.length)) {
+    if (params.length != args.length) {
       return false;
     }
     for (int i = 0; i < params.length; i++) {
