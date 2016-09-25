@@ -18,6 +18,9 @@ package ru.stqa.selenium.decorated.eventfiring;
 
 import org.junit.Test;
 import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.HasInputDevices;
+import org.openqa.selenium.interactions.HasTouchScreen;
+import org.openqa.selenium.interactions.Keyboard;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -33,20 +36,20 @@ import static org.mockito.Mockito.*;
 
 public class WebDriverListenerTest {
 
-  interface WebDriverWithJS extends WebDriver, JavascriptExecutor {}
+  interface WebDriverWithJS extends WebDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen {}
 
   private static class Fixture {
     WebDriverWithJS mockedDriver;
     WebDriverListener listener;
     EventFiringWebDriver decoratedDriver;
-    WebDriver driver;
+    WebDriverWithJS driver;
 
     public Fixture() {
       mockedDriver = mock(WebDriverWithJS.class);
       listener = spy(new WebDriverListener() {});
       decoratedDriver = new EventFiringWebDriver(mockedDriver);
       decoratedDriver.addListener(listener);
-      driver = decoratedDriver.getActivated();
+      driver = (WebDriverWithJS) decoratedDriver.getActivated();
     }
   }
 
@@ -212,7 +215,7 @@ public class WebDriverListenerTest {
 
     when(fixture.mockedDriver.executeScript("return arguments[0]", "test")).thenReturn("result");
 
-    Object result = ((JavascriptExecutor) fixture.driver).executeScript("return arguments[0]", "test");
+    Object result = fixture.driver.executeScript("return arguments[0]", "test");
 
     assertEquals(result, "result");
 
@@ -229,7 +232,7 @@ public class WebDriverListenerTest {
 
     when(fixture.mockedDriver.executeAsyncScript("return arguments[0]", "test")).thenReturn("result");
 
-    Object result = ((JavascriptExecutor) fixture.driver).executeAsyncScript("return arguments[0]", "test");
+    Object result = fixture.driver.executeAsyncScript("return arguments[0]", "test");
 
     assertEquals(result, "result");
 
@@ -1091,6 +1094,63 @@ public class WebDriverListenerTest {
     verifyNoMoreInteractions(window);
     verify(fixture.listener, times(1)).beforeFullscreen(window);
     verify(fixture.listener, times(1)).afterFullscreen(window);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForKeyboardSendKeys() {
+    Fixture fixture = new Fixture();
+
+    final Keyboard keyboard = mock(Keyboard.class);
+
+    when(fixture.mockedDriver.getKeyboard()).thenReturn(keyboard);
+
+    fixture.driver.getKeyboard().sendKeys("test");
+
+    verify(fixture.mockedDriver, times(1)).getKeyboard();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(keyboard, times(1)).sendKeys("test");
+    verifyNoMoreInteractions(keyboard);
+    verify(fixture.listener, times(1)).beforeSendKeys(keyboard, "test");
+    verify(fixture.listener, times(1)).afterSendKeys(keyboard, "test");
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForKeyboardPressKey() {
+    Fixture fixture = new Fixture();
+
+    final Keyboard keyboard = mock(Keyboard.class);
+
+    when(fixture.mockedDriver.getKeyboard()).thenReturn(keyboard);
+
+    fixture.driver.getKeyboard().pressKey(Keys.CONTROL);
+
+    verify(fixture.mockedDriver, times(1)).getKeyboard();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(keyboard, times(1)).pressKey(Keys.CONTROL);
+    verifyNoMoreInteractions(keyboard);
+    verify(fixture.listener, times(1)).beforePressKey(keyboard, Keys.CONTROL);
+    verify(fixture.listener, times(1)).afterPressKey(keyboard, Keys.CONTROL);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForKeyboardReleaseKey() {
+    Fixture fixture = new Fixture();
+
+    final Keyboard keyboard = mock(Keyboard.class);
+
+    when(fixture.mockedDriver.getKeyboard()).thenReturn(keyboard);
+
+    fixture.driver.getKeyboard().releaseKey(Keys.CONTROL);
+
+    verify(fixture.mockedDriver, times(1)).getKeyboard();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(keyboard, times(1)).releaseKey(Keys.CONTROL);
+    verifyNoMoreInteractions(keyboard);
+    verify(fixture.listener, times(1)).beforeReleaseKey(keyboard, Keys.CONTROL);
+    verify(fixture.listener, times(1)).afterReleaseKey(keyboard, Keys.CONTROL);
     verifyNoMoreInteractions(fixture.listener);
   }
 
