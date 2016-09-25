@@ -16,6 +16,7 @@
 
 package ru.stqa.selenium.decorated.eventfiring;
 
+import com.google.common.primitives.Primitives;
 import org.openqa.selenium.WebDriver;
 import ru.stqa.selenium.decorated.Decorated;
 import ru.stqa.selenium.decorated.DecoratedWebDriver;
@@ -118,7 +119,7 @@ public class EventFiringWebDriver extends DecoratedWebDriver {
       return false;
     }
     for (int i = 0; i < params.length; i++) {
-      if (! params[0].isAssignableFrom(args[0].getClass())) {
+      if (! params[i].isAssignableFrom(args[i].getClass())) {
         return false;
       }
     }
