@@ -179,6 +179,9 @@ public interface WebDriverListener {
   default void beforeMaximize(WebDriver.Window window) {};
   default void afterMaximize(WebDriver.Window window) {};
 
+  default void beforeFullscreen(WebDriver.Window window) {};
+  default void afterFullscreen(WebDriver.Window window) {};
+
   default void beforeSendKeys(Keyboard keyboard, CharSequence... keysToSend) {};
   default void afterSendKeys(Keyboard keyboard, CharSequence... keysToSend) {};
 

@@ -511,7 +511,7 @@ public class WebDriverListenerTest {
     Fixture fixture = new Fixture();
 
     final WebElement mockedElement = mock(WebElement.class);
-    final Point location = mock(Point.class);
+    final Point location = new Point(10, 20);
 
     when(fixture.mockedDriver.findElement(By.id("id"))).thenReturn(mockedElement);
     when(mockedElement.getLocation()).thenReturn(location);
@@ -534,7 +534,7 @@ public class WebDriverListenerTest {
     Fixture fixture = new Fixture();
 
     final WebElement mockedElement = mock(WebElement.class);
-    final Dimension dimension = mock(Dimension.class);
+    final Dimension dimension = new Dimension(10, 20);
 
     when(fixture.mockedDriver.findElement(By.id("id"))).thenReturn(mockedElement);
     when(mockedElement.getSize()).thenReturn(dimension);
@@ -947,6 +947,150 @@ public class WebDriverListenerTest {
     verifyNoMoreInteractions(timeouts);
     verify(fixture.listener, times(1)).beforePageLoadTimeout(timeouts, 10, TimeUnit.SECONDS);
     verify(fixture.listener, times(1)).afterPageLoadTimeout(timeouts, 10, TimeUnit.SECONDS);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForWindowGetSize() {
+    Fixture fixture = new Fixture();
+
+    final WebDriver.Options options = mock(WebDriver.Options.class);
+    final WebDriver.Window window = mock(WebDriver.Window.class);
+    final Dimension dimension = new Dimension(10, 20);
+
+    when(fixture.mockedDriver.manage()).thenReturn(options);
+    when(options.window()).thenReturn(window);
+    when(window.getSize()).thenReturn(dimension);
+
+    assertEquals(fixture.driver.manage().window().getSize(), dimension);
+
+    verify(fixture.mockedDriver, times(1)).manage();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(options, times(1)).window();
+    verifyNoMoreInteractions(options);
+    verify(window, times(1)).getSize();
+    verifyNoMoreInteractions(window);
+    verify(fixture.listener, times(1)).beforeGetSize(window);
+    verify(fixture.listener, times(1)).afterGetSize(dimension, window);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForWindowSetSize() {
+    Fixture fixture = new Fixture();
+
+    final WebDriver.Options options = mock(WebDriver.Options.class);
+    final WebDriver.Window window = mock(WebDriver.Window.class);
+    final Dimension dimension = new Dimension(10, 20);
+
+    when(fixture.mockedDriver.manage()).thenReturn(options);
+    when(options.window()).thenReturn(window);
+
+    fixture.driver.manage().window().setSize(dimension);
+
+    verify(fixture.mockedDriver, times(1)).manage();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(options, times(1)).window();
+    verifyNoMoreInteractions(options);
+    verify(window, times(1)).setSize(dimension);
+    verifyNoMoreInteractions(window);
+    verify(fixture.listener, times(1)).beforeSetSize(window, dimension);
+    verify(fixture.listener, times(1)).afterSetSize(window, dimension);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForWindowGetPosition() {
+    Fixture fixture = new Fixture();
+
+    final WebDriver.Options options = mock(WebDriver.Options.class);
+    final WebDriver.Window window = mock(WebDriver.Window.class);
+    final Point position = new Point(10, 20);
+
+    when(fixture.mockedDriver.manage()).thenReturn(options);
+    when(options.window()).thenReturn(window);
+    when(window.getPosition()).thenReturn(position);
+
+    assertEquals(fixture.driver.manage().window().getPosition(), position);
+
+    verify(fixture.mockedDriver, times(1)).manage();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(options, times(1)).window();
+    verifyNoMoreInteractions(options);
+    verify(window, times(1)).getPosition();
+    verifyNoMoreInteractions(window);
+    verify(fixture.listener, times(1)).beforeGetPosition(window);
+    verify(fixture.listener, times(1)).afterGetPosition(position, window);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForWindowSetPosition() {
+    Fixture fixture = new Fixture();
+
+    final WebDriver.Options options = mock(WebDriver.Options.class);
+    final WebDriver.Window window = mock(WebDriver.Window.class);
+    final Point position = new Point(10, 20);
+
+    when(fixture.mockedDriver.manage()).thenReturn(options);
+    when(options.window()).thenReturn(window);
+
+    fixture.driver.manage().window().setPosition(position);
+
+    verify(fixture.mockedDriver, times(1)).manage();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(options, times(1)).window();
+    verifyNoMoreInteractions(options);
+    verify(window, times(1)).setPosition(position);
+    verifyNoMoreInteractions(window);
+    verify(fixture.listener, times(1)).beforeSetPosition(window, position);
+    verify(fixture.listener, times(1)).afterSetPosition(window, position);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForWindowMaximize() {
+    Fixture fixture = new Fixture();
+
+    final WebDriver.Options options = mock(WebDriver.Options.class);
+    final WebDriver.Window window = mock(WebDriver.Window.class);
+
+    when(fixture.mockedDriver.manage()).thenReturn(options);
+    when(options.window()).thenReturn(window);
+
+    fixture.driver.manage().window().maximize();
+
+    verify(fixture.mockedDriver, times(1)).manage();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(options, times(1)).window();
+    verifyNoMoreInteractions(options);
+    verify(window, times(1)).maximize();
+    verifyNoMoreInteractions(window);
+    verify(fixture.listener, times(1)).beforeMaximize(window);
+    verify(fixture.listener, times(1)).afterMaximize(window);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForWindowFullscreen() {
+    Fixture fixture = new Fixture();
+
+    final WebDriver.Options options = mock(WebDriver.Options.class);
+    final WebDriver.Window window = mock(WebDriver.Window.class);
+
+    when(fixture.mockedDriver.manage()).thenReturn(options);
+    when(options.window()).thenReturn(window);
+
+    fixture.driver.manage().window().fullscreen();
+
+    verify(fixture.mockedDriver, times(1)).manage();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(options, times(1)).window();
+    verifyNoMoreInteractions(options);
+    verify(window, times(1)).fullscreen();
+    verifyNoMoreInteractions(window);
+    verify(fixture.listener, times(1)).beforeFullscreen(window);
+    verify(fixture.listener, times(1)).afterFullscreen(window);
     verifyNoMoreInteractions(fixture.listener);
   }
 
