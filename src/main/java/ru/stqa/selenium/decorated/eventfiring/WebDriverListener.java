@@ -185,60 +185,60 @@ public interface WebDriverListener {
   default void beforeSendKeys(Keyboard keyboard, CharSequence... keysToSend) {};
   default void afterSendKeys(Keyboard keyboard, CharSequence... keysToSend) {};
 
-  default void beforePressKey(Keyboard keyboard, CharSequence keysToSend) {};
-  default void afterPressKey(Keyboard keyboard, CharSequence keysToSend) {};
+  default void beforePressKey(Keyboard keyboard, CharSequence keyToPress) {};
+  default void afterPressKey(Keyboard keyboard, CharSequence keyToPress) {};
 
-  default void beforeReleaseKey(Keyboard keyboard, CharSequence keysToSend) {};
-  default void afterReleaseKey(Keyboard keyboard, CharSequence keysToSend) {};
+  default void beforeReleaseKey(Keyboard keyboard, CharSequence keyToRelease) {};
+  default void afterReleaseKey(Keyboard keyboard, CharSequence keyToRelease) {};
 
-  default void beforeClick(Mouse mouse, Coordinates coordinates) {};
-  default void afterClick(Mouse mouse, Coordinates coordinates) {};
+  default void beforeClick(Mouse mouse, Coordinates where) {};
+  default void afterClick(Mouse mouse, Coordinates where) {};
 
-  default void beforeDoubleClick(Mouse mouse, Coordinates coordinates) {};
-  default void afterDoubleClick(Mouse mouse, Coordinates coordinates) {};
+  default void beforeDoubleClick(Mouse mouse, Coordinates where) {};
+  default void afterDoubleClick(Mouse mouse, Coordinates where) {};
 
-  default void beforeContextClick(Mouse mouse, Coordinates coordinates) {};
-  default void afterContextClick(Mouse mouse, Coordinates coordinates) {};
+  default void beforeContextClick(Mouse mouse, Coordinates where) {};
+  default void afterContextClick(Mouse mouse, Coordinates where) {};
 
-  default void beforeMouseDown(Mouse mouse, Coordinates coordinates) {};
-  default void afterMouseDown(Mouse mouse, Coordinates coordinates) {};
+  default void beforeMouseDown(Mouse mouse, Coordinates where) {};
+  default void afterMouseDown(Mouse mouse, Coordinates where) {};
 
-  default void beforeMouseUp(Mouse mouse, Coordinates coordinates) {};
-  default void afterMouseUp(Mouse mouse, Coordinates coordinates) {};
+  default void beforeMouseUp(Mouse mouse, Coordinates where) {};
+  default void afterMouseUp(Mouse mouse, Coordinates where) {};
 
-  default void beforeMouseMove(Mouse mouse, Coordinates coordinates) {};
-  default void afterMouseMove(Mouse mouse, Coordinates coordinates) {};
+  default void beforeMouseMove(Mouse mouse, Coordinates where) {};
+  default void afterMouseMove(Mouse mouse, Coordinates where) {};
 
-  default void beforeMouseMove(Mouse mouse, Coordinates coordinates, long x, long y) {};
-  default void afterMouseMove(Mouse mouse, Coordinates coordinates, long x, long y) {};
+  default void beforeMouseMove(Mouse mouse, Coordinates where, long xOffset, long yOffset) {};
+  default void afterMouseMove(Mouse mouse, Coordinates where, long xOffset, long yOffset) {};
 
-  default void beforeSingleTap(TouchScreen touchScreen, Coordinates coordinates) {};
-  default void afterSingleTap(TouchScreen touchScreen, Coordinates coordinates) {};
+  default void beforeSingleTap(TouchScreen touchScreen, Coordinates where) {};
+  default void afterSingleTap(TouchScreen touchScreen, Coordinates where) {};
 
-  default void beforeDoubleTap(TouchScreen touchScreen, Coordinates coordinates) {};
-  default void afterDoubleTap(TouchScreen touchScreen, Coordinates coordinates) {};
+  default void beforeDoubleTap(TouchScreen touchScreen, Coordinates where) {};
+  default void afterDoubleTap(TouchScreen touchScreen, Coordinates where) {};
 
-  default void beforeLongPress(TouchScreen touchScreen, Coordinates coordinates) {};
-  default void afterLongPress(TouchScreen touchScreen, Coordinates coordinates) {};
+  default void beforeLongPress(TouchScreen touchScreen, Coordinates where) {};
+  default void afterLongPress(TouchScreen touchScreen, Coordinates where) {};
 
-  default void beforeDown(TouchScreen touchScreen, long x, long y) {};
-  default void afterDown(TouchScreen touchScreen, long x, long y) {};
+  default void beforeDown(TouchScreen touchScreen, int x, int y) {};
+  default void afterDown(TouchScreen touchScreen, int x, int y) {};
 
-  default void beforeUp(TouchScreen touchScreen, long x, long y) {};
-  default void afterUp(TouchScreen touchScreen, long x, long y) {};
+  default void beforeUp(TouchScreen touchScreen, int x, int y) {};
+  default void afterUp(TouchScreen touchScreen, int x, int y) {};
 
-  default void beforeMove(TouchScreen touchScreen, long x, long y) {};
-  default void afterMove(TouchScreen touchScreen, long x, long y) {};
+  default void beforeMove(TouchScreen touchScreen, int x, int y) {};
+  default void afterMove(TouchScreen touchScreen, int x, int y) {};
 
-  default void beforeScroll(TouchScreen touchScreen, long x, long y) {};
-  default void afterScroll(TouchScreen touchScreen, long x, long y) {};
+  default void beforeScroll(TouchScreen touchScreen, int xOffset, int yOffset) {};
+  default void afterScroll(TouchScreen touchScreen, int xOffset, int yOffset) {};
 
-  default void beforeScroll(TouchScreen touchScreen, Coordinates coordinates, long x, long y) {};
-  default void afterScroll(TouchScreen touchScreen, Coordinates coordinates, long x, long y) {};
+  default void beforeScroll(TouchScreen touchScreen, Coordinates where, int xOffset, int yOffset) {};
+  default void afterScroll(TouchScreen touchScreen, Coordinates where, int xOffset, int yOffset) {};
 
-  default void beforeFlick(TouchScreen touchScreen, long x, long y) {};
-  default void afterFlick(TouchScreen touchScreen, long x, long y) {};
+  default void beforeFlick(TouchScreen touchScreen, int xSpeed, int ySpeed) {};
+  default void afterFlick(TouchScreen touchScreen, int xSpeed, int ySpeed) {};
 
-  default void beforeFlick(TouchScreen touchScreen, Coordinates coordinates, long x, long y) {};
-  default void afterFlick(TouchScreen touchScreen, Coordinates coordinates, long x, long y) {};
+  default void beforeFlick(TouchScreen touchScreen, Coordinates where, int xOffset, int yOffset, int speed) {};
+  default void afterFlick(TouchScreen touchScreen, Coordinates where, int xOffset, int yOffset, int speed) {};
 }

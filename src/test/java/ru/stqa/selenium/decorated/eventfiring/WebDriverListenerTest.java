@@ -18,10 +18,7 @@ package ru.stqa.selenium.decorated.eventfiring;
 
 import org.junit.Test;
 import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.HasInputDevices;
-import org.openqa.selenium.interactions.HasTouchScreen;
-import org.openqa.selenium.interactions.Keyboard;
-import org.openqa.selenium.interactions.Mouse;
+import org.openqa.selenium.interactions.*;
 import org.openqa.selenium.interactions.internal.Coordinates;
 
 import java.net.MalformedURLException;
@@ -1293,6 +1290,201 @@ public class WebDriverListenerTest {
     verifyNoMoreInteractions(mouse);
     verify(fixture.listener, times(1)).beforeMouseMove(mouse, coords, 10, 20);
     verify(fixture.listener, times(1)).afterMouseMove(mouse, coords, 10, 20);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForSingleTap() {
+    Fixture fixture = new Fixture();
+
+    final TouchScreen touch = mock(TouchScreen.class);
+    final Coordinates coords = mock(Coordinates.class);
+
+    when(fixture.mockedDriver.getTouch()).thenReturn(touch);
+
+    fixture.driver.getTouch().singleTap(coords);
+
+    verify(fixture.mockedDriver, times(1)).getTouch();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(touch, times(1)).singleTap(coords);
+    verifyNoMoreInteractions(touch);
+    verify(fixture.listener, times(1)).beforeSingleTap(touch, coords);
+    verify(fixture.listener, times(1)).afterSingleTap(touch, coords);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForDoubleTap() {
+    Fixture fixture = new Fixture();
+
+    final TouchScreen touch = mock(TouchScreen.class);
+    final Coordinates coords = mock(Coordinates.class);
+
+    when(fixture.mockedDriver.getTouch()).thenReturn(touch);
+
+    fixture.driver.getTouch().doubleTap(coords);
+
+    verify(fixture.mockedDriver, times(1)).getTouch();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(touch, times(1)).doubleTap(coords);
+    verifyNoMoreInteractions(touch);
+    verify(fixture.listener, times(1)).beforeDoubleTap(touch, coords);
+    verify(fixture.listener, times(1)).afterDoubleTap(touch, coords);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForLongPress() {
+    Fixture fixture = new Fixture();
+
+    final TouchScreen touch = mock(TouchScreen.class);
+    final Coordinates coords = mock(Coordinates.class);
+
+    when(fixture.mockedDriver.getTouch()).thenReturn(touch);
+
+    fixture.driver.getTouch().longPress(coords);
+
+    verify(fixture.mockedDriver, times(1)).getTouch();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(touch, times(1)).longPress(coords);
+    verifyNoMoreInteractions(touch);
+    verify(fixture.listener, times(1)).beforeLongPress(touch, coords);
+    verify(fixture.listener, times(1)).afterLongPress(touch, coords);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForTouchDown() {
+    Fixture fixture = new Fixture();
+
+    final TouchScreen touch = mock(TouchScreen.class);
+
+    when(fixture.mockedDriver.getTouch()).thenReturn(touch);
+
+    fixture.driver.getTouch().down(10, 20);
+
+    verify(fixture.mockedDriver, times(1)).getTouch();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(touch, times(1)).down(10, 20);
+    verifyNoMoreInteractions(touch);
+    verify(fixture.listener, times(1)).beforeDown(touch, 10, 20);
+    verify(fixture.listener, times(1)).afterDown(touch, 10, 20);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForTouchUp() {
+    Fixture fixture = new Fixture();
+
+    final TouchScreen touch = mock(TouchScreen.class);
+
+    when(fixture.mockedDriver.getTouch()).thenReturn(touch);
+
+    fixture.driver.getTouch().up(10, 20);
+
+    verify(fixture.mockedDriver, times(1)).getTouch();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(touch, times(1)).up(10, 20);
+    verifyNoMoreInteractions(touch);
+    verify(fixture.listener, times(1)).beforeUp(touch, 10, 20);
+    verify(fixture.listener, times(1)).afterUp(touch, 10, 20);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForTouchMove() {
+    Fixture fixture = new Fixture();
+
+    final TouchScreen touch = mock(TouchScreen.class);
+
+    when(fixture.mockedDriver.getTouch()).thenReturn(touch);
+
+    fixture.driver.getTouch().move(10, 20);
+
+    verify(fixture.mockedDriver, times(1)).getTouch();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(touch, times(1)).move(10, 20);
+    verifyNoMoreInteractions(touch);
+    verify(fixture.listener, times(1)).beforeMove(touch, 10, 20);
+    verify(fixture.listener, times(1)).afterMove(touch, 10, 20);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForScroll() {
+    Fixture fixture = new Fixture();
+
+    final TouchScreen touch = mock(TouchScreen.class);
+
+    when(fixture.mockedDriver.getTouch()).thenReturn(touch);
+
+    fixture.driver.getTouch().scroll(10, 20);
+
+    verify(fixture.mockedDriver, times(1)).getTouch();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(touch, times(1)).scroll(10, 20);
+    verifyNoMoreInteractions(touch);
+    verify(fixture.listener, times(1)).beforeScroll(touch, 10, 20);
+    verify(fixture.listener, times(1)).afterScroll(touch, 10, 20);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForScrollRelative() {
+    Fixture fixture = new Fixture();
+
+    final TouchScreen touch = mock(TouchScreen.class);
+    final Coordinates coords = mock(Coordinates.class);
+
+    when(fixture.mockedDriver.getTouch()).thenReturn(touch);
+
+    fixture.driver.getTouch().scroll(coords, 10, 20);
+
+    verify(fixture.mockedDriver, times(1)).getTouch();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(touch, times(1)).scroll(coords, 10, 20);
+    verifyNoMoreInteractions(touch);
+    verify(fixture.listener, times(1)).beforeScroll(touch, coords, 10, 20);
+    verify(fixture.listener, times(1)).afterScroll(touch, coords, 10, 20);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForFlick() {
+    Fixture fixture = new Fixture();
+
+    final TouchScreen touch = mock(TouchScreen.class);
+
+    when(fixture.mockedDriver.getTouch()).thenReturn(touch);
+
+    fixture.driver.getTouch().flick(10, 20);
+
+    verify(fixture.mockedDriver, times(1)).getTouch();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(touch, times(1)).flick(10, 20);
+    verifyNoMoreInteractions(touch);
+    verify(fixture.listener, times(1)).beforeFlick(touch, 10, 20);
+    verify(fixture.listener, times(1)).afterFlick(touch, 10, 20);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForFlickRelative() {
+    Fixture fixture = new Fixture();
+
+    final TouchScreen touch = mock(TouchScreen.class);
+    final Coordinates coords = mock(Coordinates.class);
+
+    when(fixture.mockedDriver.getTouch()).thenReturn(touch);
+
+    fixture.driver.getTouch().flick(coords, 10, 20, 5);
+
+    verify(fixture.mockedDriver, times(1)).getTouch();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(touch, times(1)).flick(coords, 10, 20, 5);
+    verifyNoMoreInteractions(touch);
+    verify(fixture.listener, times(1)).beforeFlick(touch, coords, 10, 20, 5);
+    verify(fixture.listener, times(1)).afterFlick(touch, coords, 10, 20, 5);
     verifyNoMoreInteractions(fixture.listener);
   }
 
