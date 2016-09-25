@@ -57,24 +57,20 @@ public class EventFiringWebDriverTest {
     verify(fixture.mockedListener, times(1)).afterGet(fixture.mockedDriver, "http://localhost/");
   }
 
-/*  @Test
+  @Test
   public void canFireEventForGetCurrentUrl() {
-    final WebDriver mockedDriver = mock(WebDriver.class);
-    final WebDriverListener mockedListener = mock(WebDriverListener.class);
-    when(mockedDriver.getCurrentUrl()).thenReturn("http://localhost/");
+    Fixture fixture = new Fixture();
 
-    EventFiringWebDriver wrapper = new EventFiringWebDriver(mockedDriver);
-    wrapper.addListener(mockedListener);
-    final WebDriver driver = wrapper.getDriver();
+    when(fixture.mockedDriver.getCurrentUrl()).thenReturn("http://localhost/");
 
-    assertEquals(driver.getCurrentUrl(), "http://localhost/");
+    assertEquals(fixture.driver.getCurrentUrl(), "http://localhost/");
 
-    verify(mockedDriver, times(1)).getCurrentUrl();
-    verify(mockedListener, times(1)).beforeGetCurrentUrl(mockedDriver);
-    verify(mockedListener, times(1)).afterGetCurrentUrl(mockedDriver, "http://localhost/");
+    verify(fixture.mockedDriver, times(1)).getCurrentUrl();
+    verify(fixture.mockedListener, times(1)).beforeGetCurrentUrl(fixture.mockedDriver);
+    verify(fixture.mockedListener, times(1)).afterGetCurrentUrl("http://localhost/", fixture.mockedDriver);
   }
 
-  @Test
+/*  @Test
   public void canFireEventForFindElement() {
     final WebDriver mockedDriver = mock(WebDriver.class);
     final WebElement mockedElement = mock(WebElement.class);
