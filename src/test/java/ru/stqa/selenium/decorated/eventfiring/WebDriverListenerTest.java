@@ -21,6 +21,8 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.HasInputDevices;
 import org.openqa.selenium.interactions.HasTouchScreen;
 import org.openqa.selenium.interactions.Keyboard;
+import org.openqa.selenium.interactions.Mouse;
+import org.openqa.selenium.interactions.internal.Coordinates;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -1151,6 +1153,146 @@ public class WebDriverListenerTest {
     verifyNoMoreInteractions(keyboard);
     verify(fixture.listener, times(1)).beforeReleaseKey(keyboard, Keys.CONTROL);
     verify(fixture.listener, times(1)).afterReleaseKey(keyboard, Keys.CONTROL);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForMouseClick() {
+    Fixture fixture = new Fixture();
+
+    final Mouse mouse = mock(Mouse.class);
+    final Coordinates coords = mock(Coordinates.class);
+
+    when(fixture.mockedDriver.getMouse()).thenReturn(mouse);
+
+    fixture.driver.getMouse().click(coords);
+
+    verify(fixture.mockedDriver, times(1)).getMouse();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(mouse, times(1)).click(coords);
+    verifyNoMoreInteractions(mouse);
+    verify(fixture.listener, times(1)).beforeClick(mouse, coords);
+    verify(fixture.listener, times(1)).afterClick(mouse, coords);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForMouseDoubleClick() {
+    Fixture fixture = new Fixture();
+
+    final Mouse mouse = mock(Mouse.class);
+    final Coordinates coords = mock(Coordinates.class);
+
+    when(fixture.mockedDriver.getMouse()).thenReturn(mouse);
+
+    fixture.driver.getMouse().doubleClick(coords);
+
+    verify(fixture.mockedDriver, times(1)).getMouse();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(mouse, times(1)).doubleClick(coords);
+    verifyNoMoreInteractions(mouse);
+    verify(fixture.listener, times(1)).beforeDoubleClick(mouse, coords);
+    verify(fixture.listener, times(1)).afterDoubleClick(mouse, coords);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForMouseContextClick() {
+    Fixture fixture = new Fixture();
+
+    final Mouse mouse = mock(Mouse.class);
+    final Coordinates coords = mock(Coordinates.class);
+
+    when(fixture.mockedDriver.getMouse()).thenReturn(mouse);
+
+    fixture.driver.getMouse().contextClick(coords);
+
+    verify(fixture.mockedDriver, times(1)).getMouse();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(mouse, times(1)).contextClick(coords);
+    verifyNoMoreInteractions(mouse);
+    verify(fixture.listener, times(1)).beforeContextClick(mouse, coords);
+    verify(fixture.listener, times(1)).afterContextClick(mouse, coords);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForMouseDown() {
+    Fixture fixture = new Fixture();
+
+    final Mouse mouse = mock(Mouse.class);
+    final Coordinates coords = mock(Coordinates.class);
+
+    when(fixture.mockedDriver.getMouse()).thenReturn(mouse);
+
+    fixture.driver.getMouse().mouseDown(coords);
+
+    verify(fixture.mockedDriver, times(1)).getMouse();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(mouse, times(1)).mouseDown(coords);
+    verifyNoMoreInteractions(mouse);
+    verify(fixture.listener, times(1)).beforeMouseDown(mouse, coords);
+    verify(fixture.listener, times(1)).afterMouseDown(mouse, coords);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForMouseUp() {
+    Fixture fixture = new Fixture();
+
+    final Mouse mouse = mock(Mouse.class);
+    final Coordinates coords = mock(Coordinates.class);
+
+    when(fixture.mockedDriver.getMouse()).thenReturn(mouse);
+
+    fixture.driver.getMouse().mouseUp(coords);
+
+    verify(fixture.mockedDriver, times(1)).getMouse();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(mouse, times(1)).mouseUp(coords);
+    verifyNoMoreInteractions(mouse);
+    verify(fixture.listener, times(1)).beforeMouseUp(mouse, coords);
+    verify(fixture.listener, times(1)).afterMouseUp(mouse, coords);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForMouseMove() {
+    Fixture fixture = new Fixture();
+
+    final Mouse mouse = mock(Mouse.class);
+    final Coordinates coords = mock(Coordinates.class);
+
+    when(fixture.mockedDriver.getMouse()).thenReturn(mouse);
+
+    fixture.driver.getMouse().mouseMove(coords);
+
+    verify(fixture.mockedDriver, times(1)).getMouse();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(mouse, times(1)).mouseMove(coords);
+    verifyNoMoreInteractions(mouse);
+    verify(fixture.listener, times(1)).beforeMouseMove(mouse, coords);
+    verify(fixture.listener, times(1)).afterMouseMove(mouse, coords);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForMouseMoveRelative() {
+    Fixture fixture = new Fixture();
+
+    final Mouse mouse = mock(Mouse.class);
+    final Coordinates coords = mock(Coordinates.class);
+
+    when(fixture.mockedDriver.getMouse()).thenReturn(mouse);
+
+    fixture.driver.getMouse().mouseMove(coords, 10, 20);
+
+    verify(fixture.mockedDriver, times(1)).getMouse();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(mouse, times(1)).mouseMove(coords, 10, 20);
+    verifyNoMoreInteractions(mouse);
+    verify(fixture.listener, times(1)).beforeMouseMove(mouse, coords, 10, 20);
+    verify(fixture.listener, times(1)).afterMouseMove(mouse, coords, 10, 20);
     verifyNoMoreInteractions(fixture.listener);
   }
 
