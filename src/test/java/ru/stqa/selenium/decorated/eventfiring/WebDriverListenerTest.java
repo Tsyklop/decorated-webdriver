@@ -19,6 +19,8 @@ package ru.stqa.selenium.decorated.eventfiring;
 import org.junit.Test;
 import org.openqa.selenium.*;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -54,8 +56,10 @@ public class WebDriverListenerTest {
     fixture.driver.get("http://localhost/");
 
     verify(fixture.mockedDriver, times(1)).get("http://localhost/");
+    verifyNoMoreInteractions(fixture.mockedDriver);
     verify(fixture.listener, times(1)).beforeGet(fixture.mockedDriver, "http://localhost/");
     verify(fixture.listener, times(1)).afterGet(fixture.mockedDriver, "http://localhost/");
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -67,8 +71,10 @@ public class WebDriverListenerTest {
     assertEquals(fixture.driver.getCurrentUrl(), "http://localhost/");
 
     verify(fixture.mockedDriver, times(1)).getCurrentUrl();
+    verifyNoMoreInteractions(fixture.mockedDriver);
     verify(fixture.listener, times(1)).beforeGetCurrentUrl(fixture.mockedDriver);
     verify(fixture.listener, times(1)).afterGetCurrentUrl("http://localhost/", fixture.mockedDriver);
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -80,8 +86,10 @@ public class WebDriverListenerTest {
     assertEquals(fixture.driver.getTitle(), "Home page");
 
     verify(fixture.mockedDriver, times(1)).getTitle();
+    verifyNoMoreInteractions(fixture.mockedDriver);
     verify(fixture.listener, times(1)).beforeGetTitle(fixture.mockedDriver);
     verify(fixture.listener, times(1)).afterGetTitle("Home page", fixture.mockedDriver);
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -96,8 +104,10 @@ public class WebDriverListenerTest {
     assertEquals(result, mockedElement);
 
     verify(fixture.mockedDriver, times(1)).findElement(By.id("id"));
+    verifyNoMoreInteractions(fixture.mockedDriver);
     verify(fixture.listener, times(1)).beforeFindElement(fixture.mockedDriver, By.id("id"));
     verify(fixture.listener, times(1)).afterFindElement(mockedElement, fixture.mockedDriver, By.id("id"));
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -114,8 +124,10 @@ public class WebDriverListenerTest {
     assertEquals(result, list);
 
     verify(fixture.mockedDriver, times(1)).findElements(By.id("id"));
+    verifyNoMoreInteractions(fixture.mockedDriver);
     verify(fixture.listener, times(1)).beforeFindElements(fixture.mockedDriver, By.id("id"));
     verify(fixture.listener, times(1)).afterFindElements(list, fixture.mockedDriver, By.id("id"));
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -127,8 +139,10 @@ public class WebDriverListenerTest {
     assertEquals(fixture.driver.getPageSource(), "<html></html>");
 
     verify(fixture.mockedDriver, times(1)).getPageSource();
+    verifyNoMoreInteractions(fixture.mockedDriver);
     verify(fixture.listener, times(1)).beforeGetPageSource(fixture.mockedDriver);
     verify(fixture.listener, times(1)).afterGetPageSource("<html></html>", fixture.mockedDriver);
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -138,8 +152,10 @@ public class WebDriverListenerTest {
     fixture.driver.close();
 
     verify(fixture.mockedDriver, times(1)).close();
+    verifyNoMoreInteractions(fixture.mockedDriver);
     verify(fixture.listener, times(1)).beforeClose(fixture.mockedDriver);
     verify(fixture.listener, times(1)).afterClose(fixture.mockedDriver);
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -149,8 +165,10 @@ public class WebDriverListenerTest {
     fixture.driver.quit();
 
     verify(fixture.mockedDriver, times(1)).quit();
+    verifyNoMoreInteractions(fixture.mockedDriver);
     verify(fixture.listener, times(1)).beforeQuit(fixture.mockedDriver);
     verify(fixture.listener, times(1)).afterQuit(fixture.mockedDriver);
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -166,8 +184,10 @@ public class WebDriverListenerTest {
     assertEquals(result, handles);
 
     verify(fixture.mockedDriver, times(1)).getWindowHandles();
+    verifyNoMoreInteractions(fixture.mockedDriver);
     verify(fixture.listener, times(1)).beforeGetWindowHandles(fixture.mockedDriver);
     verify(fixture.listener, times(1)).afterGetWindowHandles(handles, fixture.mockedDriver);
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -179,8 +199,10 @@ public class WebDriverListenerTest {
     assertEquals(fixture.driver.getWindowHandle(), "window1");
 
     verify(fixture.mockedDriver, times(1)).getWindowHandle();
+    verifyNoMoreInteractions(fixture.mockedDriver);
     verify(fixture.listener, times(1)).beforeGetWindowHandle(fixture.mockedDriver);
     verify(fixture.listener, times(1)).afterGetWindowHandle("window1", fixture.mockedDriver);
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -194,8 +216,10 @@ public class WebDriverListenerTest {
     assertEquals(result, "result");
 
     verify(fixture.mockedDriver, times(1)).executeScript("return arguments[0]", "test");
+    verifyNoMoreInteractions(fixture.mockedDriver);
     verify(fixture.listener, times(1)).beforeExecuteScript(fixture.mockedDriver, "return arguments[0]", "test");
     verify(fixture.listener, times(1)).afterExecuteScript("result", fixture.mockedDriver, "return arguments[0]", "test");
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -209,8 +233,10 @@ public class WebDriverListenerTest {
     assertEquals(result, "result");
 
     verify(fixture.mockedDriver, times(1)).executeAsyncScript("return arguments[0]", "test");
+    verifyNoMoreInteractions(fixture.mockedDriver);
     verify(fixture.listener, times(1)).beforeExecuteAsyncScript(fixture.mockedDriver, "return arguments[0]", "test");
     verify(fixture.listener, times(1)).afterExecuteAsyncScript("result", fixture.mockedDriver, "return arguments[0]", "test");
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -223,9 +249,15 @@ public class WebDriverListenerTest {
 
     fixture.driver.findElement(By.id("id")).click();
 
+    verify(fixture.mockedDriver, times(1)).findElement(By.id("id"));
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(fixture.listener, times(1)).beforeFindElement(fixture.mockedDriver, By.id("id"));
+    verify(fixture.listener, times(1)).afterFindElement(mockedElement, fixture.mockedDriver, By.id("id"));
     verify(mockedElement, times(1)).click();
+    verifyNoMoreInteractions(mockedElement);
     verify(fixture.listener, times(1)).beforeClick(mockedElement);
     verify(fixture.listener, times(1)).afterClick(mockedElement);
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -238,9 +270,15 @@ public class WebDriverListenerTest {
 
     fixture.driver.findElement(By.id("id")).submit();
 
+    verify(fixture.mockedDriver, times(1)).findElement(By.id("id"));
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(fixture.listener, times(1)).beforeFindElement(fixture.mockedDriver, By.id("id"));
+    verify(fixture.listener, times(1)).afterFindElement(mockedElement, fixture.mockedDriver, By.id("id"));
     verify(mockedElement, times(1)).submit();
+    verifyNoMoreInteractions(mockedElement);
     verify(fixture.listener, times(1)).beforeSubmit(mockedElement);
     verify(fixture.listener, times(1)).afterSubmit(mockedElement);
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -253,9 +291,15 @@ public class WebDriverListenerTest {
 
     fixture.driver.findElement(By.id("id")).sendKeys("test");
 
+    verify(fixture.mockedDriver, times(1)).findElement(By.id("id"));
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(fixture.listener, times(1)).beforeFindElement(fixture.mockedDriver, By.id("id"));
+    verify(fixture.listener, times(1)).afterFindElement(mockedElement, fixture.mockedDriver, By.id("id"));
     verify(mockedElement, times(1)).sendKeys("test");
+    verifyNoMoreInteractions(mockedElement);
     verify(fixture.listener, times(1)).beforeSendKeys(mockedElement, "test");
     verify(fixture.listener, times(1)).afterSendKeys(mockedElement, "test");
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -268,9 +312,15 @@ public class WebDriverListenerTest {
 
     fixture.driver.findElement(By.id("id")).clear();
 
+    verify(fixture.mockedDriver, times(1)).findElement(By.id("id"));
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(fixture.listener, times(1)).beforeFindElement(fixture.mockedDriver, By.id("id"));
+    verify(fixture.listener, times(1)).afterFindElement(mockedElement, fixture.mockedDriver, By.id("id"));
     verify(mockedElement, times(1)).clear();
+    verifyNoMoreInteractions(mockedElement);
     verify(fixture.listener, times(1)).beforeClear(mockedElement);
     verify(fixture.listener, times(1)).afterClear(mockedElement);
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -284,9 +334,15 @@ public class WebDriverListenerTest {
 
     assertEquals(fixture.driver.findElement(By.id("id")).getTagName(), "input");
 
+    verify(fixture.mockedDriver, times(1)).findElement(By.id("id"));
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(fixture.listener, times(1)).beforeFindElement(fixture.mockedDriver, By.id("id"));
+    verify(fixture.listener, times(1)).afterFindElement(mockedElement, fixture.mockedDriver, By.id("id"));
     verify(mockedElement, times(1)).getTagName();
+    verifyNoMoreInteractions(mockedElement);
     verify(fixture.listener, times(1)).beforeGetTagName(mockedElement);
     verify(fixture.listener, times(1)).afterGetTagName("input", mockedElement);
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -300,9 +356,15 @@ public class WebDriverListenerTest {
 
     assertEquals(fixture.driver.findElement(By.id("id")).getAttribute("name"), "test");
 
+    verify(fixture.mockedDriver, times(1)).findElement(By.id("id"));
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(fixture.listener, times(1)).beforeFindElement(fixture.mockedDriver, By.id("id"));
+    verify(fixture.listener, times(1)).afterFindElement(mockedElement, fixture.mockedDriver, By.id("id"));
     verify(mockedElement, times(1)).getAttribute("name");
+    verifyNoMoreInteractions(mockedElement);
     verify(fixture.listener, times(1)).beforeGetAttribute(mockedElement, "name");
     verify(fixture.listener, times(1)).afterGetAttribute("test", mockedElement, "name");
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -316,9 +378,15 @@ public class WebDriverListenerTest {
 
     assertEquals(fixture.driver.findElement(By.id("id")).isSelected(), true);
 
+    verify(fixture.mockedDriver, times(1)).findElement(By.id("id"));
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(fixture.listener, times(1)).beforeFindElement(fixture.mockedDriver, By.id("id"));
+    verify(fixture.listener, times(1)).afterFindElement(mockedElement, fixture.mockedDriver, By.id("id"));
     verify(mockedElement, times(1)).isSelected();
+    verifyNoMoreInteractions(mockedElement);
     verify(fixture.listener, times(1)).beforeIsSelected(mockedElement);
     verify(fixture.listener, times(1)).afterIsSelected(true, mockedElement);
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -332,9 +400,15 @@ public class WebDriverListenerTest {
 
     assertEquals(fixture.driver.findElement(By.id("id")).isEnabled(), true);
 
+    verify(fixture.mockedDriver, times(1)).findElement(By.id("id"));
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(fixture.listener, times(1)).beforeFindElement(fixture.mockedDriver, By.id("id"));
+    verify(fixture.listener, times(1)).afterFindElement(mockedElement, fixture.mockedDriver, By.id("id"));
     verify(mockedElement, times(1)).isEnabled();
+    verifyNoMoreInteractions(mockedElement);
     verify(fixture.listener, times(1)).beforeIsEnabled(mockedElement);
     verify(fixture.listener, times(1)).afterIsEnabled(true, mockedElement);
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -348,9 +422,15 @@ public class WebDriverListenerTest {
 
     assertEquals(fixture.driver.findElement(By.id("id")).getText(), "test");
 
+    verify(fixture.mockedDriver, times(1)).findElement(By.id("id"));
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(fixture.listener, times(1)).beforeFindElement(fixture.mockedDriver, By.id("id"));
+    verify(fixture.listener, times(1)).afterFindElement(mockedElement, fixture.mockedDriver, By.id("id"));
     verify(mockedElement, times(1)).getText();
+    verifyNoMoreInteractions(mockedElement);
     verify(fixture.listener, times(1)).beforeGetText(mockedElement);
     verify(fixture.listener, times(1)).afterGetText("test", mockedElement);
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -364,9 +444,15 @@ public class WebDriverListenerTest {
 
     assertEquals(fixture.driver.findElement(By.id("id")).isDisplayed(), true);
 
+    verify(fixture.mockedDriver, times(1)).findElement(By.id("id"));
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(fixture.listener, times(1)).beforeFindElement(fixture.mockedDriver, By.id("id"));
+    verify(fixture.listener, times(1)).afterFindElement(mockedElement, fixture.mockedDriver, By.id("id"));
     verify(mockedElement, times(1)).isDisplayed();
+    verifyNoMoreInteractions(mockedElement);
     verify(fixture.listener, times(1)).beforeIsDisplayed(mockedElement);
     verify(fixture.listener, times(1)).afterIsDisplayed(true, mockedElement);
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -382,11 +468,15 @@ public class WebDriverListenerTest {
 
     assertEquals(result, mockedElement2);
 
-    verify(mockedElement, times(1)).findElement(By.id("id2"));
+    verify(fixture.mockedDriver, times(1)).findElement(By.id("id1"));
+    verifyNoMoreInteractions(fixture.mockedDriver);
     verify(fixture.listener, times(1)).beforeFindElement(fixture.mockedDriver, By.id("id1"));
     verify(fixture.listener, times(1)).afterFindElement(mockedElement, fixture.mockedDriver, By.id("id1"));
+    verify(mockedElement, times(1)).findElement(By.id("id2"));
+    verifyNoMoreInteractions(mockedElement);
     verify(fixture.listener, times(1)).beforeFindElement(mockedElement, By.id("id2"));
     verify(fixture.listener, times(1)).afterFindElement(mockedElement2, mockedElement, By.id("id2"));
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -404,11 +494,15 @@ public class WebDriverListenerTest {
 
     assertEquals(result, list);
 
-    verify(mockedElement, times(1)).findElements(By.id("id2"));
+    verify(fixture.mockedDriver, times(1)).findElement(By.id("id1"));
+    verifyNoMoreInteractions(fixture.mockedDriver);
     verify(fixture.listener, times(1)).beforeFindElement(fixture.mockedDriver, By.id("id1"));
     verify(fixture.listener, times(1)).afterFindElement(mockedElement, fixture.mockedDriver, By.id("id1"));
+    verify(mockedElement, times(1)).findElements(By.id("id2"));
+    verifyNoMoreInteractions(mockedElement);
     verify(fixture.listener, times(1)).beforeFindElements(mockedElement, By.id("id2"));
     verify(fixture.listener, times(1)).afterFindElements(list, mockedElement, By.id("id2"));
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -423,9 +517,15 @@ public class WebDriverListenerTest {
 
     assertSame(fixture.driver.findElement(By.id("id")).getLocation(), location);
 
+    verify(fixture.mockedDriver, times(1)).findElement(By.id("id"));
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(fixture.listener, times(1)).beforeFindElement(fixture.mockedDriver, By.id("id"));
+    verify(fixture.listener, times(1)).afterFindElement(mockedElement, fixture.mockedDriver, By.id("id"));
     verify(mockedElement, times(1)).getLocation();
+    verifyNoMoreInteractions(mockedElement);
     verify(fixture.listener, times(1)).beforeGetLocation(mockedElement);
     verify(fixture.listener, times(1)).afterGetLocation(location, mockedElement);
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -440,9 +540,15 @@ public class WebDriverListenerTest {
 
     assertSame(fixture.driver.findElement(By.id("id")).getSize(), dimension);
 
+    verify(fixture.mockedDriver, times(1)).findElement(By.id("id"));
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(fixture.listener, times(1)).beforeFindElement(fixture.mockedDriver, By.id("id"));
+    verify(fixture.listener, times(1)).afterFindElement(mockedElement, fixture.mockedDriver, By.id("id"));
     verify(mockedElement, times(1)).getSize();
+    verifyNoMoreInteractions(mockedElement);
     verify(fixture.listener, times(1)).beforeGetSize(mockedElement);
     verify(fixture.listener, times(1)).afterGetSize(dimension, mockedElement);
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
@@ -456,9 +562,97 @@ public class WebDriverListenerTest {
 
     assertEquals(fixture.driver.findElement(By.id("id")).getCssValue("color"), "red");
 
+    verify(fixture.mockedDriver, times(1)).findElement(By.id("id"));
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(fixture.listener, times(1)).beforeFindElement(fixture.mockedDriver, By.id("id"));
+    verify(fixture.listener, times(1)).afterFindElement(mockedElement, fixture.mockedDriver, By.id("id"));
     verify(mockedElement, times(1)).getCssValue("color");
+    verifyNoMoreInteractions(mockedElement);
     verify(fixture.listener, times(1)).beforeGetCssValue(mockedElement, "color");
     verify(fixture.listener, times(1)).afterGetCssValue("red", mockedElement, "color");
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForNavigateTo() {
+    Fixture fixture = new Fixture();
+
+    WebDriver.Navigation navigate = mock(WebDriver.Navigation.class);
+    when(fixture.mockedDriver.navigate()).thenReturn(navigate);
+
+    fixture.driver.navigate().to("http://localhost/");
+
+    verify(navigate, times(1)).to("http://localhost/");
+    verifyNoMoreInteractions(navigate);
+    verify(fixture.listener, times(1)).beforeTo(navigate, "http://localhost/");
+    verify(fixture.listener, times(1)).afterTo(navigate, "http://localhost/");
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForNavigateToUrl() throws MalformedURLException {
+    Fixture fixture = new Fixture();
+
+    WebDriver.Navigation navigate = mock(WebDriver.Navigation.class);
+    when(fixture.mockedDriver.navigate()).thenReturn(navigate);
+
+    URL localhost = new URL("http://localhost/");
+
+    fixture.driver.navigate().to(localhost);
+
+    verify(navigate, times(1)).to(localhost);
+    verifyNoMoreInteractions(navigate);
+    verify(fixture.listener, times(1)).beforeTo(navigate, localhost);
+    verify(fixture.listener, times(1)).afterTo(navigate, localhost);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForNavigateBack() {
+    Fixture fixture = new Fixture();
+
+    WebDriver.Navigation navigate = mock(WebDriver.Navigation.class);
+    when(fixture.mockedDriver.navigate()).thenReturn(navigate);
+
+    fixture.driver.navigate().back();
+
+    verify(navigate, times(1)).back();
+    verifyNoMoreInteractions(navigate);
+    verify(fixture.listener, times(1)).beforeBack(navigate);
+    verify(fixture.listener, times(1)).afterBack(navigate);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForNavigateForward() {
+    Fixture fixture = new Fixture();
+
+    WebDriver.Navigation navigate = mock(WebDriver.Navigation.class);
+    when(fixture.mockedDriver.navigate()).thenReturn(navigate);
+
+    fixture.driver.navigate().forward();
+
+    verify(navigate, times(1)).forward();
+    verifyNoMoreInteractions(navigate);
+    verify(fixture.listener, times(1)).beforeForward(navigate);
+    verify(fixture.listener, times(1)).afterForward(navigate);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForRefresh() {
+    Fixture fixture = new Fixture();
+
+    WebDriver.Navigation navigate = mock(WebDriver.Navigation.class);
+    when(fixture.mockedDriver.navigate()).thenReturn(navigate);
+
+    fixture.driver.navigate().refresh();
+
+    verify(navigate, times(1)).refresh();
+    verifyNoMoreInteractions(navigate);
+    verify(fixture.listener, times(1)).beforeRefresh(navigate);
+    verify(fixture.listener, times(1)).afterRefresh(navigate);
+    verifyNoMoreInteractions(fixture.listener);
   }
 
 /* @Test
