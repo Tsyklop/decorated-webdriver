@@ -17,10 +17,7 @@
 package ru.stqa.selenium.decorated.eventfiring;
 
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.*;
 
 public class WebDriverListenerTest {
@@ -371,49 +369,99 @@ public class WebDriverListenerTest {
     verify(fixture.listener, times(1)).afterIsDisplayed(true, mockedElement);
   }
 
-/*  @Test
-  public void canFireEventForWebElementGetText() {
-    final WebDriver mockedDriver = mock(WebDriver.class);
+  @Test
+  public void canFireEventForRelativeFindElement() {
+    Fixture fixture = new Fixture();
+
     final WebElement mockedElement = mock(WebElement.class);
-    final WebDriverListener mockedListener = mock(WebDriverListener.class);
-    when(mockedDriver.findElement(By.id("id"))).thenReturn(mockedElement);
-    when(mockedElement.getText()).thenReturn("text");
+    final WebElement mockedElement2 = mock(WebElement.class);
+    when(fixture.mockedDriver.findElement(By.id("id1"))).thenReturn(mockedElement);
+    when(mockedElement.findElement(By.id("id2"))).thenReturn(mockedElement2);
 
-    EventFiringWebDriver wrapper = new EventFiringWebDriver(mockedDriver);
-    wrapper.addListener(mockedListener);
-    final WebDriver driver = wrapper.getDriver();
+    WebElement result = fixture.driver.findElement(By.id("id1")).findElement(By.id("id2"));
 
-    String result = driver.findElement(By.id("id")).getText();
+    assertEquals(result, mockedElement2);
 
-    assertEquals(result, "text");
-
-    verify(mockedElement, times(1)).getText();
-    verify(mockedListener, times(1)).beforeGetText(mockedElement);
-    verify(mockedListener, times(1)).afterGetText(mockedElement, "text");
+    verify(mockedElement, times(1)).findElement(By.id("id2"));
+    verify(fixture.listener, times(1)).beforeFindElement(fixture.mockedDriver, By.id("id1"));
+    verify(fixture.listener, times(1)).afterFindElement(mockedElement, fixture.mockedDriver, By.id("id1"));
+    verify(fixture.listener, times(1)).beforeFindElement(mockedElement, By.id("id2"));
+    verify(fixture.listener, times(1)).afterFindElement(mockedElement2, mockedElement, By.id("id2"));
   }
 
   @Test
-  public void canFireEventForWebElementGetAttribute() {
-    final WebDriver mockedDriver = mock(WebDriver.class);
+  public void canFireEventForRelativeFindElements() {
+    Fixture fixture = new Fixture();
+
     final WebElement mockedElement = mock(WebElement.class);
-    final WebDriverListener mockedListener = mock(WebDriverListener.class);
-    when(mockedDriver.findElement(By.id("id"))).thenReturn(mockedElement);
-    when(mockedElement.getAttribute("value")).thenReturn("text");
+    final WebElement mockedElement2 = mock(WebElement.class);
+    final List<WebElement> list = new ArrayList<>();
+    list.add(mockedElement2);
+    when(fixture.mockedDriver.findElement(By.id("id1"))).thenReturn(mockedElement);
+    when(mockedElement.findElements(By.id("id2"))).thenReturn(list);
 
-    EventFiringWebDriver wrapper = new EventFiringWebDriver(mockedDriver);
-    wrapper.addListener(mockedListener);
-    final WebDriver driver = wrapper.getDriver();
+    List<WebElement> result = fixture.driver.findElement(By.id("id1")).findElements(By.id("id2"));
 
-    String result = driver.findElement(By.id("id")).getAttribute("value");
+    assertEquals(result, list);
 
-    assertEquals(result, "text");
-
-    verify(mockedElement, times(1)).getAttribute("value");
-    verify(mockedListener, times(1)).beforeGetAttribute(mockedElement, "value");
-    verify(mockedListener, times(1)).afterGetAttribute(mockedElement, "text", "value");
+    verify(mockedElement, times(1)).findElements(By.id("id2"));
+    verify(fixture.listener, times(1)).beforeFindElement(fixture.mockedDriver, By.id("id1"));
+    verify(fixture.listener, times(1)).afterFindElement(mockedElement, fixture.mockedDriver, By.id("id1"));
+    verify(fixture.listener, times(1)).beforeFindElements(mockedElement, By.id("id2"));
+    verify(fixture.listener, times(1)).afterFindElements(list, mockedElement, By.id("id2"));
   }
 
   @Test
+  public void canFireEventForWebElementGetLocation() {
+    Fixture fixture = new Fixture();
+
+    final WebElement mockedElement = mock(WebElement.class);
+    final Point location = mock(Point.class);
+
+    when(fixture.mockedDriver.findElement(By.id("id"))).thenReturn(mockedElement);
+    when(mockedElement.getLocation()).thenReturn(location);
+
+    assertSame(fixture.driver.findElement(By.id("id")).getLocation(), location);
+
+    verify(mockedElement, times(1)).getLocation();
+    verify(fixture.listener, times(1)).beforeGetLocation(mockedElement);
+    verify(fixture.listener, times(1)).afterGetLocation(location, mockedElement);
+  }
+
+  @Test
+  public void canFireEventForWebElementGetSize() {
+    Fixture fixture = new Fixture();
+
+    final WebElement mockedElement = mock(WebElement.class);
+    final Dimension dimension = mock(Dimension.class);
+
+    when(fixture.mockedDriver.findElement(By.id("id"))).thenReturn(mockedElement);
+    when(mockedElement.getSize()).thenReturn(dimension);
+
+    assertSame(fixture.driver.findElement(By.id("id")).getSize(), dimension);
+
+    verify(mockedElement, times(1)).getSize();
+    verify(fixture.listener, times(1)).beforeGetSize(mockedElement);
+    verify(fixture.listener, times(1)).afterGetSize(dimension, mockedElement);
+  }
+
+  @Test
+  public void canFireEventForWebElementGetCssValue() {
+    Fixture fixture = new Fixture();
+
+    final WebElement mockedElement = mock(WebElement.class);
+
+    when(fixture.mockedDriver.findElement(By.id("id"))).thenReturn(mockedElement);
+    when(mockedElement.getCssValue("color")).thenReturn("red");
+
+    assertEquals(fixture.driver.findElement(By.id("id")).getCssValue("color"), "red");
+
+    verify(mockedElement, times(1)).getCssValue("color");
+    verify(fixture.listener, times(1)).beforeGetCssValue(mockedElement, "color");
+    verify(fixture.listener, times(1)).afterGetCssValue("red", mockedElement, "color");
+  }
+
+/* @Test
   public void canFireEventForRefresh() {
     final WebDriver mockedDriver = mock(WebDriver.class);
     final WebDriver.Navigation mockedNavigation = mock(WebDriver.Navigation.class);
@@ -429,56 +477,6 @@ public class WebDriverListenerTest {
     verify(mockedNavigation, times(1)).refresh();
     verify(mockedListener, times(1)).beforeRefresh(mockedNavigation);
     verify(mockedListener, times(1)).afterRefresh(mockedNavigation);
-  }
-
-  @Test
-  public void canFireEventForFindElementInElement() {
-    final WebDriver mockedDriver = mock(WebDriver.class);
-    final WebElement mockedElement = mock(WebElement.class);
-    final WebElement mockedElement2 = mock(WebElement.class);
-    final WebDriverListener mockedListener = mock(WebDriverListener.class);
-    when(mockedDriver.findElement(By.id("id1"))).thenReturn(mockedElement);
-    when(mockedElement.findElement(By.id("id2"))).thenReturn(mockedElement2);
-
-    EventFiringWebDriver wrapper = new EventFiringWebDriver(mockedDriver);
-    wrapper.addListener(mockedListener);
-    final WebDriver driver = wrapper.getDriver();
-
-    WebElement result = driver.findElement(By.id("id1")).findElement(By.id("id2"));
-
-    assertEquals(result, mockedElement2);
-
-    verify(mockedElement, times(1)).findElement(By.id("id2"));
-    verify(mockedListener, times(1)).beforeFindElement(mockedDriver, By.id("id1"));
-    verify(mockedListener, times(1)).afterFindElement(mockedDriver, mockedElement, By.id("id1"));
-    verify(mockedListener, times(1)).beforeFindElement(mockedElement, By.id("id2"));
-    verify(mockedListener, times(1)).afterFindElement(mockedElement, mockedElement2, By.id("id2"));
-  }
-
-  @Test
-  public void canFireEventForFindElementsInElement() {
-    final WebDriver mockedDriver = mock(WebDriver.class);
-    final WebElement mockedElement = mock(WebElement.class);
-    final WebElement mockedElement2 = mock(WebElement.class);
-    final List<WebElement> list = new ArrayList<WebElement>();
-    list.add(mockedElement2);
-    final WebDriverListener mockedListener = mock(WebDriverListener.class);
-    when(mockedDriver.findElement(By.id("id1"))).thenReturn(mockedElement);
-    when(mockedElement.findElements(By.id("id2"))).thenReturn(list);
-
-    EventFiringWebDriver wrapper = new EventFiringWebDriver(mockedDriver);
-    wrapper.addListener(mockedListener);
-    final WebDriver driver = wrapper.getDriver();
-
-    List<WebElement> result = driver.findElement(By.id("id1")).findElements(By.id("id2"));
-
-    assertEquals(result, list);
-
-    verify(mockedElement, times(1)).findElements(By.id("id2"));
-    verify(mockedListener, times(1)).beforeFindElement(mockedDriver, By.id("id1"));
-    verify(mockedListener, times(1)).afterFindElement(mockedDriver, mockedElement, By.id("id1"));
-    verify(mockedListener, times(1)).beforeFindElements(mockedElement, By.id("id2"));
-    verify(mockedListener, times(1)).afterFindElements(mockedElement, list, By.id("id2"));
   }
 
   @Test

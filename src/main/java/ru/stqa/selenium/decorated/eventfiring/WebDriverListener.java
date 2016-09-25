@@ -107,8 +107,8 @@ public interface WebDriverListener {
   default void beforeGetSize(WebElement element) {};
   default void afterGetSize(Dimension result, WebElement element) {};
 
-  default void beforeGetCssValue(WebElement element) {};
-  default void afterGetCssValue(String result, WebElement element) {};
+  default void beforeGetCssValue(WebElement element, String propertyName) {};
+  default void afterGetCssValue(String result, WebElement element, String propertyName) {};
 
   default void beforeTo(WebDriver.Navigation navigation, String url) {};
   default void afterTo(WebDriver.Navigation navigation, String url) {};
