@@ -582,6 +582,8 @@ public class WebDriverListenerTest {
 
     fixture.driver.navigate().to("http://localhost/");
 
+    verify(fixture.mockedDriver, times(1)).navigate();
+    verifyNoMoreInteractions(fixture.mockedDriver);
     verify(navigate, times(1)).to("http://localhost/");
     verifyNoMoreInteractions(navigate);
     verify(fixture.listener, times(1)).beforeTo(navigate, "http://localhost/");
@@ -600,6 +602,8 @@ public class WebDriverListenerTest {
 
     fixture.driver.navigate().to(localhost);
 
+    verify(fixture.mockedDriver, times(1)).navigate();
+    verifyNoMoreInteractions(fixture.mockedDriver);
     verify(navigate, times(1)).to(localhost);
     verifyNoMoreInteractions(navigate);
     verify(fixture.listener, times(1)).beforeTo(navigate, localhost);
@@ -616,6 +620,8 @@ public class WebDriverListenerTest {
 
     fixture.driver.navigate().back();
 
+    verify(fixture.mockedDriver, times(1)).navigate();
+    verifyNoMoreInteractions(fixture.mockedDriver);
     verify(navigate, times(1)).back();
     verifyNoMoreInteractions(navigate);
     verify(fixture.listener, times(1)).beforeBack(navigate);
@@ -632,6 +638,8 @@ public class WebDriverListenerTest {
 
     fixture.driver.navigate().forward();
 
+    verify(fixture.mockedDriver, times(1)).navigate();
+    verifyNoMoreInteractions(fixture.mockedDriver);
     verify(navigate, times(1)).forward();
     verifyNoMoreInteractions(navigate);
     verify(fixture.listener, times(1)).beforeForward(navigate);
@@ -648,6 +656,8 @@ public class WebDriverListenerTest {
 
     fixture.driver.navigate().refresh();
 
+    verify(fixture.mockedDriver, times(1)).navigate();
+    verifyNoMoreInteractions(fixture.mockedDriver);
     verify(navigate, times(1)).refresh();
     verifyNoMoreInteractions(navigate);
     verify(fixture.listener, times(1)).beforeRefresh(navigate);
@@ -655,25 +665,100 @@ public class WebDriverListenerTest {
     verifyNoMoreInteractions(fixture.listener);
   }
 
-/* @Test
-  public void canFireEventForRefresh() {
-    final WebDriver mockedDriver = mock(WebDriver.class);
-    final WebDriver.Navigation mockedNavigation = mock(WebDriver.Navigation.class);
-    final WebDriverListener mockedListener = mock(WebDriverListener.class);
-    when(mockedDriver.navigate()).thenReturn(mockedNavigation);
+  @Test
+  public void canFireEventForAlertAccept() {
+    Fixture fixture = new Fixture();
 
-    EventFiringWebDriver wrapper = new EventFiringWebDriver(mockedDriver);
-    wrapper.addListener(mockedListener);
-    final WebDriver driver = wrapper.getDriver();
+    final WebDriver.TargetLocator target = mock(WebDriver.TargetLocator.class);
+    final Alert alert = mock(Alert.class);
 
-    driver.navigate().refresh();
+    when(fixture.mockedDriver.switchTo()).thenReturn(target);
+    when(target.alert()).thenReturn(alert);
 
-    verify(mockedNavigation, times(1)).refresh();
-    verify(mockedListener, times(1)).beforeRefresh(mockedNavigation);
-    verify(mockedListener, times(1)).afterRefresh(mockedNavigation);
+    fixture.driver.switchTo().alert().accept();
+
+    verify(fixture.mockedDriver, times(1)).switchTo();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(target, times(1)).alert();
+    verifyNoMoreInteractions(target);
+    verify(alert, times(1)).accept();
+    verifyNoMoreInteractions(alert);
+    verify(fixture.listener, times(1)).beforeAccept(alert);
+    verify(fixture.listener, times(1)).afterAccept(alert);
+    verifyNoMoreInteractions(fixture.listener);
   }
 
   @Test
+  public void canFireEventForAlertDismiss() {
+    Fixture fixture = new Fixture();
+
+    final WebDriver.TargetLocator target = mock(WebDriver.TargetLocator.class);
+    final Alert alert = mock(Alert.class);
+
+    when(fixture.mockedDriver.switchTo()).thenReturn(target);
+    when(target.alert()).thenReturn(alert);
+
+    fixture.driver.switchTo().alert().dismiss();
+
+    verify(fixture.mockedDriver, times(1)).switchTo();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(target, times(1)).alert();
+    verifyNoMoreInteractions(target);
+    verify(alert, times(1)).dismiss();
+    verifyNoMoreInteractions(alert);
+    verify(fixture.listener, times(1)).beforeDismiss(alert);
+    verify(fixture.listener, times(1)).afterDismiss(alert);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForAlertGetText() {
+    Fixture fixture = new Fixture();
+
+    final WebDriver.TargetLocator target = mock(WebDriver.TargetLocator.class);
+    final Alert alert = mock(Alert.class);
+
+    when(fixture.mockedDriver.switchTo()).thenReturn(target);
+    when(target.alert()).thenReturn(alert);
+    when(alert.getText()).thenReturn("test");
+
+    assertEquals(fixture.driver.switchTo().alert().getText(), "test");
+
+    verify(fixture.mockedDriver, times(1)).switchTo();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(target, times(1)).alert();
+    verifyNoMoreInteractions(target);
+    verify(alert, times(1)).getText();
+    verifyNoMoreInteractions(alert);
+    verify(fixture.listener, times(1)).beforeGetText(alert);
+    verify(fixture.listener, times(1)).afterGetText("test", alert);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void canFireEventForAlertSendKeys() {
+    Fixture fixture = new Fixture();
+
+    final WebDriver.TargetLocator target = mock(WebDriver.TargetLocator.class);
+    final Alert alert = mock(Alert.class);
+
+    when(fixture.mockedDriver.switchTo()).thenReturn(target);
+    when(target.alert()).thenReturn(alert);
+
+    fixture.driver.switchTo().alert().sendKeys("test");
+
+    verify(fixture.mockedDriver, times(1)).switchTo();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(target, times(1)).alert();
+    verifyNoMoreInteractions(target);
+    verify(alert, times(1)).sendKeys("test");
+    verifyNoMoreInteractions(alert);
+    verify(fixture.listener, times(1)).beforeSendKeys(alert, "test");
+    verify(fixture.listener, times(1)).afterSendKeys(alert, "test");
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+/* @Test
   public void canFireEventForAlertAccept() {
     final WebDriver mockedDriver = mock(WebDriver.class);
     final WebDriver.TargetLocator mockedTarget = mock(WebDriver.TargetLocator.class);
