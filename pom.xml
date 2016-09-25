@@ -6,7 +6,7 @@
   <version>3.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>decorated-webdriver-base</name>
+  <name>decorated-webdriver</name>
   <description>The base set of classes to implement WebDriver extensions following Decorator design pattern</description>
   <url>https://github.com/barancev/decorated-webdriver</url>
 
