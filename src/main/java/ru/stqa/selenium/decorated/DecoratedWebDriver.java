@@ -42,7 +42,7 @@ public class DecoratedWebDriver extends AbstractDecoratedTopmost<WebDriver>
   }
 
   protected Decorated<WebElement> createDecorated(WebElement original) {
-    return new DecoratedWebElement(original, DecoratedWebDriver.this);
+    return new DecoratedWebElement(original, this);
   }
 
   protected List<WebElement> wrapElements(final List<WebElement> elements) {
@@ -54,43 +54,43 @@ public class DecoratedWebDriver extends AbstractDecoratedTopmost<WebDriver>
   }
 
   protected Decorated<TargetLocator> createDecorated(final TargetLocator original) {
-    return new DecoratedTargetLocator(original, DecoratedWebDriver.this);
+    return new DecoratedTargetLocator(original, this);
   }
 
   protected Decorated<Alert> createDecorated(final Alert original) {
-    return new DecoratedAlert(original, DecoratedWebDriver.this);
+    return new DecoratedAlert(original, this);
   }
 
   protected Decorated<Navigation> createDecorated(final Navigation original) {
-    return new DecoratedNavigation(original, DecoratedWebDriver.this);
+    return new DecoratedNavigation(original, this);
   }
 
   protected Decorated<Options> createDecorated(final Options original) {
-    return new DecoratedOptions(original, DecoratedWebDriver.this);
+    return new DecoratedOptions(original, this);
   }
 
   protected Decorated<Timeouts> createDecorated(final Timeouts original) {
-    return new DecoratedTimeouts(original, DecoratedWebDriver.this);
+    return new DecoratedTimeouts(original, this);
   }
 
   protected Decorated<Window> createDecorated(final Window original) {
-    return new DecoratedWindow(original, DecoratedWebDriver.this);
+    return new DecoratedWindow(original, this);
   }
 
   protected Decorated<Coordinates> createDecorated(final Coordinates original) {
-    return new DecoratedCoordinates(original, DecoratedWebDriver.this);
+    return new DecoratedCoordinates(original, this);
   }
 
   protected Decorated<Keyboard> createDecorated(final Keyboard original) {
-    return new DecoratedKeyboard(original, DecoratedWebDriver.this);
+    return new DecoratedKeyboard(original, this);
   }
 
   protected Decorated<Mouse> createDecorated(final Mouse original) {
-    return new DecoratedMouse(original, DecoratedWebDriver.this);
+    return new DecoratedMouse(original, this);
   }
 
   protected Decorated<TouchScreen> createDecorated(final TouchScreen original) {
-    return new DecoratedTouchScreen(original, DecoratedWebDriver.this);
+    return new DecoratedTouchScreen(original, this);
   }
 
   // TODO: implement proper wrapping for arbitrary objects

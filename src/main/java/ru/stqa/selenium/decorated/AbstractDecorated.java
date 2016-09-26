@@ -32,7 +32,7 @@ public abstract class AbstractDecorated<T> implements Decorated<T> {
     return original;
   }
 
-  protected void setOriginal(final T original) {
+  public void setOriginal(final T original) {
     this.original = original;
   }
 
