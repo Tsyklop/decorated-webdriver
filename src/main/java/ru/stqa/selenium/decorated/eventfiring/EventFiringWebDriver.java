@@ -16,6 +16,7 @@
 
 package ru.stqa.selenium.decorated.eventfiring;
 
+import com.google.common.base.Throwables;
 import com.google.common.primitives.Primitives;
 import org.openqa.selenium.WebDriver;
 import ru.stqa.selenium.decorated.Decorated;
@@ -131,9 +132,9 @@ public class EventFiringWebDriver extends DecoratedWebDriver {
     try {
       m.invoke(listener, args);
     } catch (IllegalAccessException e) {
-      throw new Error("Can't invoke a listener method " + m.getName(), e);
+      throw Throwables.propagate(e);
     } catch (InvocationTargetException e) {
-      throw new Error("Can't invoke a listener method " + m.getName(), e);
+      throw Throwables.propagate(e.getCause());
     }
   }
 }

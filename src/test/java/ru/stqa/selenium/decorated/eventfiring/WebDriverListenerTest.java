@@ -29,8 +29,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import static com.googlecode.catchexception.throwable.CatchThrowable.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 public class WebDriverListenerTest {
@@ -1485,6 +1488,53 @@ public class WebDriverListenerTest {
     verifyNoMoreInteractions(touch);
     verify(fixture.listener, times(1)).beforeFlick(touch, coords, 10, 20, 5);
     verify(fixture.listener, times(1)).afterFlick(touch, coords, 10, 20, 5);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void stopsOnAnExceptionInBefore() {
+    Fixture fixture = new Fixture();
+
+    when(fixture.mockedDriver.getCurrentUrl()).thenReturn("http://localhost/");
+    doThrow(WebDriverException.class).when(fixture.listener).beforeGetCurrentUrl(fixture.driver);
+
+    catchThrowable(() -> fixture.driver.getCurrentUrl());
+    assertThat(caughtThrowable(), instanceOf(WebDriverException.class));
+
+    verifyZeroInteractions(fixture.mockedDriver);
+    verify(fixture.listener, times(1)).beforeGetCurrentUrl(fixture.mockedDriver);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void stopsOnAnExceptionInTarget() {
+    Fixture fixture = new Fixture();
+
+    when(fixture.mockedDriver.getCurrentUrl()).thenThrow(WebDriverException.class);
+
+    catchThrowable(() -> fixture.driver.getCurrentUrl());
+    assertThat(caughtThrowable(), instanceOf(WebDriverException.class));
+
+    verify(fixture.mockedDriver, times(1)).getCurrentUrl();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(fixture.listener, times(1)).beforeGetCurrentUrl(fixture.mockedDriver);
+    verifyNoMoreInteractions(fixture.listener);
+  }
+
+  @Test
+  public void stopsOnAnExceptionInAfter() {
+    Fixture fixture = new Fixture();
+
+    when(fixture.mockedDriver.getCurrentUrl()).thenReturn("http://localhost/");
+    doThrow(WebDriverException.class).when(fixture.listener).afterGetCurrentUrl("http://localhost/", fixture.driver);
+
+    catchThrowable(() -> fixture.driver.getCurrentUrl());
+    assertThat(caughtThrowable(), instanceOf(WebDriverException.class));
+
+    verify(fixture.mockedDriver, times(1)).getCurrentUrl();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(fixture.listener, times(1)).beforeGetCurrentUrl(fixture.mockedDriver);
+    verify(fixture.listener, times(1)).afterGetCurrentUrl("http://localhost/", fixture.mockedDriver);
     verifyNoMoreInteractions(fixture.listener);
   }
 
