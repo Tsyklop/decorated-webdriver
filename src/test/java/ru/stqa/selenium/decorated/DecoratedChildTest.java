@@ -36,9 +36,9 @@ public class DecoratedChildTest {
     String hello(String who);
   }
 
-  static class DecoratedTarget extends AbstractDecoratedChild<Target, DecoratedTopmost> implements Target {
+  static class DecoratedTarget extends DecoratedChild<Target, DecoratedTopmost<?>> implements Target {
 
-    public DecoratedTarget(Target original, DecoratedTopmost topmost) {
+    public DecoratedTarget(Target original, DecoratedTopmost<?> topmost) {
       super(original, topmost);
     }
 
@@ -51,10 +51,10 @@ public class DecoratedChildTest {
   static class TargetFixture {
 
     DecoratedTarget deco;
-    DecoratedTopmost topmost;
+    DecoratedTopmost<Object> topmost;
 
     public TargetFixture(Target target) {
-      topmost = mock(DecoratedTopmost.class);
+      topmost = spy(new DecoratedTopmost<Object>(mock(Object.class)){});
       deco = new DecoratedTarget(target, topmost);
     }
   }
@@ -64,7 +64,6 @@ public class DecoratedChildTest {
     Target target = mock(Target.class);
     TargetFixture fixture = new TargetFixture(target);
     when(target.hello("world")).thenReturn("test");
-    when(fixture.topmost.callMethodGlobal(any(Decorated.class), any(Method.class), any(Object[].class))).thenCallRealMethod();
     Target decorated = new Activator<Target>().activate(fixture.deco);
 
     ArgumentCaptor<Decorated> tBefore = ArgumentCaptor.forClass(Decorated.class);
@@ -103,8 +102,6 @@ public class DecoratedChildTest {
     Target target = mock(Target.class);
     TargetFixture fixture = new TargetFixture(target);
     when(target.hello("world")).thenThrow(WebDriverException.class);
-    when(fixture.topmost.callMethodGlobal(any(Decorated.class), any(Method.class), any(Object[].class))).thenCallRealMethod();
-    when(fixture.topmost.onErrorGlobal(any(Decorated.class), any(Method.class), any(InvocationTargetException.class), any(Object[].class))).thenCallRealMethod();
     Target decorated = new Activator<Target>().activate(fixture.deco);
 
     ArgumentCaptor<Decorated> tBefore = ArgumentCaptor.forClass(Decorated.class);

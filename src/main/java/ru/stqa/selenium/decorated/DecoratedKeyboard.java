@@ -19,7 +19,7 @@ package ru.stqa.selenium.decorated;
 
 import org.openqa.selenium.interactions.Keyboard;
 
-public class DecoratedKeyboard extends AbstractDecoratedChild<Keyboard,DecoratedWebDriver> implements Keyboard {
+public class DecoratedKeyboard extends DecoratedChild<Keyboard,DecoratedWebDriver> implements Keyboard {
 
   public DecoratedKeyboard(final Keyboard keyboard, final DecoratedWebDriver driverWrapper) {
     super(keyboard, driverWrapper);

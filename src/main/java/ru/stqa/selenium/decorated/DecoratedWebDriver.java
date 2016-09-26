@@ -34,8 +34,8 @@ import java.util.Set;
  * <code>MyWebDriverWrapper decorated = new MyWebDriverWrapper(originalDriver, otherParameter);<br>
  * WebDriver driver = new MyWebDriverWrapper(originalDriver, otherParameter).getDriver();</code>
  */
-public class DecoratedWebDriver extends AbstractDecoratedTopmost<WebDriver>
-    implements DecoratedTopmost, WebDriver, WrapsDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen {
+public class DecoratedWebDriver extends DecoratedTopmost<WebDriver>
+    implements WebDriver, WrapsDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen {
 
   public DecoratedWebDriver(WebDriver driver) {
     super(driver);

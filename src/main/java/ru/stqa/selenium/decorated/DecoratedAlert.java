@@ -21,7 +21,7 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.Beta;
 import org.openqa.selenium.security.Credentials;
 
-public class DecoratedAlert extends AbstractDecoratedChild<Alert,DecoratedWebDriver> implements Alert {
+public class DecoratedAlert extends DecoratedChild<Alert,DecoratedWebDriver> implements Alert {
 
   public DecoratedAlert(final Alert alert, final DecoratedWebDriver driverWrapper) {
     super(alert, driverWrapper);

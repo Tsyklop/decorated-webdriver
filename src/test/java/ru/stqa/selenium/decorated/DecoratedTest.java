@@ -33,7 +33,7 @@ public class DecoratedTest {
     AbstractDecorated<T> deco;
 
     public Fixture(T original) {
-      deco = new AbstractDecoratedTopmost<T>(original) { };
+      deco = new DecoratedTopmost<T>(original) { };
     }
   }
 
@@ -84,7 +84,7 @@ public class DecoratedTest {
 
   }
 
-  static class DecoratedString extends AbstractDecoratedTopmost<String> {
+  static class DecoratedString extends DecoratedTopmost<String> {
     public DecoratedString(String original) {
       super(original);
     }

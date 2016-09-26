@@ -33,7 +33,7 @@ public class DecoratedTopmostTest {
     String hello(String who);
   }
 
-  static class DecoratedTarget extends AbstractDecoratedTopmost<Target> implements Target {
+  static class DecoratedTarget extends DecoratedTopmost<Target> implements Target {
 
     public DecoratedTarget(Target original) {
       super(original);
@@ -54,7 +54,7 @@ public class DecoratedTopmostTest {
     }
   }
 
-  static class DecoratedSemiTarget extends AbstractDecoratedTopmost<Target> {
+  static class DecoratedSemiTarget extends DecoratedTopmost<Target> {
     public DecoratedSemiTarget(Target original) {
       super(original);
     }
@@ -84,7 +84,7 @@ public class DecoratedTopmostTest {
     Target target = mock(Target.class);
     Fixture fixture = new Fixture(target);
     when(target.hello("world")).thenReturn("test");
-    AbstractDecoratedTopmost<Target> spy = spy(fixture.deco);
+    DecoratedTopmost<Target> spy = spy(fixture.deco);
     Target decorated = new Activator<Target>().activate(spy);
 
     assertThat(decorated.hello("world"), equalTo("test"));
@@ -103,7 +103,7 @@ public class DecoratedTopmostTest {
     Target target = mock(Target.class);
     Fixture fixture = new Fixture(target);
     when(target.hello("world")).thenThrow(RuntimeException.class);
-    AbstractDecoratedTopmost<Target> spy = spy(fixture.deco);
+    DecoratedTopmost<Target> spy = spy(fixture.deco);
     Target decorated = new Activator<Target>().activate(spy);
 
     boolean thrown = false;

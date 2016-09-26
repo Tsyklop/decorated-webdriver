@@ -19,7 +19,7 @@ package ru.stqa.selenium.decorated;
 import org.openqa.selenium.interactions.Mouse;
 import org.openqa.selenium.interactions.internal.Coordinates;
 
-public class DecoratedMouse extends AbstractDecoratedChild<Mouse,DecoratedWebDriver> implements Mouse {
+public class DecoratedMouse extends DecoratedChild<Mouse,DecoratedWebDriver> implements Mouse {
 
   public DecoratedMouse(final Mouse mouse, final DecoratedWebDriver driverWrapper) {
     super(mouse, driverWrapper);
