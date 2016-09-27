@@ -18,11 +18,12 @@ package ru.stqa.selenium.decorated.staletolerant;
 
 import org.junit.Test;
 import org.mockito.InOrder;
-import org.openqa.selenium.By;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 
+import static com.googlecode.catchexception.throwable.CatchThrowable.catchThrowable;
+import static com.googlecode.catchexception.throwable.CatchThrowable.caughtThrowable;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 public class StaleTolerantWebDriverTest {
@@ -83,7 +84,7 @@ public class StaleTolerantWebDriverTest {
   }
 
   @Test
-  public void testCanRediscoverAStaleChild() {
+  public void shouldRediscoverAStaleChild() {
     Fixture fixture = new Fixture();
 
     WebElement parent = mock(WebElement.class);
@@ -113,7 +114,7 @@ public class StaleTolerantWebDriverTest {
   }
 
   @Test
-  public void testCanRediscoverASubtree() {
+  public void shouldRediscoverASubtree() {
     Fixture fixture = new Fixture();
 
     WebElement parent1 = mock(WebElement.class);
@@ -147,6 +148,79 @@ public class StaleTolerantWebDriverTest {
     verifyNoMoreInteractions(parent2);
     verifyNoMoreInteractions(child1);
     verifyNoMoreInteractions(child2);
+  }
+
+  @Test
+  public void shouldPropagateExceptions() {
+    Fixture fixture = new Fixture();
+
+    WebElement element1 = mock(WebElement.class);
+
+    when(fixture.mockedDriver.findElement(By.id("test"))).thenReturn(element1);
+    doThrow(WebDriverException.class).when(element1).click();
+
+    WebElement element = fixture.driver.findElement(By.id("test"));
+    catchThrowable(() -> element.click());
+    assertThat(caughtThrowable(), instanceOf(WebDriverException.class));
+
+    InOrder inOrder = inOrder(fixture.mockedDriver, element1);
+    inOrder.verify(fixture.mockedDriver).findElement(By.id("test"));
+    inOrder.verify(element1).click();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verifyNoMoreInteractions(element1);
+  }
+
+  @Test
+  public void shouldRediscoverOnceAndThrowStale() {
+    Fixture fixture = new Fixture();
+
+    WebElement element1 = mock(WebElement.class);
+
+    when(fixture.mockedDriver.findElement(By.id("test")))
+      .thenReturn(element1).thenThrow(NoSuchElementException.class);
+    doNothing().doThrow(StaleElementReferenceException.class)
+      .when(element1).click();
+
+    WebElement element = fixture.driver.findElement(By.id("test"));
+    element.click();
+    catchThrowable(() -> element.click());
+    assertThat(caughtThrowable(), instanceOf(StaleElementReferenceException.class));
+
+    InOrder inOrder = inOrder(fixture.mockedDriver, element1);
+    inOrder.verify(fixture.mockedDriver).findElement(By.id("test"));
+    inOrder.verify(element1, times(2)).click();
+    inOrder.verify(fixture.mockedDriver).findElement(By.id("test"));
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verifyNoMoreInteractions(element1);
+  }
+
+  @Test
+  public void shouldPropagateExceptionsOnRediscovered() {
+    Fixture fixture = new Fixture();
+
+    WebElement element1 = mock(WebElement.class);
+    WebElement element2 = mock(WebElement.class);
+
+    when(fixture.mockedDriver.findElement(By.id("test")))
+      .thenReturn(element1).thenReturn(element2);
+    doNothing().doThrow(StaleElementReferenceException.class)
+      .when(element1).click();
+    doThrow(ElementNotVisibleException.class)
+      .when(element2).click();
+
+    WebElement element = fixture.driver.findElement(By.id("test"));
+    element.click();
+    catchThrowable(() -> element.click());
+    assertThat(caughtThrowable(), instanceOf(ElementNotVisibleException.class));
+
+    InOrder inOrder = inOrder(fixture.mockedDriver, element1, element2);
+    inOrder.verify(fixture.mockedDriver).findElement(By.id("test"));
+    inOrder.verify(element1, times(2)).click();
+    inOrder.verify(fixture.mockedDriver).findElement(By.id("test"));
+    inOrder.verify(element2).click();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verifyNoMoreInteractions(element1);
+    verifyNoMoreInteractions(element2);
   }
 
 }
