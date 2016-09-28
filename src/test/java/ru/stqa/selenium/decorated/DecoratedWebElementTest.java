@@ -23,6 +23,8 @@ import org.openqa.selenium.internal.Locatable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
@@ -33,186 +35,139 @@ public class DecoratedWebElementTest {
   private static class Fixture {
     WebDriver mockedDriver;
     DecoratedWebDriver decoratedDriver;
-    WebElement mockedElement;
-    DecoratedWebElement decoratedElement;
+    WebElement mocked;
+    DecoratedWebElement decorated;
 
     public Fixture() {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
-      mockedElement = mock(WebElement.class, withSettings().extraInterfaces(Locatable.class));
-      decoratedElement = new DecoratedWebElement(mockedElement, decoratedDriver);
+      mocked = mock(WebElement.class, withSettings().extraInterfaces(Locatable.class));
+      decorated = new DecoratedWebElement(mocked, decoratedDriver);
     }
   }
 
   @Test
   public void testConstructor() {
     Fixture fixture = new Fixture();
+    assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
+    assertThat(fixture.mocked, sameInstance(fixture.decorated.getWrappedElement()));
+    assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
+  }
 
-    assertThat(fixture.mockedElement, sameInstance(fixture.decoratedElement.getOriginal()));
-    assertThat(fixture.mockedElement, sameInstance(fixture.decoratedElement.getWrappedElement()));
-    assertThat(fixture.decoratedDriver, sameInstance(fixture.decoratedElement.getTopmostDecorated()));
+  private void verifyFunction(Consumer<WebElement> f) {
+    Fixture fixture = new Fixture();
+    f.accept(fixture.decorated);
+    f.accept(verify(fixture.mocked, times(1)));
+    verifyNoMoreInteractions(fixture.mocked);
+  }
+
+  private <R> void verifyFunction(Function<WebElement, R> f, R result) {
+    Fixture fixture = new Fixture();
+    when(f.apply(fixture.mocked)).thenReturn(result);
+    assertThat(f.apply(fixture.decorated), equalTo(result));
+    f.apply(verify(fixture.mocked, times(1)));
+    verifyNoMoreInteractions(fixture.mocked);
+  }
+
+  private <R> void verifyDecoratingFunction(Function<WebElement, R> f, R result, Consumer<R> p) {
+    Fixture fixture = new Fixture();
+    when(f.apply(fixture.mocked)).thenReturn(result);
+
+    R proxy = f.apply(fixture.decorated);
+    assertThat(result, not(sameInstance(proxy)));
+    f.apply(verify(fixture.mocked, times(1)));
+    verifyNoMoreInteractions(fixture.mocked);
+
+    p.accept(proxy);
+    p.accept(verify(result, times(1)));
+    verifyNoMoreInteractions(result);
   }
 
   @Test
   public void testSendKeys() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedElement.sendKeys("test");
-    verify(fixture.mockedElement, times(1)).sendKeys("test");
+    verifyFunction($ -> $.sendKeys("test"));
   }
 
   @Test
   public void testClick() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedElement.click();
-    verify(fixture.mockedElement, times(1)).click();
+    verifyFunction(WebElement::click);
   }
 
   @Test
   public void testSubmit() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedElement.submit();
-    verify(fixture.mockedElement, times(1)).submit();
+    verifyFunction(WebElement::submit);
   }
 
   @Test
   public void testClear() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedElement.clear();
-    verify(fixture.mockedElement, times(1)).clear();
+    verifyFunction(WebElement::clear);
   }
 
   @Test
   public void testGetText() {
-    Fixture fixture = new Fixture();
-    when(fixture.mockedElement.getText()).thenReturn("test");
-
-    assertThat(fixture.decoratedElement.getText(), equalTo("test"));
-    verify(fixture.mockedElement, times(1)).getText();
+    verifyFunction(WebElement::getText, "test");
   }
 
   @Test
   public void testGetTagName() {
-    Fixture fixture = new Fixture();
-    when(fixture.mockedElement.getTagName()).thenReturn("test");
-
-    assertThat(fixture.decoratedElement.getTagName(), equalTo("test"));
-    verify(fixture.mockedElement, times(1)).getTagName();
+    verifyFunction(WebElement::getTagName, "input");
   }
 
   @Test
   public void testGetAttribute() {
-    Fixture fixture = new Fixture();
-    when(fixture.mockedElement.getAttribute("value")).thenReturn("test");
-
-    assertThat(fixture.decoratedElement.getAttribute("value"), equalTo("test"));
-    verify(fixture.mockedElement, times(1)).getAttribute("value");
+    verifyFunction($ -> $.getAttribute("value"), "test");
   }
 
   @Test
   public void testIsSelected() {
-    Fixture fixture = new Fixture();
-    when(fixture.mockedElement.isSelected()).thenReturn(true);
-
-    assertThat(fixture.decoratedElement.isSelected(), equalTo(true));
-    verify(fixture.mockedElement, times(1)).isSelected();
+    verifyFunction(WebElement::isSelected, true);
   }
 
   @Test
   public void testIsEnabled() {
-    Fixture fixture = new Fixture();
-    when(fixture.mockedElement.isEnabled()).thenReturn(true);
-
-    assertThat(fixture.decoratedElement.isEnabled(), equalTo(true));
-    verify(fixture.mockedElement, times(1)).isEnabled();
+    verifyFunction(WebElement::isEnabled, true);
   }
 
   @Test
   public void testIsDisplayed() {
-    Fixture fixture = new Fixture();
-    when(fixture.mockedElement.isDisplayed()).thenReturn(true);
-
-    assertThat(fixture.decoratedElement.isDisplayed(), equalTo(true));
-    verify(fixture.mockedElement, times(1)).isDisplayed();
+    verifyFunction(WebElement::isDisplayed, true);
   }
 
   @Test
   public void testGetLocation() {
-    Fixture fixture = new Fixture();
-    Point p = new Point(10, 20);
-    when(fixture.mockedElement.getLocation()).thenReturn(p);
-
-    assertThat(fixture.decoratedElement.getLocation(), equalTo(p));
-    verify(fixture.mockedElement, times(1)).getLocation();
+    verifyFunction(WebElement::getLocation, new Point(10, 20));
   }
 
   @Test
   public void testGetSize() {
-    Fixture fixture = new Fixture();
-    Dimension d = new Dimension(100, 200);
-    when(fixture.mockedElement.getSize()).thenReturn(d);
-
-    assertThat(fixture.decoratedElement.getSize(), equalTo(d));
-    verify(fixture.mockedElement, times(1)).getSize();
+    verifyFunction(WebElement::getSize, new Dimension(100, 200));
   }
 
   @Test
   public void testGetRect() {
-    Fixture fixture = new Fixture();
-    Rectangle r = new Rectangle(new Point(10, 20), new Dimension(100, 200));
-    when(fixture.mockedElement.getRect()).thenReturn(r);
-
-    assertThat(fixture.decoratedElement.getRect(), equalTo(r));
-    verify(fixture.mockedElement, times(1)).getRect();
+    verifyFunction(WebElement::getRect, new Rectangle(new Point(10, 20), new Dimension(100, 200)));
   }
 
   @Test
   public void testGetCssValue() {
-    Fixture fixture = new Fixture();
-    when(fixture.mockedElement.getCssValue("color")).thenReturn("red");
-
-    assertThat(fixture.decoratedElement.getCssValue("color"), equalTo("red"));
-    verify(fixture.mockedElement, times(1)).getCssValue("color");
+    verifyFunction($ -> $.getCssValue("color"), "red");
   }
 
   @Test
   public void testGetCoordinates() {
-    Fixture fixture = new Fixture();
-    Coordinates coords = mock(Coordinates.class);
-    when(((Locatable) fixture.mockedElement).getCoordinates()).thenReturn(coords);
-
-    Coordinates proxy = fixture.decoratedElement.getCoordinates();
-    assertThat(coords, not(sameInstance(proxy)));
-    verify((Locatable) fixture.mockedElement, times(1)).getCoordinates();
-
-    proxy.onScreen();
-    verify(coords, times(1)).onScreen();
+    final Coordinates coords = mock(Coordinates.class);
+    verifyDecoratingFunction($ -> ((Locatable) $).getCoordinates(), coords, Coordinates::onScreen);
   }
 
   @Test
   public void testGetScreenshotAs() {
-    Fixture fixture = new Fixture();
-    when(fixture.mockedElement.getScreenshotAs(OutputType.BASE64)).thenReturn("xxx");
-
-    assertThat(fixture.decoratedElement.getScreenshotAs(OutputType.BASE64), equalTo("xxx"));
-    verify(fixture.mockedElement, times(1)).getScreenshotAs(OutputType.BASE64);
+    verifyFunction($ -> $.getScreenshotAs(OutputType.BASE64), "xxx");
   }
 
   @Test
   public void testFindElement() {
-    Fixture fixture = new Fixture();
-    WebElement found = mock(WebElement.class);
-    when(fixture.mockedElement.findElement(By.id("test"))).thenReturn(found);
-
-    WebElement proxy = fixture.decoratedElement.findElement(By.id("test"));
-    assertThat(found, not(sameInstance(proxy)));
-    verify(fixture.mockedElement, times(1)).findElement(By.id("test"));
-
-    proxy.isDisplayed();
-    verify(found, times(1)).isDisplayed();
+    final WebElement found = mock(WebElement.class);
+    verifyDecoratingFunction($ -> $.findElement(By.id("test")), found, WebElement::click);
   }
 
   @Test
@@ -221,13 +176,13 @@ public class DecoratedWebElementTest {
     WebElement found = mock(WebElement.class);
     List<WebElement> list = new ArrayList<WebElement>();
     list.add(found);
-    when(fixture.mockedElement.findElements(By.id("test"))).thenReturn(list);
+    when(fixture.mocked.findElements(By.id("test"))).thenReturn(list);
 
-    List<WebElement> proxyList = fixture.decoratedElement.findElements(By.id("test"));
+    List<WebElement> proxyList = fixture.decorated.findElements(By.id("test"));
     // TODO: Why same instance?????
     assertThat(list, sameInstance(proxyList));
     assertThat(found, not(sameInstance(proxyList.get(0))));
-    verify(fixture.mockedElement, times(1)).findElements(By.id("test"));
+    verify(fixture.mocked, times(1)).findElements(By.id("test"));
 
     proxyList.get(0).isDisplayed();
     verify(found, times(1)).isDisplayed();

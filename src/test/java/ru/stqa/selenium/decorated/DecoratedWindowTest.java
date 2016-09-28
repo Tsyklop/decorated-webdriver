@@ -21,6 +21,10 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
@@ -30,77 +34,67 @@ public class DecoratedWindowTest {
   private static class Fixture {
     WebDriver mockedDriver;
     DecoratedWebDriver decoratedDriver;
-    WebDriver.Window mockedWindow;
-    DecoratedWindow decoratedWindow;
+    WebDriver.Window mocked;
+    DecoratedWindow decorated;
 
     public Fixture() {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
-      mockedWindow = mock(WebDriver.Window.class);
-      decoratedWindow = new DecoratedWindow(mockedWindow, decoratedDriver);
+      mocked = mock(WebDriver.Window.class);
+      decorated = new DecoratedWindow(mocked, decoratedDriver);
     }
   }
 
   @Test
   public void testConstructor() {
     Fixture fixture = new Fixture();
+    assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
+    assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
+  }
 
-    assertThat(fixture.mockedWindow, sameInstance(fixture.decoratedWindow.getOriginal()));
-    assertThat(fixture.decoratedDriver, sameInstance(fixture.decoratedWindow.getTopmostDecorated()));
+  private void verifyFunction(Consumer<WebDriver.Window> f) {
+    Fixture fixture = new Fixture();
+    f.accept(fixture.decorated);
+    f.accept(verify(fixture.mocked, times(1)));
+    verifyNoMoreInteractions(fixture.mocked);
+  }
+
+  private <R> void verifyFunction(Function<WebDriver.Window, R> f, R result) {
+    Fixture fixture = new Fixture();
+    when(f.apply(fixture.mocked)).thenReturn(result);
+    assertThat(f.apply(fixture.decorated), equalTo(result));
+    f.apply(verify(fixture.mocked, times(1)));
+    verifyNoMoreInteractions(fixture.mocked);
   }
 
   @Test
   public void testSetSize() {
-    Fixture fixture = new Fixture();
-    Dimension dim = mock(Dimension.class);
-
-    fixture.decoratedWindow.setSize(dim);
-    verify(fixture.mockedWindow, times(1)).setSize(dim);
+    verifyFunction($ -> $.setSize(new Dimension(100, 200)));
   }
 
   @Test
   public void testSetPosition() {
-    Fixture fixture = new Fixture();
-    Point pos = mock(Point.class);
-
-    fixture.decoratedWindow.setPosition(pos);
-    verify(fixture.mockedWindow, times(1)).setPosition(pos);
+    verifyFunction($ -> $.setPosition(new Point(10, 20)));
   }
 
   @Test
   public void testGetSize() {
-    Fixture fixture = new Fixture();
-    Dimension dim = mock(Dimension.class);
-    when(fixture.mockedWindow.getSize()).thenReturn(dim);
-
-    assertThat(fixture.decoratedWindow.getSize(), sameInstance(dim));
-    verify(fixture.mockedWindow, times(1)).getSize();
+    verifyFunction(WebDriver.Window::getSize, new Dimension(100, 200));
   }
 
   @Test
   public void testGetPosition() {
-    Fixture fixture = new Fixture();
-    Point pos = mock(Point.class);
-    when(fixture.mockedWindow.getPosition()).thenReturn(pos);
-
-    assertThat(fixture.decoratedWindow.getPosition(), sameInstance(pos));
-    verify(fixture.mockedWindow, times(1)).getPosition();
+    verifyFunction(WebDriver.Window::getPosition, new Point(10, 20));
   }
 
   @Test
   public void testMaximize() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedWindow.maximize();
-    verify(fixture.mockedWindow, times(1)).maximize();
+    verifyFunction(WebDriver.Window::maximize);
   }
 
   @Test
   public void testFullscreen() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedWindow.fullscreen();
-    verify(fixture.mockedWindow, times(1)).fullscreen();
+    verifyFunction(WebDriver.Window::fullscreen);
   }
 
 }

@@ -21,6 +21,9 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
@@ -31,128 +34,93 @@ public class DecoratedTargetLocatorTest {
   private static class Fixture {
     WebDriver mockedDriver;
     DecoratedWebDriver decoratedDriver;
-    WebDriver.TargetLocator mockedTarget;
-    DecoratedTargetLocator decoratedTarget;
+    WebDriver.TargetLocator mocked;
+    DecoratedTargetLocator decorated;
 
     public Fixture() {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
-      mockedTarget = mock(WebDriver.TargetLocator.class);
-      decoratedTarget = new DecoratedTargetLocator(mockedTarget, decoratedDriver);
+      mocked = mock(WebDriver.TargetLocator.class);
+      decorated = new DecoratedTargetLocator(mocked, decoratedDriver);
     }
   }
 
   @Test
   public void testConstructor() {
     Fixture fixture = new Fixture();
+    assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
+    assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
+  }
 
-    assertThat(fixture.mockedTarget, sameInstance(fixture.decoratedTarget.getOriginal()));
-    assertThat(fixture.decoratedDriver, sameInstance(fixture.decoratedTarget.getTopmostDecorated()));
+  private <R> void verifyDecoratingFunction(Function<WebDriver.TargetLocator, WebDriver> f) {
+    Fixture fixture = new Fixture();
+    when(f.apply(fixture.mocked)).thenReturn(fixture.mockedDriver);
+
+    WebDriver proxy = f.apply(fixture.decorated);
+    assertThat(fixture.mockedDriver, not(sameInstance(proxy)));
+    f.apply(verify(fixture.mocked, times(1)));
+    verifyNoMoreInteractions(fixture.mocked);
+
+    proxy.quit();
+    verify(fixture.mockedDriver, times(1)).quit();
+    verifyNoMoreInteractions(fixture.mockedDriver);
+  }
+
+  private <R> void verifyDecoratingFunction(Function<WebDriver.TargetLocator, R> f, R result, Consumer<R> p) {
+    Fixture fixture = new Fixture();
+    when(f.apply(fixture.mocked)).thenReturn(result);
+
+    R proxy = f.apply(fixture.decorated);
+    assertThat(result, not(sameInstance(proxy)));
+    f.apply(verify(fixture.mocked, times(1)));
+    verifyNoMoreInteractions(fixture.mocked);
+
+    p.accept(proxy);
+    p.accept(verify(result, times(1)));
+    verifyNoMoreInteractions(result);
   }
 
   @Test
   public void testWindow() {
-    Fixture fixture = new Fixture();
-    when(fixture.mockedTarget.window("test")).thenReturn(fixture.mockedDriver);
-
-    WebDriver proxy = fixture.decoratedTarget.window("test");
-    assertThat(fixture.mockedDriver, not(sameInstance(proxy)));
-    verify(fixture.mockedTarget, times(1)).window("test");
-
-    proxy.quit();
-    verify(fixture.mockedDriver, times(1)).quit();
+    verifyDecoratingFunction($ -> $.window("test"));
   }
 
   @Test
   public void testFrameByIndex() {
-    Fixture fixture = new Fixture();
-    when(fixture.mockedTarget.frame(3)).thenReturn(fixture.mockedDriver);
-
-    WebDriver proxy = fixture.decoratedTarget.frame(3);
-    assertThat(fixture.mockedDriver, not(sameInstance(proxy)));
-    verify(fixture.mockedTarget, times(1)).frame(3);
-
-    proxy.quit();
-    verify(fixture.mockedDriver, times(1)).quit();
+    verifyDecoratingFunction($ -> $.frame(3));
   }
 
   @Test
   public void testFrameByString() {
-    Fixture fixture = new Fixture();
-    when(fixture.mockedTarget.frame("test")).thenReturn(fixture.mockedDriver);
-
-    WebDriver proxy = fixture.decoratedTarget.frame("test");
-    assertThat(fixture.mockedDriver, not(sameInstance(proxy)));
-    verify(fixture.mockedTarget, times(1)).frame("test");
-
-    proxy.quit();
-    verify(fixture.mockedDriver, times(1)).quit();
+    verifyDecoratingFunction($ -> $.frame("test"));
   }
 
   @Test
   public void testFrameByReference() {
-    Fixture fixture = new Fixture();
-    WebElement frame = mock(WebElement.class);
-    when(fixture.mockedTarget.frame(frame)).thenReturn(fixture.mockedDriver);
-
-    WebDriver proxy = fixture.decoratedTarget.frame(frame);
-    assertThat(fixture.mockedDriver, not(sameInstance(proxy)));
-    verify(fixture.mockedTarget, times(1)).frame(frame);
-
-    proxy.quit();
-    verify(fixture.mockedDriver, times(1)).quit();
+    final WebElement frame = mock(WebElement.class);
+    verifyDecoratingFunction($ -> $.frame(frame));
   }
 
   @Test
   public void testParentFrame() {
-    Fixture fixture = new Fixture();
-
-    WebDriver proxy = fixture.decoratedTarget.parentFrame();
-    assertThat(fixture.mockedDriver, not(sameInstance(proxy)));
-    verify(fixture.mockedTarget, times(1)).parentFrame();
-
-    proxy.quit();
-    verify(fixture.mockedDriver, times(1)).quit();
+    verifyDecoratingFunction(WebDriver.TargetLocator::parentFrame);
   }
 
   @Test
   public void testDefaultContent() {
-    Fixture fixture = new Fixture();
-
-    WebDriver proxy = fixture.decoratedTarget.defaultContent();
-    assertThat(fixture.mockedDriver, not(sameInstance(proxy)));
-    verify(fixture.mockedTarget, times(1)).defaultContent();
-
-    proxy.quit();
-    verify(fixture.mockedDriver, times(1)).quit();
+    verifyDecoratingFunction(WebDriver.TargetLocator::defaultContent);
   }
 
   @Test
   public void testActiveElement() {
-    Fixture fixture = new Fixture();
     WebElement active = mock(WebElement.class);
-    when(fixture.mockedTarget.activeElement()).thenReturn(active);
-
-    WebElement proxy = fixture.decoratedTarget.activeElement();
-    assertThat(active, not(sameInstance(proxy)));
-    verify(fixture.mockedTarget, times(1)).activeElement();
-
-    proxy.isDisplayed();
-    verify(active, times(1)).isDisplayed();
+    verifyDecoratingFunction(WebDriver.TargetLocator::activeElement, active, WebElement::click);
   }
 
   @Test
   public void testAlert() {
-    Fixture fixture = new Fixture();
     Alert alert = mock(Alert.class);
-    when(fixture.mockedTarget.alert()).thenReturn(alert);
-
-    Alert proxy = fixture.decoratedTarget.alert();
-    assertThat(alert, not(sameInstance(proxy)));
-    verify(fixture.mockedTarget, times(1)).alert();
-
-    proxy.dismiss();
-    verify(alert, times(1)).dismiss();
+    verifyDecoratingFunction(WebDriver.TargetLocator::alert, alert, Alert::dismiss);
   }
 
 }

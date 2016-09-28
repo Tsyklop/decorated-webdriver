@@ -21,6 +21,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.interactions.TouchScreen;
 import org.openqa.selenium.interactions.internal.Coordinates;
 
+import java.util.function.Consumer;
+
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
@@ -30,108 +32,84 @@ public class DecoratedTouchScreenTest {
   private static class Fixture {
     WebDriver mockedDriver;
     DecoratedWebDriver decoratedDriver;
-    TouchScreen mockedTouchScreen;
-    DecoratedTouchScreen decoratedTouchScreen;
+    TouchScreen mocked;
+    DecoratedTouchScreen decorated;
 
     public Fixture() {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
-      mockedTouchScreen = mock(TouchScreen.class);
-      decoratedTouchScreen = new DecoratedTouchScreen(mockedTouchScreen, decoratedDriver);
+      mocked = mock(TouchScreen.class);
+      decorated = new DecoratedTouchScreen(mocked, decoratedDriver);
     }
   }
 
   @Test
   public void testConstructor() {
     Fixture fixture = new Fixture();
+    assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
+    assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
+  }
 
-    assertThat(fixture.mockedTouchScreen, sameInstance(fixture.decoratedTouchScreen.getOriginal()));
-    assertThat(fixture.decoratedDriver, sameInstance(fixture.decoratedTouchScreen.getTopmostDecorated()));
+  private void verifyFunction(Consumer<TouchScreen> f) {
+    Fixture fixture = new Fixture();
+    f.accept(fixture.decorated);
+    f.accept(verify(fixture.mocked, times(1)));
+    verifyNoMoreInteractions(fixture.mocked);
   }
 
   @Test
   public void testSingleTap() {
-    Fixture fixture = new Fixture();
-    Coordinates coords = mock(Coordinates.class);
-
-    fixture.decoratedTouchScreen.singleTap(coords);
-    verify(fixture.mockedTouchScreen, times(1)).singleTap(coords);
+    final Coordinates coords = mock(Coordinates.class);
+    verifyFunction($ -> $.singleTap(coords));
   }
 
   @Test
   public void testDoubleTap() {
-    Fixture fixture = new Fixture();
-    Coordinates coords = mock(Coordinates.class);
-
-    fixture.decoratedTouchScreen.doubleTap(coords);
-    verify(fixture.mockedTouchScreen, times(1)).doubleTap(coords);
+    final Coordinates coords = mock(Coordinates.class);
+    verifyFunction($ -> $.doubleTap(coords));
   }
 
   @Test
   public void testLongPress() {
-    Fixture fixture = new Fixture();
-    Coordinates coords = mock(Coordinates.class);
-
-    fixture.decoratedTouchScreen.longPress(coords);
-    verify(fixture.mockedTouchScreen, times(1)).longPress(coords);
+    final Coordinates coords = mock(Coordinates.class);
+    verifyFunction($ -> $.longPress(coords));
   }
 
   @Test
   public void testDown() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedTouchScreen.down(10, 20);
-    verify(fixture.mockedTouchScreen, times(1)).down(10, 20);
+    verifyFunction($ -> $.down(10, 20));
   }
 
   @Test
   public void testUp() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedTouchScreen.up(10, 20);
-    verify(fixture.mockedTouchScreen, times(1)).up(10, 20);
+    verifyFunction($ -> $.up(10, 20));
   }
 
   @Test
   public void testMove() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedTouchScreen.move(10, 20);
-    verify(fixture.mockedTouchScreen, times(1)).move(10, 20);
+    verifyFunction($ -> $.move(10, 20));
   }
 
   @Test
   public void testScroll() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedTouchScreen.scroll(10, 20);
-    verify(fixture.mockedTouchScreen, times(1)).scroll(10, 20);
+    verifyFunction($ -> $.scroll(10, 20));
   }
 
   @Test
   public void testScrollRelative() {
-    Fixture fixture = new Fixture();
-    Coordinates coords = mock(Coordinates.class);
-
-    fixture.decoratedTouchScreen.scroll(coords, 10, 20);
-    verify(fixture.mockedTouchScreen, times(1)).scroll(coords, 10, 20);
+    final Coordinates coords = mock(Coordinates.class);
+    verifyFunction($ -> $.scroll(coords, 10, 20));
   }
 
   @Test
   public void testFlick() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedTouchScreen.flick(2, 3);
-    verify(fixture.mockedTouchScreen, times(1)).flick(2, 3);
+    verifyFunction($ -> $.flick(10, 20));
   }
 
   @Test
   public void testFlickRelative() {
-    Fixture fixture = new Fixture();
-    Coordinates coords = mock(Coordinates.class);
-
-    fixture.decoratedTouchScreen.flick(coords, 10, 20, 3);
-    verify(fixture.mockedTouchScreen, times(1)).flick(coords, 10, 20, 3);
+    final Coordinates coords = mock(Coordinates.class);
+    verifyFunction($ -> $.flick(coords, 10, 20, 3));
   }
 
 }

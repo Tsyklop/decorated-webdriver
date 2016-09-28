@@ -22,6 +22,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.internal.Coordinates;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
@@ -31,67 +34,65 @@ public class DecoratedCoordinatesTest {
   private static class Fixture {
     WebDriver mockedDriver;
     DecoratedWebDriver decoratedDriver;
-    Coordinates mockedCoords;
-    DecoratedCoordinates decoratedCoords;
+    Coordinates mocked;
+    DecoratedCoordinates decorated;
 
     public Fixture() {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
-      mockedCoords = mock(Coordinates.class);
-      decoratedCoords = new DecoratedCoordinates(mockedCoords, decoratedDriver);
+      mocked = mock(Coordinates.class);
+      decorated = new DecoratedCoordinates(mocked, decoratedDriver);
     }
   }
 
   @Test
   public void testConstructor() {
     Fixture fixture = new Fixture();
+    assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
+    assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
+  }
 
-    assertThat(fixture.mockedCoords, sameInstance(fixture.decoratedCoords.getOriginal()));
-    assertThat(fixture.decoratedDriver, sameInstance(fixture.decoratedCoords.getTopmostDecorated()));
+  private <R> void verifyFunction(Function<Coordinates, R> f, R result) {
+    Fixture fixture = new Fixture();
+    when(f.apply(fixture.mocked)).thenReturn(result);
+    assertThat(f.apply(fixture.decorated), equalTo(result));
+    f.apply(verify(fixture.mocked, times(1)));
+    verifyNoMoreInteractions(fixture.mocked);
+  }
+
+  private <R> void verifyDecoratingFunction(Function<Coordinates, R> f, R result, Consumer<R> p) {
+    Fixture fixture = new Fixture();
+    when(f.apply(fixture.mocked)).thenReturn(result);
+
+    R proxy = f.apply(fixture.decorated);
+    assertThat(result, not(sameInstance(proxy)));
+    f.apply(verify(fixture.mocked, times(1)));
+    verifyNoMoreInteractions(fixture.mocked);
+
+    p.accept(proxy);
+    p.accept(verify(result, times(1)));
+    verifyNoMoreInteractions(result);
   }
 
   @Test
   public void testOnScreen() {
-    Fixture fixture = new Fixture();
-    Point p = new Point(10, 20);
-    when(fixture.mockedCoords.onScreen()).thenReturn(p);
-
-    assertThat(fixture.decoratedCoords.onScreen(), equalTo(p));
-    verify(fixture.mockedCoords, times(1)).onScreen();
+    verifyFunction(Coordinates::onScreen, new Point(10, 20));
   }
 
   @Test
   public void testInViewPort() {
-    Fixture fixture = new Fixture();
-    Point p = new Point(10, 20);
-    when(fixture.mockedCoords.inViewPort()).thenReturn(p);
-
-    assertThat(fixture.decoratedCoords.inViewPort(), equalTo(p));
-    verify(fixture.mockedCoords, times(1)).inViewPort();
+    verifyFunction(Coordinates::inViewPort, new Point(10, 20));
   }
 
   @Test
   public void testOnPage() {
-    Fixture fixture = new Fixture();
-    Point p = new Point(10, 20);
-    when(fixture.mockedCoords.onPage()).thenReturn(p);
-
-    assertThat(fixture.decoratedCoords.onPage(), equalTo(p));
-    verify(fixture.mockedCoords, times(1)).onPage();
+    verifyFunction(Coordinates::onPage, new Point(10, 20));
   }
 
   @Test
   public void testGetAuxiliary() {
-    Fixture fixture = new Fixture();
-    WebElement mockedElement = mock(WebElement.class);
-    when(fixture.mockedCoords.getAuxiliary()).thenReturn(mockedElement);
-
-    WebElement proxy = (WebElement) fixture.decoratedCoords.getAuxiliary();
-    assertThat(mockedElement, not(sameInstance(proxy)));
-    verify(fixture.mockedCoords, times(1)).getAuxiliary();
-
-    proxy.isDisplayed();
-    verify(mockedElement, times(1)).isDisplayed();
+    final WebElement element = mock(WebElement.class);
+    verifyDecoratingFunction($ -> (WebElement) $.getAuxiliary(), element, e -> e.click());
   }
 
 }

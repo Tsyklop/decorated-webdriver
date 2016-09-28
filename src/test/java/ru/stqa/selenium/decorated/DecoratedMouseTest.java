@@ -21,6 +21,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.interactions.Mouse;
 import org.openqa.selenium.interactions.internal.Coordinates;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
@@ -30,86 +34,70 @@ public class DecoratedMouseTest {
   private static class Fixture {
     WebDriver mockedDriver;
     DecoratedWebDriver decoratedDriver;
-    Mouse mockedMouse;
-    DecoratedMouse decoratedMouse;
+    Mouse mocked;
+    DecoratedMouse decorated;
 
     public Fixture() {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
-      mockedMouse = mock(Mouse.class);
-      decoratedMouse = new DecoratedMouse(mockedMouse, decoratedDriver);
+      mocked = mock(Mouse.class);
+      decorated = new DecoratedMouse(mocked, decoratedDriver);
     }
   }
 
   @Test
   public void testConstructor() {
     Fixture fixture = new Fixture();
+    assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
+    assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
+  }
 
-    assertThat(fixture.mockedMouse, sameInstance(fixture.decoratedMouse.getOriginal()));
-    assertThat(fixture.decoratedDriver, sameInstance(fixture.decoratedMouse.getTopmostDecorated()));
+  private void verifyFunction(Consumer<Mouse> f) {
+    Fixture fixture = new Fixture();
+    f.accept(fixture.decorated);
+    f.accept(verify(fixture.mocked, times(1)));
+    verifyNoMoreInteractions(fixture.mocked);
   }
 
   @Test
   public void testClick() {
-    Fixture fixture = new Fixture();
-    Coordinates coords = mock(Coordinates.class);
-
-    fixture.decoratedMouse.click(coords);
-    verify(fixture.mockedMouse, times(1)).click(coords);
+    final Coordinates coords = mock(Coordinates.class);
+    verifyFunction($ -> $.click(coords));
   }
 
   @Test
   public void testDoubleClick() {
-    Fixture fixture = new Fixture();
-    Coordinates coords = mock(Coordinates.class);
-
-    fixture.decoratedMouse.doubleClick(coords);
-    verify(fixture.mockedMouse, times(1)).doubleClick(coords);
+    final Coordinates coords = mock(Coordinates.class);
+    verifyFunction($ -> $.doubleClick(coords));
   }
 
   @Test
   public void testContextClick() {
-    Fixture fixture = new Fixture();
-    Coordinates coords = mock(Coordinates.class);
-
-    fixture.decoratedMouse.contextClick(coords);
-    verify(fixture.mockedMouse, times(1)).contextClick(coords);
+    final Coordinates coords = mock(Coordinates.class);
+    verifyFunction($ -> $.contextClick(coords));
   }
 
   @Test
   public void testMouseDown() {
-    Fixture fixture = new Fixture();
-    Coordinates coords = mock(Coordinates.class);
-
-    fixture.decoratedMouse.mouseDown(coords);
-    verify(fixture.mockedMouse, times(1)).mouseDown(coords);
+    final Coordinates coords = mock(Coordinates.class);
+    verifyFunction($ -> $.mouseDown(coords));
   }
 
   @Test
   public void testMouseUp() {
-    Fixture fixture = new Fixture();
-    Coordinates coords = mock(Coordinates.class);
-
-    fixture.decoratedMouse.mouseUp(coords);
-    verify(fixture.mockedMouse, times(1)).mouseUp(coords);
+    final Coordinates coords = mock(Coordinates.class);
+    verifyFunction($ -> $.mouseUp(coords));
   }
 
   @Test
   public void testMouseMove() {
-    Fixture fixture = new Fixture();
-    Coordinates coords = mock(Coordinates.class);
-
-    fixture.decoratedMouse.mouseMove(coords);
-    verify(fixture.mockedMouse, times(1)).mouseMove(coords);
+    final Coordinates coords = mock(Coordinates.class);
+    verifyFunction($ -> $.mouseMove(coords));
   }
 
   @Test
   public void testMouseMoveWithShift() {
-    Fixture fixture = new Fixture();
-    Coordinates coords = mock(Coordinates.class);
-
-    fixture.decoratedMouse.mouseMove(coords, 10, 20);
-    verify(fixture.mockedMouse, times(1)).mouseMove(coords, 10, 20);
+    final Coordinates coords = mock(Coordinates.class);
+    verifyFunction($ -> $.mouseMove(coords, 10, 20));
   }
-
 }

@@ -17,12 +17,11 @@
 package ru.stqa.selenium.decorated;
 
 import org.junit.Test;
-import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
@@ -32,53 +31,44 @@ public class DecoratedTimeoutsTest {
   private static class Fixture {
     WebDriver mockedDriver;
     DecoratedWebDriver decoratedDriver;
-    WebDriver.Timeouts mockedTimeouts;
-    DecoratedTimeouts decoratedTimeouts;
+    WebDriver.Timeouts mocked;
+    DecoratedTimeouts decorated;
 
     public Fixture() {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
-      mockedTimeouts = mock(WebDriver.Timeouts.class);
-      decoratedTimeouts = new DecoratedTimeouts(mockedTimeouts, decoratedDriver);
+      mocked = mock(WebDriver.Timeouts.class);
+      decorated = new DecoratedTimeouts(mocked, decoratedDriver);
     }
   }
 
   @Test
   public void testConstructor() {
     Fixture fixture = new Fixture();
+    assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
+    assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
+  }
 
-    assertThat(fixture.mockedTimeouts, sameInstance(fixture.decoratedTimeouts.getOriginal()));
-    assertThat(fixture.decoratedDriver, sameInstance(fixture.decoratedTimeouts.getTopmostDecorated()));
+  private void verifyFunction(Consumer<WebDriver.Timeouts> f) {
+    Fixture fixture = new Fixture();
+    f.accept(fixture.decorated);
+    f.accept(verify(fixture.mocked, times(1)));
+    verifyNoMoreInteractions(fixture.mocked);
   }
 
   @Test
   public void testImplicitlyWait() {
-    Fixture fixture = new Fixture();
-    Point p = new Point(10, 20);
-    when(fixture.mockedTimeouts.implicitlyWait(10, TimeUnit.SECONDS)).thenReturn(fixture.mockedTimeouts);
-
-    assertThat(fixture.decoratedTimeouts, equalTo(fixture.decoratedTimeouts.implicitlyWait(10, TimeUnit.SECONDS)));
-    verify(fixture.mockedTimeouts, times(1)).implicitlyWait(10, TimeUnit.SECONDS);
+    verifyFunction($ -> $.implicitlyWait(10, TimeUnit.SECONDS));
   }
 
   @Test
   public void testSetScriptTimeout() {
-    Fixture fixture = new Fixture();
-    Point p = new Point(10, 20);
-    when(fixture.mockedTimeouts.setScriptTimeout(10, TimeUnit.SECONDS)).thenReturn(fixture.mockedTimeouts);
-
-    assertThat(fixture.decoratedTimeouts, equalTo(fixture.decoratedTimeouts.setScriptTimeout(10, TimeUnit.SECONDS)));
-    verify(fixture.mockedTimeouts, times(1)).setScriptTimeout(10, TimeUnit.SECONDS);
+    verifyFunction($ -> $.setScriptTimeout(10, TimeUnit.SECONDS));
   }
 
   @Test
   public void testPageLoadTimeout() {
-    Fixture fixture = new Fixture();
-    Point p = new Point(10, 20);
-    when(fixture.mockedTimeouts.pageLoadTimeout(10, TimeUnit.SECONDS)).thenReturn(fixture.mockedTimeouts);
-
-    assertThat(fixture.decoratedTimeouts, equalTo(fixture.decoratedTimeouts.pageLoadTimeout(10, TimeUnit.SECONDS)));
-    verify(fixture.mockedTimeouts, times(1)).pageLoadTimeout(10, TimeUnit.SECONDS);
+    verifyFunction($ -> $.pageLoadTimeout(10, TimeUnit.SECONDS));
   }
 
 }

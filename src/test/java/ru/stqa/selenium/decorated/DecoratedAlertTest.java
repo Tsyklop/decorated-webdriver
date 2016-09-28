@@ -21,6 +21,9 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.security.Credentials;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
@@ -31,74 +34,68 @@ public class DecoratedAlertTest {
   private static class Fixture {
     WebDriver mockedDriver;
     DecoratedWebDriver decoratedDriver;
-    Alert mockedAlert;
-    DecoratedAlert decoratedAlert;
+    Alert mocked;
+    DecoratedAlert decorated;
 
     public Fixture() {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
-      mockedAlert = mock(Alert.class);
-      decoratedAlert = new DecoratedAlert(mockedAlert, decoratedDriver);
+      mocked = mock(Alert.class);
+      decorated = new DecoratedAlert(mocked, decoratedDriver);
     }
   }
 
   @Test
   public void testConstructor() {
     Fixture fixture = new Fixture();
+    assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
+    assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
+  }
 
-    assertThat(fixture.mockedAlert, sameInstance(fixture.decoratedAlert.getOriginal()));
-    assertThat(fixture.decoratedDriver, sameInstance(fixture.decoratedAlert.getTopmostDecorated()));
+  private void verifyFunction(Consumer<Alert> f) {
+    Fixture fixture = new Fixture();
+    f.accept(fixture.decorated);
+    f.accept(verify(fixture.mocked, times(1)));
+    verifyNoMoreInteractions(fixture.mocked);
+  }
+
+  private <R> void verifyFunction(Function<Alert, R> f, R result) {
+    Fixture fixture = new Fixture();
+    when(f.apply(fixture.mocked)).thenReturn(result);
+    assertThat(f.apply(fixture.decorated), equalTo(result));
+    f.apply(verify(fixture.mocked, times(1)));
+    verifyNoMoreInteractions(fixture.mocked);
   }
 
   @Test
   public void testSendKeys() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedAlert.sendKeys("test");
-    verify(fixture.mockedAlert, times(1)).sendKeys("test");
+    verifyFunction($ -> $.sendKeys("test"));
   }
 
   @Test
   public void testAccept() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedAlert.accept();
-    verify(fixture.mockedAlert, times(1)).accept();
+    verifyFunction(Alert::accept);
   }
 
   @Test
   public void testDismiss() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedAlert.dismiss();
-    verify(fixture.mockedAlert, times(1)).dismiss();
+    verifyFunction(Alert::dismiss);
   }
 
   @Test
   public void testGetText() {
-    Fixture fixture = new Fixture();
-    when(fixture.mockedAlert.getText()).thenReturn("test");
-
-    assertThat(fixture.decoratedAlert.getText(), equalTo("test"));
-    verify(fixture.mockedAlert, times(1)).getText();
+    verifyFunction(Alert::getText, "test");
   }
 
   @Test
   public void testAuthenticateUsing() {
-    Fixture fixture = new Fixture();
-    Credentials creds = mock(Credentials.class);
-
-    fixture.decoratedAlert.authenticateUsing(creds);
-    verify(fixture.mockedAlert, times(1)).authenticateUsing(creds);
+    final Credentials creds = mock(Credentials.class);
+    verifyFunction($ -> $.authenticateUsing(creds));
   }
 
   @Test
   public void testSetCredentials() {
-    Fixture fixture = new Fixture();
-    Credentials creds = mock(Credentials.class);
-
-    fixture.decoratedAlert.setCredentials(creds);
-    verify(fixture.mockedAlert, times(1)).setCredentials(creds);
+    final Credentials creds = mock(Credentials.class);
+    verifyFunction($ -> $.setCredentials(creds));
   }
-
 }

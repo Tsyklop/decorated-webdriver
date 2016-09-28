@@ -21,6 +21,7 @@ import org.openqa.selenium.WebDriver;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.function.Consumer;
 
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
@@ -31,64 +32,55 @@ public class DecoratedNavigationTest {
   private static class Fixture {
     WebDriver mockedDriver;
     DecoratedWebDriver decoratedDriver;
-    WebDriver.Navigation mockedNavigation;
-    DecoratedNavigation decoratedNavigation;
+    WebDriver.Navigation mocked;
+    DecoratedNavigation decorated;
 
     public Fixture() {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
-      mockedNavigation = mock(WebDriver.Navigation.class);
-      decoratedNavigation = new DecoratedNavigation(mockedNavigation, decoratedDriver);
+      mocked = mock(WebDriver.Navigation.class);
+      decorated = new DecoratedNavigation(mocked, decoratedDriver);
     }
   }
 
   @Test
   public void testConstructor() {
     Fixture fixture = new Fixture();
+    assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
+    assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
+  }
 
-    assertThat(fixture.mockedNavigation, sameInstance(fixture.decoratedNavigation.getOriginal()));
-    assertThat(fixture.decoratedDriver, sameInstance(fixture.decoratedNavigation.getTopmostDecorated()));
+  private void verifyFunction(Consumer<WebDriver.Navigation> f) {
+    Fixture fixture = new Fixture();
+    f.accept(fixture.decorated);
+    f.accept(verify(fixture.mocked, times(1)));
+    verifyNoMoreInteractions(fixture.mocked);
   }
 
   @Test
   public void testToAddressAsString() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedNavigation.to("test");
-    verify(fixture.mockedNavigation, times(1)).to("test");
+    verifyFunction($ -> $.to("test"));
   }
 
   @Test
   public void testToAddressAsUrl() throws MalformedURLException {
-    Fixture fixture = new Fixture();
-    URL url = new URL("http://www.selenium2.ru/");
-
-    fixture.decoratedNavigation.to(url);
-    verify(fixture.mockedNavigation, times(1)).to(url);
+    final URL url = new URL("http://www.selenium2.ru/");
+    verifyFunction($ -> $.to(url));
   }
 
   @Test
   public void testBack() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedNavigation.back();
-    verify(fixture.mockedNavigation, times(1)).back();
+    verifyFunction(WebDriver.Navigation::back);
   }
 
   @Test
   public void testForward() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedNavigation.forward();
-    verify(fixture.mockedNavigation, times(1)).forward();
+    verifyFunction(WebDriver.Navigation::forward);
   }
 
   @Test
   public void testRefresh() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedNavigation.refresh();
-    verify(fixture.mockedNavigation, times(1)).refresh();
+    verifyFunction(WebDriver.Navigation::refresh);
   }
 
 }

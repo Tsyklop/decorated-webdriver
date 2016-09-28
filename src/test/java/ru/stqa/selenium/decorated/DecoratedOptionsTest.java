@@ -24,7 +24,10 @@ import org.openqa.selenium.logging.Logs;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
@@ -35,126 +38,107 @@ public class DecoratedOptionsTest {
   private static class Fixture {
     WebDriver mockedDriver;
     DecoratedWebDriver decoratedDriver;
-    WebDriver.Options mockedOptions;
-    DecoratedOptions decoratedOptions;
+    WebDriver.Options mocked;
+    DecoratedOptions decorated;
 
     public Fixture() {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
-      mockedOptions = mock(WebDriver.Options.class);
-      decoratedOptions = new DecoratedOptions(mockedOptions, decoratedDriver);
+      mocked = mock(WebDriver.Options.class);
+      decorated = new DecoratedOptions(mocked, decoratedDriver);
     }
   }
 
   @Test
   public void testConstructor() {
     Fixture fixture = new Fixture();
+    assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
+    assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
+  }
 
-    assertThat(fixture.mockedOptions, sameInstance(fixture.decoratedOptions.getOriginal()));
-    assertThat(fixture.decoratedDriver, sameInstance(fixture.decoratedOptions.getTopmostDecorated()));
+  private void verifyFunction(Consumer<WebDriver.Options> f) {
+    Fixture fixture = new Fixture();
+    f.accept(fixture.decorated);
+    f.accept(verify(fixture.mocked, times(1)));
+    verifyNoMoreInteractions(fixture.mocked);
+  }
+
+  private <R> void verifyFunction(Function<WebDriver.Options, R> f, R result) {
+    Fixture fixture = new Fixture();
+    when(f.apply(fixture.mocked)).thenReturn(result);
+    assertThat(f.apply(fixture.decorated), equalTo(result));
+    f.apply(verify(fixture.mocked, times(1)));
+    verifyNoMoreInteractions(fixture.mocked);
+  }
+
+  private <R> void verifyDecoratingFunction(Function<WebDriver.Options, R> f, R result, Consumer<R> p) {
+    Fixture fixture = new Fixture();
+    when(f.apply(fixture.mocked)).thenReturn(result);
+
+    R proxy = f.apply(fixture.decorated);
+    assertThat(result, not(sameInstance(proxy)));
+    f.apply(verify(fixture.mocked, times(1)));
+    verifyNoMoreInteractions(fixture.mocked);
+
+    p.accept(proxy);
+    p.accept(verify(result, times(1)));
+    verifyNoMoreInteractions(result);
   }
 
   @Test
   public void testAddCookie() {
-    Fixture fixture = new Fixture();
-    Cookie mockedCookie = mock(Cookie.class);
-
-    fixture.decoratedOptions.addCookie(mockedCookie);
-    verify(fixture.mockedOptions, times(1)).addCookie(mockedCookie);
+    verifyFunction($ -> $.addCookie(new Cookie("name", "value")));
   }
 
   @Test
   public void testDeleteCookieNamed() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedOptions.deleteCookieNamed("test");
-    verify(fixture.mockedOptions, times(1)).deleteCookieNamed("test");
+    verifyFunction($ -> $.deleteCookieNamed("test"));
   }
 
   @Test
   public void testDeleteCookie() {
-    Fixture fixture = new Fixture();
-    Cookie mockedCookie = mock(Cookie.class);
-
-    fixture.decoratedOptions.deleteCookie(mockedCookie);
-    verify(fixture.mockedOptions, times(1)).deleteCookie(mockedCookie);
+    verifyFunction($ -> $.deleteCookie(new Cookie("name", "value")));
   }
 
   @Test
   public void testDeleteAllCookies() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedOptions.deleteAllCookies();
-    verify(fixture.mockedOptions, times(1)).deleteAllCookies();
+    verifyFunction(WebDriver.Options::deleteAllCookies);
   }
 
   @Test
   public void testGetCookies() {
-    Fixture fixture = new Fixture();
-    Set<Cookie> cookies = new HashSet<Cookie>();
-    cookies.add(mock(Cookie.class));
-    when(fixture.mockedOptions.getCookies()).thenReturn(cookies);
-
-    assertThat(fixture.decoratedOptions.getCookies(), sameInstance(cookies));
-    verify(fixture.mockedOptions, times(1)).getCookies();
+    Set<Cookie> cookies = new HashSet<>();
+    cookies.add(new Cookie("name", "value"));
+    verifyFunction(WebDriver.Options::getCookies, cookies);
   }
 
   @Test
   public void testGetCookieNamed() {
-    Fixture fixture = new Fixture();
-    Cookie cookie = mock(Cookie.class);
-    when(fixture.mockedOptions.getCookieNamed("test")).thenReturn(cookie);
-
-    assertThat(fixture.decoratedOptions.getCookieNamed("test"), sameInstance(cookie));
-    verify(fixture.mockedOptions, times(1)).getCookieNamed("test");
+    verifyFunction($ -> $.getCookieNamed("test"), new Cookie("name", "value"));
   }
 
   @Test
   public void testTimeouts() {
-    Fixture fixture = new Fixture();
-    WebDriver.Timeouts mockedTimeouts = mock(WebDriver.Timeouts.class);
-    when(fixture.mockedOptions.timeouts()).thenReturn(mockedTimeouts);
-
-    WebDriver.Timeouts proxy = fixture.decoratedOptions.timeouts();
-    assertThat(mockedTimeouts, not(sameInstance(proxy)));
-    verify(fixture.mockedOptions, times(1)).timeouts();
-
-    proxy.implicitlyWait(10, TimeUnit.SECONDS);
-    verify(mockedTimeouts, times(1)).implicitlyWait(10, TimeUnit.SECONDS);
+    WebDriver.Timeouts timeouts = mock(WebDriver.Timeouts.class);
+    verifyDecoratingFunction(WebDriver.Options::timeouts, timeouts, t -> t.implicitlyWait(10, TimeUnit.SECONDS));
   }
 
   @Test
   public void testImeNotDecorated() {
-    Fixture fixture = new Fixture();
-    WebDriver.ImeHandler mockedIme = mock(WebDriver.ImeHandler.class);
-    when(fixture.mockedOptions.ime()).thenReturn(mockedIme);
-
-    assertThat(fixture.decoratedOptions.ime(), sameInstance(mockedIme));
-    verify(fixture.mockedOptions, times(1)).ime();
+    final WebDriver.ImeHandler ime = mock(WebDriver.ImeHandler.class);
+    verifyFunction(WebDriver.Options::ime, ime);
   }
 
   @Test
   public void testWindow() {
-    Fixture fixture = new Fixture();
-    WebDriver.Window mockedWindow = mock(WebDriver.Window.class);
-    when(fixture.mockedOptions.window()).thenReturn(mockedWindow);
-
-    WebDriver.Window proxy = fixture.decoratedOptions.window();
-    assertThat(mockedWindow, not(sameInstance(proxy)));
-    verify(fixture.mockedOptions, times(1)).window();
-
-    proxy.maximize();
-    verify(mockedWindow, times(1)).maximize();
+    final WebDriver.Window window = mock(WebDriver.Window.class);
+    verifyDecoratingFunction(WebDriver.Options::window, window, WebDriver.Window::maximize);
   }
 
   @Test
   public void testLogsNotDecorated() {
-    Fixture fixture = new Fixture();
-    Logs mockedLogs = mock(Logs.class);
-    when(fixture.mockedOptions.logs()).thenReturn(mockedLogs);
-
-    assertThat(fixture.decoratedOptions.logs(), sameInstance(mockedLogs));
-    verify(fixture.mockedOptions, times(1)).logs();
+    final Logs logs = mock(Logs.class);
+    verifyFunction(WebDriver.Options::logs, logs);
   }
 
 }

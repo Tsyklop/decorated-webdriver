@@ -20,6 +20,8 @@ import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.interactions.Keyboard;
 
+import java.util.function.Consumer;
+
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
@@ -29,47 +31,44 @@ public class DecoratedKeyboardTest {
   private static class Fixture {
     WebDriver mockedDriver;
     DecoratedWebDriver decoratedDriver;
-    Keyboard mockedKeyboard;
-    DecoratedKeyboard decoratedKeyboard;
+    Keyboard mocked;
+    DecoratedKeyboard decorated;
 
     public Fixture() {
       mockedDriver = mock(WebDriver.class);
       decoratedDriver = new DecoratedWebDriver(mockedDriver);
-      mockedKeyboard = mock(Keyboard.class);
-      decoratedKeyboard = new DecoratedKeyboard(mockedKeyboard, decoratedDriver);
+      mocked = mock(Keyboard.class);
+      decorated = new DecoratedKeyboard(mocked, decoratedDriver);
     }
   }
 
   @Test
   public void testConstructor() {
     Fixture fixture = new Fixture();
+    assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
+    assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
+  }
 
-    assertThat(fixture.mockedKeyboard, sameInstance(fixture.decoratedKeyboard.getOriginal()));
-    assertThat(fixture.decoratedDriver, sameInstance(fixture.decoratedKeyboard.getTopmostDecorated()));
+  private void verifyFunction(Consumer<Keyboard> f) {
+    Fixture fixture = new Fixture();
+    f.accept(fixture.decorated);
+    f.accept(verify(fixture.mocked, times(1)));
+    verifyNoMoreInteractions(fixture.mocked);
   }
 
   @Test
   public void testSendKeys() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedKeyboard.sendKeys("test");
-    verify(fixture.mockedKeyboard, times(1)).sendKeys("test");
+    verifyFunction($ -> $.sendKeys("test"));
   }
 
   @Test
   public void testPressKey() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedKeyboard.pressKey("t");
-    verify(fixture.mockedKeyboard, times(1)).pressKey("t");
+    verifyFunction($ -> $.pressKey("t"));
   }
 
   @Test
   public void testReleaseKey() {
-    Fixture fixture = new Fixture();
-
-    fixture.decoratedKeyboard.releaseKey("t");
-    verify(fixture.mockedKeyboard, times(1)).releaseKey("t");
+    verifyFunction($ -> $.releaseKey("t"));
   }
 
 }
