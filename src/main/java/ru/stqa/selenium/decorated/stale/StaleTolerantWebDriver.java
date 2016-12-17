@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.stqa.selenium.decorated.staletolerant;
+package ru.stqa.selenium.decorated.stale;
 
 import com.google.common.base.Throwables;
 import org.openqa.selenium.*;

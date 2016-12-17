@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.stqa.selenium.decorated.staletolerant;
+package ru.stqa.selenium.decorated.stale;
 
 import org.junit.Test;
 import org.mockito.InOrder;

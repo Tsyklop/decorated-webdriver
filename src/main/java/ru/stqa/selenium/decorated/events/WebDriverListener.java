@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.stqa.selenium.decorated.eventfiring;
+package ru.stqa.selenium.decorated.events;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Keyboard;

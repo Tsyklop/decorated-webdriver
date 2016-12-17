@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.stqa.selenium.decorated.eventfiring;
+package ru.stqa.selenium.decorated.events;
 
 import com.google.common.base.Throwables;
 import com.google.common.primitives.Primitives;

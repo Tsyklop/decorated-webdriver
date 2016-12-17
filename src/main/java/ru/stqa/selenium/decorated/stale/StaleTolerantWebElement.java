@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.stqa.selenium.decorated.staletolerant;
+package ru.stqa.selenium.decorated.stale;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
