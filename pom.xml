@@ -3,7 +3,7 @@
 
   <groupId>ru.stqa.selenium</groupId>
   <artifactId>decorated-webdriver</artifactId>
-  <version>3.0-SNAPSHOT</version>
+  <version>3.0</version>
   <packaging>jar</packaging>
 
   <name>decorated-webdriver</name>
@@ -22,7 +22,7 @@
     <connection>scm:git:git@github.com:barancev/decorated-webdriver.git</connection>
     <developerConnection>scm:git:git@github.com:barancev/decorated-webdriver.git</developerConnection>
     <url>https://github.com/barancev/decorated-webdriver</url>
-    <tag>HEAD</tag>
+    <tag>decorated-webdriver-3.0</tag>
   </scm>
 
   <developers>
