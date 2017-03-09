@@ -126,7 +126,7 @@ public class DecoratedWebDriverTest {
   public void testFindElements() {
     Fixture fixture = new Fixture();
     WebElement found = mock(WebElement.class);
-    List<WebElement> list = new ArrayList<WebElement>();
+    List<WebElement> list = new ArrayList<>();
     list.add(found);
     when(fixture.mocked.findElements(By.id("test"))).thenReturn(list);
 
@@ -157,7 +157,7 @@ public class DecoratedWebDriverTest {
 
   @Test
   public void testGetWindowHandles() {
-    Set<String> handles = new HashSet<String>();
+    Set<String> handles = new HashSet<>();
     handles.add("test");
     verifyFunction(WebDriver::getWindowHandles, handles);
   }
@@ -217,7 +217,7 @@ public class DecoratedWebDriverTest {
   @Test
   public void testExecuteScriptThatReturnsAnElement() {
     WebElement element = mock(WebElement.class);
-    verifyDecoratingFunction($ -> (WebElement) ((JavascriptExecutor) $).executeScript("..."), element, e -> e.click());
+    verifyDecoratingFunction($ -> (WebElement) ((JavascriptExecutor) $).executeScript("..."), element, WebElement::click);
   }
 
   @Test
@@ -237,7 +237,7 @@ public class DecoratedWebDriverTest {
   @Test
   public void testExecuteAsyncScriptThatReturnsAnElement() {
     WebElement element = mock(WebElement.class);
-    verifyDecoratingFunction($ -> (WebElement) ((JavascriptExecutor) $).executeAsyncScript("..."), element, e -> e.click());
+    verifyDecoratingFunction($ -> (WebElement) ((JavascriptExecutor) $).executeAsyncScript("..."), element, WebElement::click);
   }
 
 }

@@ -66,7 +66,7 @@ public class Activator<T> {
   }
 
   private static Set<Class<?>> extractInterfaces(final Class<?> clazz) {
-    Set<Class<?>> allInterfaces = new HashSet<Class<?>>();
+    Set<Class<?>> allInterfaces = new HashSet<>();
     extractInterfaces(allInterfaces, clazz);
 
     return allInterfaces;

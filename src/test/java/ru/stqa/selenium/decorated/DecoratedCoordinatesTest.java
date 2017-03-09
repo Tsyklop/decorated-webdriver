@@ -92,7 +92,7 @@ public class DecoratedCoordinatesTest {
   @Test
   public void testGetAuxiliary() {
     final WebElement element = mock(WebElement.class);
-    verifyDecoratingFunction($ -> (WebElement) $.getAuxiliary(), element, e -> e.click());
+    verifyDecoratingFunction($ -> (WebElement) $.getAuxiliary(), element, WebElement::click);
   }
 
 }

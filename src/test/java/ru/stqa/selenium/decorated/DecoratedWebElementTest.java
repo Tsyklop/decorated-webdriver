@@ -174,7 +174,7 @@ public class DecoratedWebElementTest {
   public void testFindElements() {
     Fixture fixture = new Fixture();
     WebElement found = mock(WebElement.class);
-    List<WebElement> list = new ArrayList<WebElement>();
+    List<WebElement> list = new ArrayList<>();
     list.add(found);
     when(fixture.mocked.findElements(By.id("test"))).thenReturn(list);
 

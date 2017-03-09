@@ -47,7 +47,7 @@ public abstract class AbstractDecorated<T> implements Decorated<T> {
     }
     if (result instanceof List) {
       // TODO: Create typed list
-      List<Object> newList = new ArrayList<Object>();
+      List<Object> newList = new ArrayList<>();
       for (Object o : (List) result) {
         if (o instanceof Decorated) {
           newList.add(((Decorated) o).getOriginal());

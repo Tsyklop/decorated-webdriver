@@ -27,17 +27,17 @@ public abstract class DecoratedTopmost<T> extends AbstractDecorated<T> {
     super(original);
   }
 
-  public void beforeMethodGlobal(Decorated<?> target, Method method, Object[] args) {};
+  public void beforeMethodGlobal(Decorated<?> target, Method method, Object[] args) {}
 
   public Object callMethodGlobal(Decorated<?> target, Method method, Object[] args) throws Throwable {
     return method.invoke(target, args);
-  };
+  }
 
-  public void afterMethodGlobal(Decorated<?> target, Method method, Object res, Object[] args) {};
+  public void afterMethodGlobal(Decorated<?> target, Method method, Object res, Object[] args) {}
 
   public Object onErrorGlobal(Decorated<?> target, Method method, InvocationTargetException e, Object[] args) throws Throwable {
     throw Throwables.propagate(e.getTargetException());
-  };
+  }
 
   @Override
   public void beforeMethod(Method method, Object[] args) {

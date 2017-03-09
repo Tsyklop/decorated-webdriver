@@ -160,7 +160,7 @@ public class StaleTolerantWebDriverTest {
     doThrow(WebDriverException.class).when(element1).click();
 
     WebElement element = fixture.driver.findElement(By.id("test"));
-    catchThrowable(() -> element.click());
+    catchThrowable(element::click);
     assertThat(caughtThrowable(), instanceOf(WebDriverException.class));
 
     InOrder inOrder = inOrder(fixture.mockedDriver, element1);
@@ -183,7 +183,7 @@ public class StaleTolerantWebDriverTest {
 
     WebElement element = fixture.driver.findElement(By.id("test"));
     element.click();
-    catchThrowable(() -> element.click());
+    catchThrowable(element::click);
     assertThat(caughtThrowable(), instanceOf(StaleElementReferenceException.class));
 
     InOrder inOrder = inOrder(fixture.mockedDriver, element1);
@@ -210,7 +210,7 @@ public class StaleTolerantWebDriverTest {
 
     WebElement element = fixture.driver.findElement(By.id("test"));
     element.click();
-    catchThrowable(() -> element.click());
+    catchThrowable(element::click);
     assertThat(caughtThrowable(), instanceOf(ElementNotVisibleException.class));
 
     InOrder inOrder = inOrder(fixture.mockedDriver, element1, element2);
