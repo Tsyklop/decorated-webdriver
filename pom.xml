@@ -2,13 +2,17 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>ru.stqa.selenium</groupId>
-  <artifactId>decorated-webdriver</artifactId>
-  <version>3.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <artifactId>decorated-webdriver-parent</artifactId>
+  <version>4.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
-  <name>decorated-webdriver</name>
-  <description>The base set of classes that helps to implement WebDriver extensions using Decorator design pattern</description>
+  <name>decorated-webdriver-parent</name>
+  <description>The set of classes that helps to implement WebDriver extensions using Decorator design pattern</description>
   <url>https://github.com/barancev/decorated-webdriver</url>
+  
+  <modules>
+    <module>core</module>
+  </modules>
 
   <licenses>
     <license>
@@ -35,38 +39,41 @@
     </developer>
   </developers>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-java</artifactId>
-      <version>3.3.0</version>
-      <scope>provided</scope>
-    </dependency>
+  <dependencyManagement> 
+    <dependencies>
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>3.3.0</version>
+        <scope>provided</scope>
+      </dependency>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>2.3.6</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-core</artifactId>
-      <version>1.3</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>eu.codearte.catch-exception</groupId>
-      <artifactId>catch-throwable</artifactId>
-      <version>2.0.0-ALPHA-1</version>
-    </dependency>
-  </dependencies>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>2.3.6</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest-core</artifactId>
+        <version>1.3</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>eu.codearte.catch-exception</groupId>
+        <artifactId>catch-throwable</artifactId>
+        <version>2.0.0-ALPHA-1</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
