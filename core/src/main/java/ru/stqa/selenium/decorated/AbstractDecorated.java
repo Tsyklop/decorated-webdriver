@@ -23,6 +23,7 @@ import java.util.List;
 public abstract class AbstractDecorated<T> implements Decorated<T> {
 
   private T original;
+  private T activated;
 
   public AbstractDecorated(final T original) {
     this.original = original;
@@ -38,7 +39,10 @@ public abstract class AbstractDecorated<T> implements Decorated<T> {
 
   @Override
   final public T getActivated() {
-    return new Activator<T>().activate(this);
+    if (activated == null) {
+      activated = new Activator<T>().activate(this);
+    }
+    return activated;
   }
 
   protected Object unwrap(Object result) {

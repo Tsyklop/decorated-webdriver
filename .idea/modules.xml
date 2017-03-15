@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/core/decorated-webdriver.iml" filepath="$PROJECT_DIR$/core/decorated-webdriver.iml" />
       <module fileurl="file://$PROJECT_DIR$/decorated-webdriver-parent.iml" filepath="$PROJECT_DIR$/decorated-webdriver-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/implicit-wait/implicitly-waiting-wrapper.iml" filepath="$PROJECT_DIR$/implicit-wait/implicitly-waiting-wrapper.iml" />
     </modules>
   </component>
 </project>
