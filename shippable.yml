@@ -8,4 +8,5 @@ before_script:
 
 after_success:
   - mvn test
-  - cp -r target/surefire-reports/* shippable/testresults/
+  - cp -r core/target/surefire-reports/* shippable/testresults/
+  - cp -r implicit-wait/target/surefire-reports/* shippable/testresults/
