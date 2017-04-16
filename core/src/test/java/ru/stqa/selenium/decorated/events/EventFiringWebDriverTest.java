@@ -16,12 +16,12 @@
 
 package ru.stqa.selenium.decorated.events;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
 
 import static org.mockito.Mockito.*;
 
-public class EventFiringWebDriverTest {
+class EventFiringWebDriverTest {
 
   private static class Fixture {
     WebDriver mockedDriver;
@@ -45,7 +45,7 @@ public class EventFiringWebDriverTest {
   }
 
   @Test
-  public void shouldNotFireToRemovedListener() {
+  void shouldNotFireToRemovedListener() {
     Fixture fixture = new Fixture();
     fixture.decoratedDriver.removeListener(fixture.listener);
 
@@ -56,7 +56,7 @@ public class EventFiringWebDriverTest {
   }
 
   @Test
-  public void canRemoveASingleListener() {
+  void canRemoveASingleListener() {
     Fixture fixture = new Fixture();
     fixture.decoratedDriver.removeListener(fixture.listener);
 
@@ -69,7 +69,7 @@ public class EventFiringWebDriverTest {
   }
 
   @Test
-  public void canRemoveAllListeners() {
+  void canRemoveAllListeners() {
     Fixture fixture = new Fixture();
     fixture.decoratedDriver.removeAllListeners();
 

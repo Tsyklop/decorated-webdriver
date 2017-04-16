@@ -16,7 +16,7 @@
 
 package ru.stqa.selenium.decorated;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.interactions.Mouse;
 import org.openqa.selenium.interactions.internal.Coordinates;
@@ -24,10 +24,10 @@ import org.openqa.selenium.interactions.internal.Coordinates;
 import java.util.function.Consumer;
 
 import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
-public class DecoratedMouseTest {
+class DecoratedMouseTest {
 
   private static class Fixture {
     WebDriver mockedDriver;
@@ -44,7 +44,7 @@ public class DecoratedMouseTest {
   }
 
   @Test
-  public void testConstructor() {
+  void testConstructor() {
     Fixture fixture = new Fixture();
     assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
     assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
@@ -58,43 +58,43 @@ public class DecoratedMouseTest {
   }
 
   @Test
-  public void testClick() {
+  void testClick() {
     final Coordinates coords = mock(Coordinates.class);
     verifyFunction($ -> $.click(coords));
   }
 
   @Test
-  public void testDoubleClick() {
+  void testDoubleClick() {
     final Coordinates coords = mock(Coordinates.class);
     verifyFunction($ -> $.doubleClick(coords));
   }
 
   @Test
-  public void testContextClick() {
+  void testContextClick() {
     final Coordinates coords = mock(Coordinates.class);
     verifyFunction($ -> $.contextClick(coords));
   }
 
   @Test
-  public void testMouseDown() {
+  void testMouseDown() {
     final Coordinates coords = mock(Coordinates.class);
     verifyFunction($ -> $.mouseDown(coords));
   }
 
   @Test
-  public void testMouseUp() {
+  void testMouseUp() {
     final Coordinates coords = mock(Coordinates.class);
     verifyFunction($ -> $.mouseUp(coords));
   }
 
   @Test
-  public void testMouseMove() {
+  void testMouseMove() {
     final Coordinates coords = mock(Coordinates.class);
     verifyFunction($ -> $.mouseMove(coords));
   }
 
   @Test
-  public void testMouseMoveWithShift() {
+  void testMouseMoveWithShift() {
     final Coordinates coords = mock(Coordinates.class);
     verifyFunction($ -> $.mouseMove(coords, 10, 20));
   }

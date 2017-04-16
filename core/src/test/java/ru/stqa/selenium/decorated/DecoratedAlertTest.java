@@ -16,7 +16,7 @@
 
 package ru.stqa.selenium.decorated;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.security.Credentials;
@@ -26,10 +26,10 @@ import java.util.function.Function;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
-public class DecoratedAlertTest {
+class DecoratedAlertTest {
 
   private static class Fixture {
     WebDriver mockedDriver;
@@ -46,7 +46,7 @@ public class DecoratedAlertTest {
   }
 
   @Test
-  public void testConstructor() {
+  void testConstructor() {
     Fixture fixture = new Fixture();
     assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
     assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
@@ -68,33 +68,33 @@ public class DecoratedAlertTest {
   }
 
   @Test
-  public void testSendKeys() {
+  void testSendKeys() {
     verifyFunction($ -> $.sendKeys("test"));
   }
 
   @Test
-  public void testAccept() {
+  void testAccept() {
     verifyFunction(Alert::accept);
   }
 
   @Test
-  public void testDismiss() {
+  void testDismiss() {
     verifyFunction(Alert::dismiss);
   }
 
   @Test
-  public void testGetText() {
+  void testGetText() {
     verifyFunction(Alert::getText, "test");
   }
 
   @Test
-  public void testAuthenticateUsing() {
+  void testAuthenticateUsing() {
     final Credentials creds = mock(Credentials.class);
     verifyFunction($ -> $.authenticateUsing(creds));
   }
 
   @Test
-  public void testSetCredentials() {
+  void testSetCredentials() {
     final Credentials creds = mock(Credentials.class);
     verifyFunction($ -> $.setCredentials(creds));
   }

@@ -16,17 +16,14 @@
 
 package ru.stqa.selenium.decorated.stale;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.openqa.selenium.*;
 
-import static com.googlecode.catchexception.throwable.CatchThrowable.catchThrowable;
-import static com.googlecode.catchexception.throwable.CatchThrowable.caughtThrowable;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-public class StaleTolerantWebDriverTest {
+class StaleTolerantWebDriverTest {
 
   private static class Fixture {
     WebDriver mockedDriver;
@@ -39,7 +36,7 @@ public class StaleTolerantWebDriverTest {
   }
 
   @Test
-  public void shouldNotRediscoverNonStaleElement() {
+  void shouldNotRediscoverNonStaleElement() {
     Fixture fixture = new Fixture();
 
     WebElement element1 = mock(WebElement.class);
@@ -58,7 +55,7 @@ public class StaleTolerantWebDriverTest {
   }
 
   @Test
-  public void shouldRediscoverAStaleElement() {
+  void shouldRediscoverAStaleElement() {
     Fixture fixture = new Fixture();
 
     WebElement element1 = mock(WebElement.class);
@@ -84,7 +81,7 @@ public class StaleTolerantWebDriverTest {
   }
 
   @Test
-  public void shouldRediscoverAStaleChild() {
+  void shouldRediscoverAStaleChild() {
     Fixture fixture = new Fixture();
 
     WebElement parent = mock(WebElement.class);
@@ -114,7 +111,7 @@ public class StaleTolerantWebDriverTest {
   }
 
   @Test
-  public void shouldRediscoverASubtree() {
+  void shouldRediscoverASubtree() {
     Fixture fixture = new Fixture();
 
     WebElement parent1 = mock(WebElement.class);
@@ -151,7 +148,7 @@ public class StaleTolerantWebDriverTest {
   }
 
   @Test
-  public void shouldPropagateExceptions() {
+  void shouldPropagateExceptions() {
     Fixture fixture = new Fixture();
 
     WebElement element1 = mock(WebElement.class);
@@ -160,8 +157,7 @@ public class StaleTolerantWebDriverTest {
     doThrow(WebDriverException.class).when(element1).click();
 
     WebElement element = fixture.driver.findElement(By.id("test"));
-    catchThrowable(element::click);
-    assertThat(caughtThrowable(), instanceOf(WebDriverException.class));
+    assertThrows(WebDriverException.class, element::click);
 
     InOrder inOrder = inOrder(fixture.mockedDriver, element1);
     inOrder.verify(fixture.mockedDriver).findElement(By.id("test"));
@@ -171,7 +167,7 @@ public class StaleTolerantWebDriverTest {
   }
 
   @Test
-  public void shouldRediscoverOnceAndThrowStale() {
+  void shouldRediscoverOnceAndThrowStale() {
     Fixture fixture = new Fixture();
 
     WebElement element1 = mock(WebElement.class);
@@ -183,8 +179,7 @@ public class StaleTolerantWebDriverTest {
 
     WebElement element = fixture.driver.findElement(By.id("test"));
     element.click();
-    catchThrowable(element::click);
-    assertThat(caughtThrowable(), instanceOf(StaleElementReferenceException.class));
+    assertThrows(StaleElementReferenceException.class, element::click);
 
     InOrder inOrder = inOrder(fixture.mockedDriver, element1);
     inOrder.verify(fixture.mockedDriver).findElement(By.id("test"));
@@ -195,7 +190,7 @@ public class StaleTolerantWebDriverTest {
   }
 
   @Test
-  public void shouldPropagateExceptionsOnRediscovered() {
+  void shouldPropagateExceptionsOnRediscovered() {
     Fixture fixture = new Fixture();
 
     WebElement element1 = mock(WebElement.class);
@@ -210,8 +205,7 @@ public class StaleTolerantWebDriverTest {
 
     WebElement element = fixture.driver.findElement(By.id("test"));
     element.click();
-    catchThrowable(element::click);
-    assertThat(caughtThrowable(), instanceOf(ElementNotVisibleException.class));
+    assertThrows(ElementNotVisibleException.class, element::click);
 
     InOrder inOrder = inOrder(fixture.mockedDriver, element1, element2);
     inOrder.verify(fixture.mockedDriver).findElement(By.id("test"));

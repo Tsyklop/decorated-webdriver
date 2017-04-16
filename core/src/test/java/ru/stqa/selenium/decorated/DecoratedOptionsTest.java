@@ -16,7 +16,7 @@
 
 package ru.stqa.selenium.decorated;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.logging.Logs;
@@ -30,10 +30,10 @@ import java.util.function.Function;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
-public class DecoratedOptionsTest {
+class DecoratedOptionsTest {
 
   private static class Fixture {
     WebDriver mockedDriver;
@@ -50,7 +50,7 @@ public class DecoratedOptionsTest {
   }
 
   @Test
-  public void testConstructor() {
+  void testConstructor() {
     Fixture fixture = new Fixture();
     assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
     assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
@@ -86,57 +86,57 @@ public class DecoratedOptionsTest {
   }
 
   @Test
-  public void testAddCookie() {
+  void testAddCookie() {
     verifyFunction($ -> $.addCookie(new Cookie("name", "value")));
   }
 
   @Test
-  public void testDeleteCookieNamed() {
+  void testDeleteCookieNamed() {
     verifyFunction($ -> $.deleteCookieNamed("test"));
   }
 
   @Test
-  public void testDeleteCookie() {
+  void testDeleteCookie() {
     verifyFunction($ -> $.deleteCookie(new Cookie("name", "value")));
   }
 
   @Test
-  public void testDeleteAllCookies() {
+  void testDeleteAllCookies() {
     verifyFunction(WebDriver.Options::deleteAllCookies);
   }
 
   @Test
-  public void testGetCookies() {
+  void testGetCookies() {
     Set<Cookie> cookies = new HashSet<>();
     cookies.add(new Cookie("name", "value"));
     verifyFunction(WebDriver.Options::getCookies, cookies);
   }
 
   @Test
-  public void testGetCookieNamed() {
+  void testGetCookieNamed() {
     verifyFunction($ -> $.getCookieNamed("test"), new Cookie("name", "value"));
   }
 
   @Test
-  public void testTimeouts() {
+  void testTimeouts() {
     WebDriver.Timeouts timeouts = mock(WebDriver.Timeouts.class);
     verifyDecoratingFunction(WebDriver.Options::timeouts, timeouts, t -> t.implicitlyWait(10, TimeUnit.SECONDS));
   }
 
   @Test
-  public void testImeNotDecorated() {
+  void testImeNotDecorated() {
     final WebDriver.ImeHandler ime = mock(WebDriver.ImeHandler.class);
     verifyFunction(WebDriver.Options::ime, ime);
   }
 
   @Test
-  public void testWindow() {
+  void testWindow() {
     final WebDriver.Window window = mock(WebDriver.Window.class);
     verifyDecoratingFunction(WebDriver.Options::window, window, WebDriver.Window::maximize);
   }
 
   @Test
-  public void testLogsNotDecorated() {
+  void testLogsNotDecorated() {
     final Logs logs = mock(Logs.class);
     verifyFunction(WebDriver.Options::logs, logs);
   }

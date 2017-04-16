@@ -16,18 +16,18 @@
 
 package ru.stqa.selenium.decorated;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-public class DecoratedTopmostTest {
+class DecoratedTopmostTest {
 
   interface Target {
     String hello(String who);
@@ -35,7 +35,7 @@ public class DecoratedTopmostTest {
 
   static class DecoratedTarget extends DecoratedTopmost<Target> implements Target {
 
-    public DecoratedTarget(Target original) {
+    DecoratedTarget(Target original) {
       super(original);
     }
 
@@ -55,7 +55,7 @@ public class DecoratedTopmostTest {
   }
 
   static class DecoratedSemiTarget extends DecoratedTopmost<Target> {
-    public DecoratedSemiTarget(Target original) {
+    DecoratedSemiTarget(Target original) {
       super(original);
     }
   }
@@ -64,13 +64,13 @@ public class DecoratedTopmostTest {
 
     DecoratedSemiTarget deco;
 
-    public SemiFixture(Target original) {
+    SemiFixture(Target original) {
       deco = new DecoratedSemiTarget(original) { };
     }
   }
 
   @Test
-  public void testDoesNotDelegateDomesticMethods() throws Throwable {
+  void testDoesNotDelegateDomesticMethods() throws Throwable {
     Target target = mock(Target.class);
     when(target.hello("who")).thenReturn("world");
     SemiFixture fixture = new SemiFixture(target);
@@ -80,7 +80,7 @@ public class DecoratedTopmostTest {
   }
 
   @Test
-  public void testDelegatesToGlobal() throws Throwable {
+  void testDelegatesToGlobal() throws Throwable {
     Target target = mock(Target.class);
     Fixture fixture = new Fixture(target);
     when(target.hello("world")).thenReturn("test");
@@ -99,20 +99,14 @@ public class DecoratedTopmostTest {
   }
 
   @Test
-  public void testDelegatesExceptionToGlobal() throws Throwable {
+  void testDelegatesExceptionToGlobal() throws Throwable {
     Target target = mock(Target.class);
     Fixture fixture = new Fixture(target);
     when(target.hello("world")).thenThrow(RuntimeException.class);
     DecoratedTopmost<Target> spy = spy(fixture.deco);
     Target decorated = new Activator<Target>().activate(spy);
 
-    boolean thrown = false;
-    try {
-      decorated.hello("world");
-    } catch (RuntimeException expected) {
-      thrown = true;
-    }
-    assertTrue(thrown);
+    assertThrows(RuntimeException.class, () -> decorated.hello("world"));
 
     InOrder inOrder = inOrder(spy);
     inOrder.verify(spy).beforeMethod(any(Method.class), any(Object[].class));

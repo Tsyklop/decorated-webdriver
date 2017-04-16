@@ -16,28 +16,28 @@
 
 package ru.stqa.selenium.decorated;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class InterfacesTest {
+class InterfacesTest {
 
   private interface SomeOtherInterface {}
 
   private interface ExtendedDriver extends WebDriver, SomeOtherInterface {}
 
   private static class SimpleDecoratedWebDriver extends DecoratedWebDriver {
-    public SimpleDecoratedWebDriver(final WebDriver driver) {
+    SimpleDecoratedWebDriver(final WebDriver driver) {
       super(driver);
     }
   }
 
   @Test
-  public void shouldNotAddInterfacesNotAvailableInTheOriginalDriver() {
+  void shouldNotAddInterfacesNotAvailableInTheOriginalDriver() {
     final WebDriver driver = mock(WebDriver.class);
     assertThat(driver, not(instanceOf(SomeOtherInterface.class)));
 
@@ -46,7 +46,7 @@ public class InterfacesTest {
   }
 
   @Test
-  public void shouldRespectInterfacesAvailableInTheOriginalDriver() {
+  void shouldRespectInterfacesAvailableInTheOriginalDriver() {
     final WebDriver driver = mock(ExtendedDriver.class);
     assertThat(driver, instanceOf(SomeOtherInterface.class));
 

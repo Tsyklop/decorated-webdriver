@@ -16,18 +16,18 @@
 
 package ru.stqa.selenium.decorated;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.openqa.selenium.WebDriverException;
 
 import java.lang.reflect.InvocationTargetException;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-public class DecoratedChildTest {
+class DecoratedChildTest {
 
   interface Target {
     String hello(String who);
@@ -35,7 +35,7 @@ public class DecoratedChildTest {
 
   static class DecoratedTarget extends DecoratedChild<Target, DecoratedTopmost<?>> implements Target {
 
-    public DecoratedTarget(Target original, DecoratedTopmost<?> topmost) {
+    DecoratedTarget(Target original, DecoratedTopmost<?> topmost) {
       super(original, topmost);
     }
 
@@ -50,14 +50,14 @@ public class DecoratedChildTest {
     DecoratedTarget deco;
     DecoratedTopmost<Object> topmost;
 
-    public TargetFixture(Target target) {
+    TargetFixture(Target target) {
       topmost = spy(new DecoratedTopmost<Object>(mock(Object.class)){});
       deco = new DecoratedTarget(target, topmost);
     }
   }
 
   @Test
-  public void testDelegatesToTopmost() throws Throwable {
+  void testDelegatesToTopmost() throws Throwable {
     Target target = mock(Target.class);
     TargetFixture fixture = new TargetFixture(target);
     when(target.hello("world")).thenReturn("test");
@@ -76,20 +76,13 @@ public class DecoratedChildTest {
   }
 
   @Test
-  public void testCanPropagateExceptions() throws Throwable {
+  void testCanPropagateExceptions() throws Throwable {
     Target target = mock(Target.class);
     TargetFixture fixture = new TargetFixture(target);
     when(target.hello("world")).thenThrow(WebDriverException.class);
     Target decorated = new Activator<Target>().activate(fixture.deco);
 
-    boolean thrown = false;
-    try {
-      decorated.hello("world");
-    } catch (Throwable expected) {
-      thrown = true;
-      assertThat(expected, instanceOf(WebDriverException.class));
-    }
-    assertTrue(thrown);
+    assertThrows(WebDriverException.class, () -> decorated.hello("world"));
 
     InOrder inOrder = inOrder(fixture.topmost);
     inOrder.verify(fixture.topmost, times(1)).beforeMethodGlobal(same(fixture.deco),

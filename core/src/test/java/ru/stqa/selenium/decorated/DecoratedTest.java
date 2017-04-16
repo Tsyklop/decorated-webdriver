@@ -16,17 +16,16 @@
 
 package ru.stqa.selenium.decorated;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-public class DecoratedTest {
+class DecoratedTest {
 
   static class Fixture<T> {
 
@@ -38,46 +37,46 @@ public class DecoratedTest {
   }
 
   @Test
-  public void testConstructor() {
+  void testConstructor() {
     Object obj = new Object();
     Fixture<Object> fixture = new Fixture<>(obj);
     assertThat(fixture.deco.getOriginal(), sameInstance(obj));
   }
 
   @Test
-  public void testSetOriginal() {
+  void testSetOriginal() {
     Fixture<String> fixture = new Fixture<>("test");
     fixture.deco.setOriginal("diff");
     assertThat(fixture.deco.getOriginal(), equalTo("diff"));
   }
 
   @Test
-  public void testToString() {
+  void testToString() {
     Fixture<String> fixture = new Fixture<>("test");
     assertThat(fixture.deco.toString(), equalTo("Decorated {test}"));
   }
 
   @Test
-  public void testEquals() {
+  void testEquals() {
     Fixture<String> fixture1 = new Fixture<>("test");
     Fixture<String> fixture2 = new Fixture<>("test");
     assertThat(fixture1.deco, equalTo(fixture2.deco));
   }
 
   @Test
-  public void testEqualToOriginal() {
+  void testEqualToOriginal() {
     Fixture<String> fixture = new Fixture<>("test");
-    assertEquals(fixture.deco, "test");
+    assertThat(fixture.deco, equalTo("test"));
   }
 
   @Test
-  public void testHashCode() {
+  void testHashCode() {
     Fixture<String> fixture = new Fixture<>("test");
-    assertEquals(fixture.deco.hashCode(), "test".hashCode());
+    assertThat(fixture.deco.hashCode(), equalTo("test".hashCode()));
   }
 
   @Test
-  public void testUnwrapUnwrapped() {
+  void testUnwrapUnwrapped() {
     Fixture<String> fixture = new Fixture<>("");
     Object obj = new Object();
     assertThat(fixture.deco.unwrap(obj), sameInstance(obj));
@@ -85,13 +84,13 @@ public class DecoratedTest {
   }
 
   static class DecoratedString extends DecoratedTopmost<String> {
-    public DecoratedString(String original) {
+    DecoratedString(String original) {
       super(original);
     }
   }
 
   @Test
-  public void testUnwrapWrapped() {
+  void testUnwrapWrapped() {
     Fixture<String> fixture = new Fixture<>("");
     String test = "test";
     Decorated<String> decorated = new DecoratedString(test);
@@ -99,7 +98,7 @@ public class DecoratedTest {
   }
 
   @Test
-  public void testUnwrapListOfUnwrapped() {
+  void testUnwrapListOfUnwrapped() {
     Fixture<String> fixture = new Fixture<>("");
     String test = "test";
     List<Object> list = new ArrayList<>();
@@ -110,7 +109,7 @@ public class DecoratedTest {
   }
 
   @Test
-  public void testUnwrapListOfWrapped() {
+  void testUnwrapListOfWrapped() {
     Fixture<String> fixture = new Fixture<>("");
     String test = "test";
     Decorated<String> decorated = new DecoratedString(test);

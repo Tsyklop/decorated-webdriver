@@ -16,17 +16,17 @@
 
 package ru.stqa.selenium.decorated;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
-public class DecoratedTimeoutsTest {
+class DecoratedTimeoutsTest {
 
   private static class Fixture {
     WebDriver mockedDriver;
@@ -43,7 +43,7 @@ public class DecoratedTimeoutsTest {
   }
 
   @Test
-  public void testConstructor() {
+  void testConstructor() {
     Fixture fixture = new Fixture();
     assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
     assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
@@ -57,17 +57,17 @@ public class DecoratedTimeoutsTest {
   }
 
   @Test
-  public void testImplicitlyWait() {
+  void testImplicitlyWait() {
     verifyFunction($ -> $.implicitlyWait(10, TimeUnit.SECONDS));
   }
 
   @Test
-  public void testSetScriptTimeout() {
+  void testSetScriptTimeout() {
     verifyFunction($ -> $.setScriptTimeout(10, TimeUnit.SECONDS));
   }
 
   @Test
-  public void testPageLoadTimeout() {
+  void testPageLoadTimeout() {
     verifyFunction($ -> $.pageLoadTimeout(10, TimeUnit.SECONDS));
   }
 

@@ -16,18 +16,16 @@
 
 package ru.stqa.selenium.decorated.alerts;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
 
-import static com.googlecode.catchexception.throwable.CatchThrowable.catchThrowable;
-import static com.googlecode.catchexception.throwable.CatchThrowable.caughtThrowable;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class UnhandledAlertHandlingWebDriverTest {
+class UnhandledAlertHandlingWebDriverTest {
 
   private static class Fixture {
     WebDriver mockedDriver;
@@ -42,7 +40,7 @@ public class UnhandledAlertHandlingWebDriverTest {
   }
 
   public static class SimpleUnhandledAlertHandler implements UnhandledAlertHandler {
-    public String alertText;
+    String alertText;
 
     @Override
     public void handleUnhandledAlert(WebDriver driver, UnhandledAlertException ex) {
@@ -51,7 +49,7 @@ public class UnhandledAlertHandlingWebDriverTest {
   }
 
   @Test
-  public void testAlertIsIgnored() {
+  void testAlertIsIgnored() {
     Fixture fixture = new Fixture();
     SimpleUnhandledAlertHandler handler = new SimpleUnhandledAlertHandler();
     fixture.alertHandlingDriver.registerAlertHandler(handler);
@@ -66,7 +64,7 @@ public class UnhandledAlertHandlingWebDriverTest {
   }
 
   @Test
-  public void testSecondAlertIsNotIgnored() {
+  void testSecondAlertIsNotIgnored() {
     Fixture fixture = new Fixture();
     SimpleUnhandledAlertHandler handler = new SimpleUnhandledAlertHandler();
     fixture.alertHandlingDriver.registerAlertHandler(handler);
@@ -75,22 +73,20 @@ public class UnhandledAlertHandlingWebDriverTest {
       .thenThrow(new UnhandledAlertException("Unhandled alert", "Alert text 1"))
       .thenThrow(new UnhandledAlertException("Unhandled alert", "Alert text 2"));
 
-    catchThrowable(() -> fixture.driver.getTitle());
-    assertThat(caughtThrowable(), instanceOf(UnhandledAlertException.class));
-    assertThat(((UnhandledAlertException) caughtThrowable()).getAlertText(), is("Alert text 2"));
+    Throwable exception = assertThrows(UnhandledAlertException.class, () -> fixture.driver.getTitle());
+    assertThat(((UnhandledAlertException) exception).getAlertText(), is("Alert text 2"));
     assertThat(handler.alertText, is("Alert text 1"));
   }
 
   @Test
-  public void testOtherExceptionsAreNotIgnored() {
+  void testOtherExceptionsAreNotIgnored() {
     Fixture fixture = new Fixture();
     SimpleUnhandledAlertHandler handler = new SimpleUnhandledAlertHandler();
     fixture.alertHandlingDriver.registerAlertHandler(handler);
 
     when(fixture.mockedDriver.getTitle()).thenThrow(new WebDriverException());
 
-    catchThrowable(() -> fixture.driver.getTitle());
-    assertThat(caughtThrowable(), instanceOf(WebDriverException.class));
+    assertThrows(WebDriverException.class, () -> fixture.driver.getTitle());
   }
 
 }

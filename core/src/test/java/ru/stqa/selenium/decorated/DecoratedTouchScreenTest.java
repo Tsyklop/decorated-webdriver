@@ -16,7 +16,7 @@
 
 package ru.stqa.selenium.decorated;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.interactions.TouchScreen;
 import org.openqa.selenium.interactions.internal.Coordinates;
@@ -24,10 +24,10 @@ import org.openqa.selenium.interactions.internal.Coordinates;
 import java.util.function.Consumer;
 
 import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
-public class DecoratedTouchScreenTest {
+class DecoratedTouchScreenTest {
 
   private static class Fixture {
     WebDriver mockedDriver;
@@ -44,7 +44,7 @@ public class DecoratedTouchScreenTest {
   }
 
   @Test
-  public void testConstructor() {
+  void testConstructor() {
     Fixture fixture = new Fixture();
     assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
     assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
@@ -58,56 +58,56 @@ public class DecoratedTouchScreenTest {
   }
 
   @Test
-  public void testSingleTap() {
+  void testSingleTap() {
     final Coordinates coords = mock(Coordinates.class);
     verifyFunction($ -> $.singleTap(coords));
   }
 
   @Test
-  public void testDoubleTap() {
+  void testDoubleTap() {
     final Coordinates coords = mock(Coordinates.class);
     verifyFunction($ -> $.doubleTap(coords));
   }
 
   @Test
-  public void testLongPress() {
+  void testLongPress() {
     final Coordinates coords = mock(Coordinates.class);
     verifyFunction($ -> $.longPress(coords));
   }
 
   @Test
-  public void testDown() {
+  void testDown() {
     verifyFunction($ -> $.down(10, 20));
   }
 
   @Test
-  public void testUp() {
+  void testUp() {
     verifyFunction($ -> $.up(10, 20));
   }
 
   @Test
-  public void testMove() {
+  void testMove() {
     verifyFunction($ -> $.move(10, 20));
   }
 
   @Test
-  public void testScroll() {
+  void testScroll() {
     verifyFunction($ -> $.scroll(10, 20));
   }
 
   @Test
-  public void testScrollRelative() {
+  void testScrollRelative() {
     final Coordinates coords = mock(Coordinates.class);
     verifyFunction($ -> $.scroll(coords, 10, 20));
   }
 
   @Test
-  public void testFlick() {
+  void testFlick() {
     verifyFunction($ -> $.flick(10, 20));
   }
 
   @Test
-  public void testFlickRelative() {
+  void testFlickRelative() {
     final Coordinates coords = mock(Coordinates.class);
     verifyFunction($ -> $.flick(coords, 10, 20, 3));
   }

@@ -17,8 +17,9 @@
 package ru.stqa.selenium.wait;
 
 import com.google.common.collect.Lists;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.HasInputDevices;
@@ -32,18 +33,18 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-public class ImplicitlyWaitingWebDriverTest {
+class ImplicitlyWaitingWebDriverTest {
 
   private TestingClock clock;
   private WebDriver mockedDriver;
   private WebDriver driver;
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     clock = new TestingClock();
     mockedDriver = getMockedDriver();
     driver = new ImplicitlyWaitingWebDriver(mockedDriver, clock, clock, 1, 100).getActivated();
@@ -61,7 +62,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void findElementShouldImplicitlyWaitForAnElementToBePresent() {
+  void findElementShouldImplicitlyWaitForAnElementToBePresent() {
     final WebElement mockedElement = mock(WebElement.class);
 
     when(mockedDriver.findElement(By.name("foo")))
@@ -77,23 +78,18 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void findElementShouldThrowIfElementIsNotFound() {
+  void findElementShouldThrowIfElementIsNotFound() {
     when(mockedDriver.findElement(By.name("foo")))
         .thenThrow(NoSuchElementException.class);
 
-    try {
-      driver.findElement(By.name("foo"));
-      fail("Exception expected");
-    } catch (Throwable t) {
-      assertThat(t, instanceOf(NoSuchElementException.class));
-    }
+    assertThrows(NoSuchElementException.class, () -> driver.findElement(By.name("foo")));
 
     assertThat(clock.now(), is(1000L));
     verify(mockedDriver, times(11)).findElement(By.name("foo"));
   }
 
   @Test
-  public void findElementsShouldImplicitlyWaitForAtLeastOneElementToBePresent() {
+  void findElementsShouldImplicitlyWaitForAtLeastOneElementToBePresent() {
     final WebElement mockedElement1 = mock(WebElement.class);
     final WebElement mockedElement2 = mock(WebElement.class);
     final List<WebElement> mockedElements = Lists.newArrayList(mockedElement1, mockedElement2);
@@ -111,7 +107,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void findElementsShouldReturnEmptyListIfNoElementIsFound() {
+  void findElementsShouldReturnEmptyListIfNoElementIsFound() {
     when(mockedDriver.findElements(By.name("foo")))
         .thenReturn(new ArrayList<>());
 
@@ -123,7 +119,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void clickShouldImplicitlyWaitForTheElementToBeVisible() {
+  void clickShouldImplicitlyWaitForTheElementToBeVisible() {
     final WebElement mockedElement = mock(WebElement.class);
 
     when(mockedDriver.findElement(By.name("foo")))
@@ -142,7 +138,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void clickShouldThrowIfTheElementIsNotVisible() {
+  void clickShouldThrowIfTheElementIsNotVisible() {
     final WebElement mockedElement = mock(WebElement.class);
 
     when(mockedDriver.findElement(By.name("foo")))
@@ -151,12 +147,7 @@ public class ImplicitlyWaitingWebDriverTest {
     doThrow(ElementNotVisibleException.class)
         .when(mockedElement).click();
 
-    try {
-      driver.findElement(By.name("foo")).click();
-      fail("Exception expected");
-    } catch (Throwable t) {
-      assertThat(t, instanceOf(ElementNotVisibleException.class));
-    }
+    assertThrows(ElementNotVisibleException.class, () -> driver.findElement(By.name("foo")).click());
 
     assertThat(clock.now(), is(1000L));
     verify(mockedDriver, times(1)).findElement(By.name("foo"));
@@ -164,7 +155,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void submitShouldImplicitlyWaitForTheElementToBeVisible() {
+  void submitShouldImplicitlyWaitForTheElementToBeVisible() {
     final WebElement mockedElement = mock(WebElement.class);
 
     when(mockedDriver.findElement(By.name("foo")))
@@ -183,7 +174,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void submitShouldThrowIfTheElementIsNotVisible() {
+  void submitShouldThrowIfTheElementIsNotVisible() {
     final WebElement mockedElement = mock(WebElement.class);
 
     when(mockedDriver.findElement(By.name("foo")))
@@ -192,12 +183,7 @@ public class ImplicitlyWaitingWebDriverTest {
     doThrow(ElementNotVisibleException.class)
         .when(mockedElement).submit();
 
-    try {
-      driver.findElement(By.name("foo")).submit();
-      fail("Exception expected");
-    } catch (Throwable t) {
-      assertThat(t, instanceOf(ElementNotVisibleException.class));
-    }
+    assertThrows(ElementNotVisibleException.class, () -> driver.findElement(By.name("foo")).submit());
 
     assertThat(clock.now(), is(1000L));
     verify(mockedDriver, times(1)).findElement(By.name("foo"));
@@ -205,7 +191,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void sendKeysShouldImplicitlyWaitForTheElementToBeVisible() {
+  void sendKeysShouldImplicitlyWaitForTheElementToBeVisible() {
     final String text = "To be or not to be";
     final WebElement mockedElement = mock(WebElement.class);
 
@@ -225,7 +211,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void sendKeysShouldThrowIfTheElementIsNotVisible() {
+  void sendKeysShouldThrowIfTheElementIsNotVisible() {
     final String text = "To be or not to be";
     final WebElement mockedElement = mock(WebElement.class);
 
@@ -235,12 +221,7 @@ public class ImplicitlyWaitingWebDriverTest {
     doThrow(ElementNotVisibleException.class)
         .when(mockedElement).sendKeys(text);
 
-    try {
-      driver.findElement(By.name("foo")).sendKeys(text);
-      fail("Exception expected");
-    } catch (Throwable t) {
-      assertThat(t, instanceOf(ElementNotVisibleException.class));
-    }
+    assertThrows(ElementNotVisibleException.class, () -> driver.findElement(By.name("foo")).sendKeys(text));
 
     assertThat(clock.now(), is(1000L));
     verify(mockedDriver, times(1)).findElement(By.name("foo"));
@@ -248,7 +229,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void clearShouldImplicitlyWaitForTheElementToBeVisible() {
+  void clearShouldImplicitlyWaitForTheElementToBeVisible() {
     final WebElement mockedElement = mock(WebElement.class);
 
     when(mockedDriver.findElement(By.name("foo")))
@@ -267,7 +248,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void clearShouldThrowIfTheElementIsNotVisible() {
+  void clearShouldThrowIfTheElementIsNotVisible() {
     final WebElement mockedElement = mock(WebElement.class);
 
     when(mockedDriver.findElement(By.name("foo")))
@@ -276,12 +257,7 @@ public class ImplicitlyWaitingWebDriverTest {
     doThrow(new ElementNotVisibleException(""))
         .when(mockedElement).clear();
 
-    try {
-      driver.findElement(By.name("foo")).clear();
-      fail("Exception expected");
-    } catch (Throwable t) {
-      assertThat(t, instanceOf(ElementNotVisibleException.class));
-    }
+    assertThrows(ElementNotVisibleException.class, () -> driver.findElement(By.name("foo")).clear());
 
     assertThat(clock.now(), is(1000L));
     verify(mockedDriver, times(1)).findElement(By.name("foo"));
@@ -289,7 +265,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void isSelectedShouldImplicitlyWaitForTheElementToBeVisible() {
+  void isSelectedShouldImplicitlyWaitForTheElementToBeVisible() {
     final WebElement mockedElement = mock(WebElement.class);
 
     when(mockedDriver.findElement(By.name("foo")))
@@ -309,7 +285,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void isSelectedShouldImplicitlyWaitForTheElementToBeVisibleEvenIfTheElementIsNotSelected() {
+  void isSelectedShouldImplicitlyWaitForTheElementToBeVisibleEvenIfTheElementIsNotSelected() {
     final WebElement mockedElement = mock(WebElement.class);
 
     when(mockedDriver.findElement(By.name("foo")))
@@ -329,7 +305,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void isSelectedShouldThrowIfTheElementIsNotVisible() {
+  void isSelectedShouldThrowIfTheElementIsNotVisible() {
     final WebElement mockedElement = mock(WebElement.class);
 
     when(mockedDriver.findElement(By.name("foo")))
@@ -338,12 +314,7 @@ public class ImplicitlyWaitingWebDriverTest {
     when(mockedElement.isSelected())
         .thenThrow(ElementNotVisibleException.class);
 
-    try {
-      driver.findElement(By.name("foo")).isSelected();
-      fail("Exception expected");
-    } catch (Throwable t) {
-      assertThat(t, instanceOf(ElementNotVisibleException.class));
-    }
+    assertThrows(ElementNotVisibleException.class, () -> driver.findElement(By.name("foo")).isSelected());
 
     assertThat(clock.now(), is(1000L));
     verify(mockedDriver, times(1)).findElement(By.name("foo"));
@@ -351,7 +322,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void isEnabledShouldImplicitlyWaitForTheElementToBeVisible() {
+  void isEnabledShouldImplicitlyWaitForTheElementToBeVisible() {
     final WebElement mockedElement = mock(WebElement.class);
 
     when(mockedDriver.findElement(By.name("foo")))
@@ -371,7 +342,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void isEnabledShouldImplicitlyWaitForTheElementToBeVisibleEvenIfTheElementIsNotEnabled() {
+  void isEnabledShouldImplicitlyWaitForTheElementToBeVisibleEvenIfTheElementIsNotEnabled() {
     final WebElement mockedElement = mock(WebElement.class);
 
     when(mockedDriver.findElement(By.name("foo")))
@@ -391,7 +362,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void isEnabledShouldThrowIfTheElementIsNotVisible() {
+  void isEnabledShouldThrowIfTheElementIsNotVisible() {
     final WebElement mockedElement = mock(WebElement.class);
 
     when(mockedDriver.findElement(By.name("foo")))
@@ -400,12 +371,7 @@ public class ImplicitlyWaitingWebDriverTest {
     when(mockedElement.isEnabled())
         .thenThrow(ElementNotVisibleException.class);
 
-    try {
-      driver.findElement(By.name("foo")).isEnabled();
-      fail("Exception expected");
-    } catch (Throwable t) {
-      assertThat(t, instanceOf(ElementNotVisibleException.class));
-    }
+    assertThrows(ElementNotVisibleException.class, () -> driver.findElement(By.name("foo")).isEnabled());
 
     assertThat(clock.now(), is(1000L));
     verify(mockedDriver, times(1)).findElement(By.name("foo"));
@@ -413,7 +379,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void findElementInAnotherElementShouldImplicitlyWaitForAnElementToBePresent() {
+  void findElementInAnotherElementShouldImplicitlyWaitForAnElementToBePresent() {
     final WebElement mockedElement = mock(WebElement.class);
     final WebElement mockedElement2 = mock(WebElement.class);
 
@@ -437,7 +403,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void findElementInAnotherElementShouldThrowIfElementIsNotFound() {
+  void findElementInAnotherElementShouldThrowIfElementIsNotFound() {
     final WebElement mockedElement = mock(WebElement.class);
 
     when(mockedDriver.findElement(By.name("foo")))
@@ -450,12 +416,7 @@ public class ImplicitlyWaitingWebDriverTest {
 
     WebElement element = driver.findElement(By.name("foo"));
 
-    try {
-      element.findElement(By.name("bar"));
-      fail("Exception expected");
-    } catch (Throwable t) {
-      assertThat(t, instanceOf(NoSuchElementException.class));
-    }
+    assertThrows(NoSuchElementException.class, () -> element.findElement(By.name("bar")));
 
     assertThat(clock.now(), is(1200L));
     verify(mockedDriver, times(3)).findElement(By.name("foo"));
@@ -463,7 +424,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void findElementsInAnotherElementShouldImplicitlyWaitForAtLeastOneElementToBePresent() {
+  void findElementsInAnotherElementShouldImplicitlyWaitForAtLeastOneElementToBePresent() {
     final WebElement mockedElement = mock(WebElement.class);
     final WebElement mockedElement1 = mock(WebElement.class);
     final WebElement mockedElement2 = mock(WebElement.class);
@@ -489,7 +450,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void findElementsInAnotherElementShouldReturnEmptyListIfNoElementIsFound() {
+  void findElementsInAnotherElementShouldReturnEmptyListIfNoElementIsFound() {
     final WebElement mockedElement = mock(WebElement.class);
 
     when(mockedDriver.findElement(By.name("foo")))
@@ -510,7 +471,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void findElementChainShouldImplicitlyWaitForAnElementToBePresent() {
+  void findElementChainShouldImplicitlyWaitForAnElementToBePresent() {
     final WebElement mockedElement1 = mock(WebElement.class);
     final WebElement mockedElement2 = mock(WebElement.class);
     final WebElement mockedElement3 = mock(WebElement.class);
@@ -542,7 +503,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void findElementChainShouldThrowIfElementIsNotFound() {
+  void findElementChainShouldThrowIfElementIsNotFound() {
     final WebElement mockedElement1 = mock(WebElement.class);
     final WebElement mockedElement2 = mock(WebElement.class);
 
@@ -562,12 +523,7 @@ public class ImplicitlyWaitingWebDriverTest {
     WebElement element1 = driver.findElement(By.name("foo"));
     WebElement element2 = element1.findElement(By.name("bar"));
 
-    try {
-      element2.findElement(By.name("baz"));
-      fail("Exception expected");
-    } catch (Throwable t) {
-      assertThat(t, instanceOf(NoSuchElementException.class));
-    }
+    assertThrows(NoSuchElementException.class, () -> element2.findElement(By.name("baz")));
 
     assertThat(clock.now(), is(1400L));
     verify(mockedDriver, times(3)).findElement(By.name("foo"));
@@ -576,7 +532,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void findElementsChainShouldImplicitlyWaitForAnElementToBePresent() {
+  void findElementsChainShouldImplicitlyWaitForAnElementToBePresent() {
     final WebElement mockedElement1 = mock(WebElement.class);
     final WebElement mockedElement2 = mock(WebElement.class);
     final WebElement mockedElement3 = mock(WebElement.class);
@@ -608,7 +564,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void findElementsChainShouldThrowIfElementIsNotFound() {
+  void findElementsChainShouldThrowIfElementIsNotFound() {
     final WebElement mockedElement1 = mock(WebElement.class);
     final WebElement mockedElement2 = mock(WebElement.class);
 
@@ -637,7 +593,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void switchToAlertShouldImplicitlyWaitForAnAlertToBePresent() {
+  void switchToAlertShouldImplicitlyWaitForAnAlertToBePresent() {
     final WebDriver.TargetLocator mockedSwitch = mock(WebDriver.TargetLocator.class);
     final Alert mockedAlert = mock(Alert.class);
 
@@ -656,19 +612,14 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void switchToAlertShouldThrowIfThereIsNoAlert() {
+  void switchToAlertShouldThrowIfThereIsNoAlert() {
     final WebDriver.TargetLocator mockedSwitch = mock(WebDriver.TargetLocator.class);
 
     when(mockedDriver.switchTo()).thenReturn(mockedSwitch);
     when(mockedSwitch.alert())
         .thenThrow(NoAlertPresentException.class);
 
-    try {
-      driver.switchTo().alert();
-      fail("Exception expected");
-    } catch (Throwable t) {
-      assertThat(t, instanceOf(NoAlertPresentException.class));
-    }
+    assertThrows(NoAlertPresentException.class, () -> driver.switchTo().alert());
 
     assertThat(clock.now(), is(1000L));
     verify(mockedDriver, times(1)).switchTo();
@@ -676,7 +627,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void switchToFrameByIndexShouldImplicitlyWaitForAFrameToBePresent() {
+  void switchToFrameByIndexShouldImplicitlyWaitForAFrameToBePresent() {
     final WebDriver.TargetLocator mockedSwitch = mock(WebDriver.TargetLocator.class);
 
     when(mockedDriver.switchTo()).thenReturn(mockedSwitch);
@@ -694,19 +645,14 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void switchToFrameByIndexShouldThrowIfThereIsNoFrame() {
+  void switchToFrameByIndexShouldThrowIfThereIsNoFrame() {
     final WebDriver.TargetLocator mockedSwitch = mock(WebDriver.TargetLocator.class);
 
     when(mockedDriver.switchTo()).thenReturn(mockedSwitch);
     when(mockedSwitch.frame(1))
         .thenThrow(NoSuchFrameException.class);
 
-    try {
-      driver.switchTo().frame(1);
-      fail("Exception expected");
-    } catch (Throwable t) {
-      assertThat(t, instanceOf(NoSuchFrameException.class));
-    }
+    assertThrows(NoSuchFrameException.class, () -> driver.switchTo().frame(1));
 
     assertThat(clock.now(), is(1000L));
     verify(mockedDriver, times(1)).switchTo();
@@ -714,7 +660,7 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void switchToFrameByNameShouldImplicitlyWaitForAFrameToBePresent() {
+  void switchToFrameByNameShouldImplicitlyWaitForAFrameToBePresent() {
     final WebDriver.TargetLocator mockedSwitch = mock(WebDriver.TargetLocator.class);
 
     when(mockedDriver.switchTo()).thenReturn(mockedSwitch);
@@ -732,19 +678,14 @@ public class ImplicitlyWaitingWebDriverTest {
   }
 
   @Test
-  public void switchToFrameByNameShouldThrowIfThereIsNoFrame() {
+  void switchToFrameByNameShouldThrowIfThereIsNoFrame() {
     final WebDriver.TargetLocator mockedSwitch = mock(WebDriver.TargetLocator.class);
 
     when(mockedDriver.switchTo()).thenReturn(mockedSwitch);
     when(mockedSwitch.frame("myname"))
         .thenThrow(NoSuchFrameException.class);
 
-    try {
-      driver.switchTo().frame("myname");
-      fail("Exception expected");
-    } catch (Throwable t) {
-      assertThat(t, instanceOf(NoSuchFrameException.class));
-    }
+    assertThrows(NoSuchFrameException.class, () -> driver.switchTo().frame("myname"));
 
     assertThat(clock.now(), is(1000L));
     verify(mockedDriver, times(1)).switchTo();
@@ -754,7 +695,7 @@ public class ImplicitlyWaitingWebDriverTest {
   private interface LocatableElement extends WebElement, Locatable {}
 
   @Test
-  public void interactionsClickShouldImplicitlyWaitForTheElementToBeVisible() {
+  void interactionsClickShouldImplicitlyWaitForTheElementToBeVisible() {
     final Keyboard mockedKeyboard = mock(Keyboard.class);
     final Mouse mockedMouse = mock(Mouse.class);
 

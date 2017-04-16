@@ -16,7 +16,7 @@
 
 package ru.stqa.selenium.decorated;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.internal.Coordinates;
 import org.openqa.selenium.internal.Locatable;
@@ -27,10 +27,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
-public class DecoratedWebElementTest {
+class DecoratedWebElementTest {
 
   private static class Fixture {
     WebDriver mockedDriver;
@@ -47,7 +47,7 @@ public class DecoratedWebElementTest {
   }
 
   @Test
-  public void testConstructor() {
+  void testConstructor() {
     Fixture fixture = new Fixture();
     assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
     assertThat(fixture.mocked, sameInstance(fixture.decorated.getWrappedElement()));
@@ -84,94 +84,94 @@ public class DecoratedWebElementTest {
   }
 
   @Test
-  public void testSendKeys() {
+  void testSendKeys() {
     verifyFunction($ -> $.sendKeys("test"));
   }
 
   @Test
-  public void testClick() {
+  void testClick() {
     verifyFunction(WebElement::click);
   }
 
   @Test
-  public void testSubmit() {
+  void testSubmit() {
     verifyFunction(WebElement::submit);
   }
 
   @Test
-  public void testClear() {
+  void testClear() {
     verifyFunction(WebElement::clear);
   }
 
   @Test
-  public void testGetText() {
+  void testGetText() {
     verifyFunction(WebElement::getText, "test");
   }
 
   @Test
-  public void testGetTagName() {
+  void testGetTagName() {
     verifyFunction(WebElement::getTagName, "input");
   }
 
   @Test
-  public void testGetAttribute() {
+  void testGetAttribute() {
     verifyFunction($ -> $.getAttribute("value"), "test");
   }
 
   @Test
-  public void testIsSelected() {
+  void testIsSelected() {
     verifyFunction(WebElement::isSelected, true);
   }
 
   @Test
-  public void testIsEnabled() {
+  void testIsEnabled() {
     verifyFunction(WebElement::isEnabled, true);
   }
 
   @Test
-  public void testIsDisplayed() {
+  void testIsDisplayed() {
     verifyFunction(WebElement::isDisplayed, true);
   }
 
   @Test
-  public void testGetLocation() {
+  void testGetLocation() {
     verifyFunction(WebElement::getLocation, new Point(10, 20));
   }
 
   @Test
-  public void testGetSize() {
+  void testGetSize() {
     verifyFunction(WebElement::getSize, new Dimension(100, 200));
   }
 
   @Test
-  public void testGetRect() {
+  void testGetRect() {
     verifyFunction(WebElement::getRect, new Rectangle(new Point(10, 20), new Dimension(100, 200)));
   }
 
   @Test
-  public void testGetCssValue() {
+  void testGetCssValue() {
     verifyFunction($ -> $.getCssValue("color"), "red");
   }
 
   @Test
-  public void testGetCoordinates() {
+  void testGetCoordinates() {
     final Coordinates coords = mock(Coordinates.class);
     verifyDecoratingFunction($ -> ((Locatable) $).getCoordinates(), coords, Coordinates::onScreen);
   }
 
   @Test
-  public void testGetScreenshotAs() {
+  void testGetScreenshotAs() {
     verifyFunction($ -> $.getScreenshotAs(OutputType.BASE64), "xxx");
   }
 
   @Test
-  public void testFindElement() {
+  void testFindElement() {
     final WebElement found = mock(WebElement.class);
     verifyDecoratingFunction($ -> $.findElement(By.id("test")), found, WebElement::click);
   }
 
   @Test
-  public void testFindElements() {
+  void testFindElements() {
     Fixture fixture = new Fixture();
     WebElement found = mock(WebElement.class);
     List<WebElement> list = new ArrayList<>();

@@ -16,9 +16,7 @@
 
 package ru.stqa.selenium.decorated;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.*;
 import org.openqa.selenium.interactions.internal.Coordinates;
@@ -31,13 +29,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-public class DecoratedWebDriverTest {
-
-  @Rule
-  public ExpectedException expectedEx = ExpectedException.none();
+class DecoratedWebDriverTest {
 
   private static class Fixture {
     WebDriver mocked;
@@ -51,7 +47,7 @@ public class DecoratedWebDriverTest {
   }
 
   @Test
-  public void testConstructor() {
+  void testConstructor() {
     Fixture fixture = new Fixture();
     assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
     assertThat(fixture.mocked, sameInstance(fixture.decorated.getWrappedDriver()));
@@ -97,33 +93,33 @@ public class DecoratedWebDriverTest {
   }
 
   @Test
-  public void testGet() {
+  void testGet() {
     verifyFunction($ -> $.get("http://selenium2.ru/"));
   }
 
   @Test
-  public void testGetCurrentUrl() {
+  void testGetCurrentUrl() {
     verifyFunction(WebDriver::getCurrentUrl, "http://selenium2.ru/");
   }
 
   @Test
-  public void testGetTitle() {
+  void testGetTitle() {
     verifyFunction(WebDriver::getTitle, "test");
   }
 
   @Test
-  public void testGetPageSource() {
+  void testGetPageSource() {
     verifyFunction(WebDriver::getPageSource, "test");
   }
 
   @Test
-  public void testFindElement() {
+  void testFindElement() {
     final WebElement found = mock(WebElement.class);
     verifyDecoratingFunction($ -> $.findElement(By.id("test")), found, WebElement::click);
   }
 
   @Test
-  public void testFindElements() {
+  void testFindElements() {
     Fixture fixture = new Fixture();
     WebElement found = mock(WebElement.class);
     List<WebElement> list = new ArrayList<>();
@@ -141,101 +137,99 @@ public class DecoratedWebDriverTest {
   }
 
   @Test
-  public void testClose() {
+  void testClose() {
     verifyFunction(WebDriver::close);
   }
 
   @Test
-  public void testQuit() {
+  void testQuit() {
     verifyFunction(WebDriver::quit);
   }
 
   @Test
-  public void testGetWindowHandle() {
+  void testGetWindowHandle() {
     verifyFunction(WebDriver::getWindowHandle, "test");
   }
 
   @Test
-  public void testGetWindowHandles() {
+  void testGetWindowHandles() {
     Set<String> handles = new HashSet<>();
     handles.add("test");
     verifyFunction(WebDriver::getWindowHandles, handles);
   }
 
   @Test
-  public void testSwitchTo() {
+  void testSwitchTo() {
     final WebDriver.TargetLocator target = mock(WebDriver.TargetLocator.class);
     verifyDecoratingFunction(WebDriver::switchTo, target, WebDriver.TargetLocator::defaultContent);
   }
 
   @Test
-  public void testNavigate() {
+  void testNavigate() {
     final WebDriver.Navigation navigation = mock(WebDriver.Navigation.class);
     verifyDecoratingFunction(WebDriver::navigate, navigation, WebDriver.Navigation::refresh);
   }
 
   @Test
-  public void testManage() {
+  void testManage() {
     final WebDriver.Options options = mock(WebDriver.Options.class);
     verifyDecoratingFunction(WebDriver::manage, options, WebDriver.Options::deleteAllCookies);
   }
 
   @Test
-  public void testGetKeyboard() {
+  void testGetKeyboard() {
     final Keyboard keyboard = mock(Keyboard.class);
     verifyDecoratingFunction($ -> ((HasInputDevices) $).getKeyboard(), keyboard, k -> k.sendKeys("test"));
   }
 
   @Test
-  public void testGetMouse() {
+  void testGetMouse() {
     final Mouse  mouse = mock(Mouse.class);
     final Coordinates coords = mock(Coordinates.class);
     verifyDecoratingFunction($ -> ((HasInputDevices) $).getMouse(), mouse, m -> m.click(coords));
   }
 
   @Test
-  public void testGetTouchScreen() {
+  void testGetTouchScreen() {
     TouchScreen touch = mock(TouchScreen.class);
     final Coordinates coords = mock(Coordinates.class);
     verifyDecoratingFunction($ -> ((HasTouchScreen) $).getTouch(), touch, t -> t.singleTap(coords));
   }
 
   @Test
-  public void testExecuteScriptNotSupported() {
+  void testExecuteScriptNotSupported() {
     WebDriver mockedDriver = mock(WebDriver.class);
     DecoratedWebDriver decoratedDriver = new DecoratedWebDriver(mockedDriver);
 
-    expectedEx.expect(WebDriverException.class);
-    decoratedDriver.executeScript("...");
+    assertThrows(WebDriverException.class, () -> decoratedDriver.executeScript("..."));
   }
 
   @Test
-  public void testExecuteScriptThatReturnsAPrimitive() {
+  void testExecuteScriptThatReturnsAPrimitive() {
     verifyFunction($ -> ((JavascriptExecutor) $).executeScript("..."), 1);
   }
 
   @Test
-  public void testExecuteScriptThatReturnsAnElement() {
+  void testExecuteScriptThatReturnsAnElement() {
     WebElement element = mock(WebElement.class);
     verifyDecoratingFunction($ -> (WebElement) ((JavascriptExecutor) $).executeScript("..."), element, WebElement::click);
   }
 
   @Test
-  public void testExecuteAsyncScriptNotSupported() {
+  void testExecuteAsyncScriptNotSupported() {
     WebDriver mockedDriver = mock(WebDriver.class);
     DecoratedWebDriver decoratedDriver = new DecoratedWebDriver(mockedDriver);
 
-    expectedEx.expect(WebDriverException.class);
-    decoratedDriver.executeAsyncScript("...");
+    assertThrows(WebDriverException.class, () -> decoratedDriver.executeAsyncScript("..."));
   }
 
   @Test
-  public void testExecuteAsyncScriptThatReturnsAPrimitive() {
+  void testExecuteAsyncScriptThatReturnsAPrimitive() {
     verifyFunction($ -> ((JavascriptExecutor) $).executeAsyncScript("..."), 1);
   }
 
   @Test
-  public void testExecuteAsyncScriptThatReturnsAnElement() {
+  void testExecuteAsyncScriptThatReturnsAnElement() {
     WebElement element = mock(WebElement.class);
     verifyDecoratingFunction($ -> (WebElement) ((JavascriptExecutor) $).executeAsyncScript("..."), element, WebElement::click);
   }

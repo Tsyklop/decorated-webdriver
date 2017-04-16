@@ -16,7 +16,7 @@
 
 package ru.stqa.selenium.decorated;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
@@ -26,10 +26,10 @@ import java.util.function.Function;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
-public class DecoratedWindowTest {
+class DecoratedWindowTest {
 
   private static class Fixture {
     WebDriver mockedDriver;
@@ -46,7 +46,7 @@ public class DecoratedWindowTest {
   }
 
   @Test
-  public void testConstructor() {
+  void testConstructor() {
     Fixture fixture = new Fixture();
     assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
     assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
@@ -68,32 +68,32 @@ public class DecoratedWindowTest {
   }
 
   @Test
-  public void testSetSize() {
+  void testSetSize() {
     verifyFunction($ -> $.setSize(new Dimension(100, 200)));
   }
 
   @Test
-  public void testSetPosition() {
+  void testSetPosition() {
     verifyFunction($ -> $.setPosition(new Point(10, 20)));
   }
 
   @Test
-  public void testGetSize() {
+  void testGetSize() {
     verifyFunction(WebDriver.Window::getSize, new Dimension(100, 200));
   }
 
   @Test
-  public void testGetPosition() {
+  void testGetPosition() {
     verifyFunction(WebDriver.Window::getPosition, new Point(10, 20));
   }
 
   @Test
-  public void testMaximize() {
+  void testMaximize() {
     verifyFunction(WebDriver.Window::maximize);
   }
 
   @Test
-  public void testFullscreen() {
+  void testFullscreen() {
     verifyFunction(WebDriver.Window::fullscreen);
   }
 

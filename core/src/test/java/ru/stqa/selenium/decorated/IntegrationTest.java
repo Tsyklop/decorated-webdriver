@@ -15,7 +15,7 @@
  */
 package ru.stqa.selenium.decorated;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -27,13 +27,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-public class IntegrationTest {
+class IntegrationTest {
 
   @Test
-  public void canWrapASingleMethod() {
+  void canWrapASingleMethod() {
     final WebDriver mockedDriver = mock(WebDriver.class);
     final WebElement mockedElement = mock(WebElement.class, "element1");
     final WebElement mockedElement2 = mock(WebElement.class, "element2");
@@ -84,19 +85,19 @@ public class IntegrationTest {
     }
   }
 
-  @Test(expected = NoSuchElementException.class)
-  public void canPropagateExceptions() {
+  @Test
+  void canPropagateExceptions() {
     final WebDriver mockedDriver = mock(WebDriver.class);
 
     when(mockedDriver.findElement(By.name("foo"))).thenThrow(NoSuchElementException.class);
 
     final WebDriver driver = new Activator<WebDriver>().activate(new DecoratedWebDriver(mockedDriver));
 
-    driver.findElement(By.name("foo"));
+    assertThrows(NoSuchElementException.class, () -> driver.findElement(By.name("foo")));
   }
 
   @Test
-  public void canPreventExceptions() {
+  void canPreventExceptions() {
     final WebDriver mockedDriver = mock(WebDriver.class);
 
     when(mockedDriver.findElement(By.name("foo"))).thenThrow(NoSuchElementException.class);

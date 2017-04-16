@@ -16,17 +16,17 @@
 
 package ru.stqa.selenium.decorated;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.interactions.Keyboard;
 
 import java.util.function.Consumer;
 
 import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
-public class DecoratedKeyboardTest {
+class DecoratedKeyboardTest {
 
   private static class Fixture {
     WebDriver mockedDriver;
@@ -43,7 +43,7 @@ public class DecoratedKeyboardTest {
   }
 
   @Test
-  public void testConstructor() {
+  void testConstructor() {
     Fixture fixture = new Fixture();
     assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
     assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
@@ -57,17 +57,17 @@ public class DecoratedKeyboardTest {
   }
 
   @Test
-  public void testSendKeys() {
+  void testSendKeys() {
     verifyFunction($ -> $.sendKeys("test"));
   }
 
   @Test
-  public void testPressKey() {
+  void testPressKey() {
     verifyFunction($ -> $.pressKey("t"));
   }
 
   @Test
-  public void testReleaseKey() {
+  void testReleaseKey() {
     verifyFunction($ -> $.releaseKey("t"));
   }
 

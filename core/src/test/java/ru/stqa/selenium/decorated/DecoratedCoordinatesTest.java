@@ -16,7 +16,7 @@
 
 package ru.stqa.selenium.decorated;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -26,10 +26,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
-public class DecoratedCoordinatesTest {
+class DecoratedCoordinatesTest {
 
   private static class Fixture {
     WebDriver mockedDriver;
@@ -46,7 +46,7 @@ public class DecoratedCoordinatesTest {
   }
 
   @Test
-  public void testConstructor() {
+  void testConstructor() {
     Fixture fixture = new Fixture();
     assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
     assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
@@ -75,22 +75,22 @@ public class DecoratedCoordinatesTest {
   }
 
   @Test
-  public void testOnScreen() {
+  void testOnScreen() {
     verifyFunction(Coordinates::onScreen, new Point(10, 20));
   }
 
   @Test
-  public void testInViewPort() {
+  void testInViewPort() {
     verifyFunction(Coordinates::inViewPort, new Point(10, 20));
   }
 
   @Test
-  public void testOnPage() {
+  void testOnPage() {
     verifyFunction(Coordinates::onPage, new Point(10, 20));
   }
 
   @Test
-  public void testGetAuxiliary() {
+  void testGetAuxiliary() {
     final WebElement element = mock(WebElement.class);
     verifyDecoratingFunction($ -> (WebElement) $.getAuxiliary(), element, WebElement::click);
   }

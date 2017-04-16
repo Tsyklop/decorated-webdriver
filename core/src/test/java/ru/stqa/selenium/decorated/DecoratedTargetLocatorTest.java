@@ -16,7 +16,7 @@
 
 package ru.stqa.selenium.decorated;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -26,10 +26,10 @@ import java.util.function.Function;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
-public class DecoratedTargetLocatorTest {
+class DecoratedTargetLocatorTest {
 
   private static class Fixture {
     WebDriver mockedDriver;
@@ -46,7 +46,7 @@ public class DecoratedTargetLocatorTest {
   }
 
   @Test
-  public void testConstructor() {
+  void testConstructor() {
     Fixture fixture = new Fixture();
     assertThat(fixture.mocked, sameInstance(fixture.decorated.getOriginal()));
     assertThat(fixture.decoratedDriver, sameInstance(fixture.decorated.getTopmostDecorated()));
@@ -81,44 +81,44 @@ public class DecoratedTargetLocatorTest {
   }
 
   @Test
-  public void testWindow() {
+  void testWindow() {
     verifyDecoratingFunction($ -> $.window("test"));
   }
 
   @Test
-  public void testFrameByIndex() {
+  void testFrameByIndex() {
     verifyDecoratingFunction($ -> $.frame(3));
   }
 
   @Test
-  public void testFrameByString() {
+  void testFrameByString() {
     verifyDecoratingFunction($ -> $.frame("test"));
   }
 
   @Test
-  public void testFrameByReference() {
+  void testFrameByReference() {
     final WebElement frame = mock(WebElement.class);
     verifyDecoratingFunction($ -> $.frame(frame));
   }
 
   @Test
-  public void testParentFrame() {
+  void testParentFrame() {
     verifyDecoratingFunction(WebDriver.TargetLocator::parentFrame);
   }
 
   @Test
-  public void testDefaultContent() {
+  void testDefaultContent() {
     verifyDecoratingFunction(WebDriver.TargetLocator::defaultContent);
   }
 
   @Test
-  public void testActiveElement() {
+  void testActiveElement() {
     WebElement active = mock(WebElement.class);
     verifyDecoratingFunction(WebDriver.TargetLocator::activeElement, active, WebElement::click);
   }
 
   @Test
-  public void testAlert() {
+  void testAlert() {
     Alert alert = mock(Alert.class);
     verifyDecoratingFunction(WebDriver.TargetLocator::alert, alert, Alert::dismiss);
   }
