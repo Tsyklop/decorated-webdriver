@@ -4,11 +4,11 @@
   <parent>
     <groupId>ru.stqa.selenium</groupId>
     <artifactId>decorated-webdriver-parent</artifactId>
-    <version>4.0</version>
+    <version>4.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>implicitly-waiting-webdriver</artifactId>
-  <version>4.0</version>
+  <version>4.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>implicitly-waiting-webdriver</name>
