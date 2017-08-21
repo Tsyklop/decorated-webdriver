@@ -3,7 +3,7 @@
 
   <groupId>ru.stqa.selenium</groupId>
   <artifactId>decorated-webdriver-parent</artifactId>
-  <version>4.1-SNAPSHOT</version>
+  <version>SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>decorated-webdriver-parent</name>
@@ -83,7 +83,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <decoratedWebdriver.version>4.0</decoratedWebdriver.version>
+    <decoratedWebdriver.version>4.1-SNAPSHOT</decoratedWebdriver.version>
   </properties>
 
   <build>
