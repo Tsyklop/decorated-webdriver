@@ -115,6 +115,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>flatten-maven-plugin</artifactId>
         <configuration>
+          <flattenMode>oss</flattenMode>
         </configuration>
         <executions>
           <execution>
