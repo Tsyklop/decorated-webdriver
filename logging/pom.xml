@@ -4,11 +4,11 @@
   <parent>
     <groupId>ru.stqa.selenium</groupId>
     <artifactId>decorated-webdriver-parent</artifactId>
-    <version>SNAPSHOT</version>
+    <version>4.0</version>
   </parent>
 
   <artifactId>logging-webdriver</artifactId>
-  <version>${decoratedWebdriver.version}</version>
+  <version>4.0</version>
   <packaging>jar</packaging>
 
   <name>logging-webdriver</name>
