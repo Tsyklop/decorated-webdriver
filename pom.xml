@@ -83,7 +83,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <decoratedWebdriver.version>4.0-SNAPSHOT</decoratedWebdriver.version>
+    <decoratedWebdriver.version>4.0</decoratedWebdriver.version>
   </properties>
 
   <build>
