@@ -19,10 +19,12 @@ package ru.stqa.selenium.decorated.events;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Keyboard;
 import org.openqa.selenium.interactions.Mouse;
+import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.interactions.TouchScreen;
 import org.openqa.selenium.interactions.internal.Coordinates;
 
 import java.net.URL;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -241,4 +243,10 @@ public interface WebDriverListener {
 
   default void beforeFlick(TouchScreen touchScreen, Coordinates where, int xOffset, int yOffset, int speed) {}
   default void afterFlick(TouchScreen touchScreen, Coordinates where, int xOffset, int yOffset, int speed) {}
+
+  default void beforePerform(WebDriver driver, Collection<Sequence> actions) {}
+  default void afterPerform(WebDriver driver, Collection<Sequence> actions) {}
+
+  default void beforeResetInputState(WebDriver driver) {}
+  default void afterResetInputState(WebDriver driver) {}
 }

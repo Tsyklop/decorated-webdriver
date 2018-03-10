@@ -22,6 +22,7 @@ import org.openqa.selenium.interactions.*;
 import org.openqa.selenium.interactions.internal.Coordinates;
 import org.openqa.selenium.internal.WrapsDriver;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -35,7 +36,7 @@ import java.util.Set;
  * WebDriver driver = new MyWebDriverWrapper(originalDriver, otherParameter).getDriver();</code>
  */
 public class DecoratedWebDriver extends DecoratedTopmost<WebDriver>
-    implements WebDriver, WrapsDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen {
+    implements WebDriver, WrapsDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen, Interactive {
 
   public DecoratedWebDriver(WebDriver driver) {
     super(driver);
@@ -178,7 +179,7 @@ public class DecoratedWebDriver extends DecoratedTopmost<WebDriver>
     if (driver instanceof JavascriptExecutor) {
       return wrapObject(((JavascriptExecutor) driver).executeScript(script, args));
     } else {
-      throw new WebDriverException("Wrapped webdriver does not support JavascriptExecutor: " + driver);
+      throw new WebDriverException("Wrapped webdriver does not implement JavascriptExecutor: " + driver);
     }
   }
 
@@ -188,7 +189,7 @@ public class DecoratedWebDriver extends DecoratedTopmost<WebDriver>
     if (driver instanceof JavascriptExecutor) {
       return wrapObject(((JavascriptExecutor) driver).executeAsyncScript(script, args));
     } else {
-      throw new WebDriverException("Wrapped webdriver does not support JavascriptExecutor: " + driver);
+      throw new WebDriverException("Wrapped webdriver does not implement JavascriptExecutor: " + driver);
     }
   }
 
@@ -207,4 +208,23 @@ public class DecoratedWebDriver extends DecoratedTopmost<WebDriver>
     return createDecorated(((HasTouchScreen) getOriginal()).getTouch()).getActivated();
   }
 
+  @Override
+  public void perform(Collection<Sequence> actions) {
+    WebDriver driver = getOriginal();
+    if (driver instanceof Interactive) {
+      ((Interactive) driver).perform(actions);
+    } else {
+      throw new WebDriverException("Wrapped webdriver does not implement Interactive: " + driver);
+    }
+  }
+
+  @Override
+  public void resetInputState() {
+    WebDriver driver = getOriginal();
+    if (driver instanceof Interactive) {
+      ((Interactive) driver).resetInputState();
+    } else {
+      throw new WebDriverException("Wrapped webdriver does not implement Interactive: " + driver);
+    }
+  }
 }

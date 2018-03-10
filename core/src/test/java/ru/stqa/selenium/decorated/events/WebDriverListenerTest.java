@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 
 class WebDriverListenerTest {
 
-  interface WebDriverWithJS extends WebDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen {}
+  interface WebDriverWithJS extends WebDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen, Interactive {}
 
   private static class Fixture {
     WebDriverWithJS mockedDriver;
@@ -1533,4 +1533,24 @@ class WebDriverListenerTest {
     verifyNoMoreInteractions(fixture.listener);
   }
 
+  @Test
+  void canFireEventForPerformActions() {
+    Fixture fixture = new Fixture();
+
+    final Mouse mouse = mock(Mouse.class);
+    when(fixture.mockedDriver.getMouse()).thenReturn(mouse);
+    final Keyboard keyboard = mock(Keyboard.class);
+    when(fixture.mockedDriver.getKeyboard()).thenReturn(keyboard);
+
+    new Actions(fixture.driver).click().perform();
+
+    verify(fixture.mockedDriver, times(1)).getMouse();
+    verify(fixture.mockedDriver, times(1)).getKeyboard();
+    verify(fixture.mockedDriver, times(1)).perform(anyCollection());
+    verifyNoMoreInteractions(fixture.mockedDriver);
+    verify(fixture.listener, times(1)).beforePerform(same(fixture.mockedDriver), anyCollection());
+    verify(fixture.listener, times(1)).afterPerform(same(fixture.mockedDriver), anyCollection());
+    verifyNoMoreInteractions(fixture.listener);
+    verifyZeroInteractions(mouse, keyboard);
+  }
 }
