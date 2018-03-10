@@ -19,7 +19,6 @@ package ru.stqa.selenium.decorated;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,25 +28,23 @@ public class Activator<T> {
   public final T activate(final Decorated<T> decorated) {
     final Set<Class<?>> decoratedInterfaces = extractInterfaces(decorated);
 
-    final InvocationHandler handler = new InvocationHandler() {
-      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        try {
-          if (! decoratedInterfaces.contains(method.getDeclaringClass())) {
-            return method.invoke(decorated.getOriginal(), args);
-          }
-          boolean isUnwrap = method.getName().equals("getOriginal");
-          if (! isUnwrap) {
-            decorated.beforeMethod(method, args);
-          }
-          Object result = decorated.callMethod(method, args);
-          if (! isUnwrap) {
-            decorated.afterMethod(method, result, args);
-          }
-          return result;
-
-        } catch (InvocationTargetException e) {
-          return decorated.onError(method, e, args);
+    final InvocationHandler handler = (proxy, method, args) -> {
+      try {
+        if (! decoratedInterfaces.contains(method.getDeclaringClass())) {
+          return method.invoke(decorated.getOriginal(), args);
         }
+        boolean isUnwrap = method.getName().equals("getOriginal");
+        if (! isUnwrap) {
+          decorated.beforeMethod(method, args);
+        }
+        Object result = decorated.callMethod(method, args);
+        if (! isUnwrap) {
+          decorated.afterMethod(method, result, args);
+        }
+        return result;
+
+      } catch (InvocationTargetException e) {
+        return decorated.onError(method, e, args);
       }
     };
 

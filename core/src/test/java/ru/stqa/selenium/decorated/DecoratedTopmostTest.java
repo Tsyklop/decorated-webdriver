@@ -70,7 +70,7 @@ class DecoratedTopmostTest {
   }
 
   @Test
-  void testDoesNotDelegateDomesticMethods() throws Throwable {
+  void testDoesNotDelegateDomesticMethods() {
     Target target = mock(Target.class);
     when(target.hello("who")).thenReturn("world");
     SemiFixture fixture = new SemiFixture(target);

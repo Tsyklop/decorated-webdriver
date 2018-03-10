@@ -18,8 +18,6 @@
 package ru.stqa.selenium.decorated;
 
 import org.openqa.selenium.Alert;
-import org.openqa.selenium.Beta;
-import org.openqa.selenium.security.Credentials;
 
 public class DecoratedAlert extends DecoratedChild<Alert,DecoratedWebDriver> implements Alert {
 
@@ -30,12 +28,6 @@ public class DecoratedAlert extends DecoratedChild<Alert,DecoratedWebDriver> imp
   @Override
   public void accept() {
     getOriginal().accept();
-  }
-
-  @Override
-  @Beta
-  public void authenticateUsing(Credentials creds) {
-    getOriginal().authenticateUsing(creds);
   }
 
   @Override
@@ -51,10 +43,5 @@ public class DecoratedAlert extends DecoratedChild<Alert,DecoratedWebDriver> imp
   @Override
   public void sendKeys(String text) {
     getOriginal().sendKeys(text);
-  }
-
-  @Override
-  public void setCredentials(Credentials credentials) {
-    getOriginal().setCredentials(credentials);
   }
 }

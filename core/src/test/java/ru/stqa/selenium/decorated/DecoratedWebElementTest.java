@@ -19,7 +19,7 @@ package ru.stqa.selenium.decorated;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.internal.Coordinates;
-import org.openqa.selenium.internal.Locatable;
+import org.openqa.selenium.interactions.internal.Locatable;
 
 import java.util.ArrayList;
 import java.util.List;

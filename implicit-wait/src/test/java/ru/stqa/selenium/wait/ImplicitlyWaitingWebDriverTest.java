@@ -17,7 +17,6 @@
 package ru.stqa.selenium.wait;
 
 import com.google.common.collect.Lists;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
@@ -26,13 +25,14 @@ import org.openqa.selenium.interactions.HasInputDevices;
 import org.openqa.selenium.interactions.Keyboard;
 import org.openqa.selenium.interactions.Mouse;
 import org.openqa.selenium.interactions.internal.Coordinates;
-import org.openqa.selenium.internal.Locatable;
+import org.openqa.selenium.interactions.internal.Locatable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -722,7 +722,7 @@ class ImplicitlyWaitingWebDriverTest {
     assertThat(clock.now(), is(200L));
     verify(mockedDriver, times(1)).findElement(By.name("foo"));
     verify(mockedElement, times(5)).getCoordinates(); // there are 2 extra calls
-    verify(mockedMouse, times(1)).click((Coordinates) anyObject());
+    verify(mockedMouse, times(1)).click(any(Coordinates.class));
   }
 
 }

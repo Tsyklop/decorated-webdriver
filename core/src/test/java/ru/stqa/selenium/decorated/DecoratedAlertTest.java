@@ -19,7 +19,6 @@ package ru.stqa.selenium.decorated;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.security.Credentials;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -85,17 +84,5 @@ class DecoratedAlertTest {
   @Test
   void testGetText() {
     verifyFunction(Alert::getText, "test");
-  }
-
-  @Test
-  void testAuthenticateUsing() {
-    final Credentials creds = mock(Credentials.class);
-    verifyFunction($ -> $.authenticateUsing(creds));
-  }
-
-  @Test
-  void testSetCredentials() {
-    final Credentials creds = mock(Credentials.class);
-    verifyFunction($ -> $.setCredentials(creds));
   }
 }
