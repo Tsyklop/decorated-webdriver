@@ -20,12 +20,7 @@ import com.google.common.collect.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.interactions.HasInputDevices;
-import org.openqa.selenium.interactions.Keyboard;
-import org.openqa.selenium.interactions.Mouse;
-import org.openqa.selenium.interactions.internal.Coordinates;
-import org.openqa.selenium.interactions.internal.Locatable;
+import org.openqa.selenium.interactions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +47,7 @@ class ImplicitlyWaitingWebDriverTest {
 
   private WebDriver getMockedDriver() {
     final WebDriver mockedDriver = mock(WebDriver.class,
-        withSettings().extraInterfaces(HasInputDevices.class));
+        withSettings().extraInterfaces(HasInputDevices.class, Interactive.class));
     final WebDriver.Options mockedOptions = mock(WebDriver.Options.class);
     final WebDriver.Timeouts mockedTimeouts = mock(WebDriver.Timeouts.class);
     when(mockedDriver.manage()).thenReturn(mockedOptions);
@@ -691,38 +686,4 @@ class ImplicitlyWaitingWebDriverTest {
     verify(mockedDriver, times(1)).switchTo();
     verify(mockedSwitch, times(11)).frame("myname");
   }
-
-  private interface LocatableElement extends WebElement, Locatable {}
-
-  @Test
-  void interactionsClickShouldImplicitlyWaitForTheElementToBeVisible() {
-    final Keyboard mockedKeyboard = mock(Keyboard.class);
-    final Mouse mockedMouse = mock(Mouse.class);
-
-    final LocatableElement mockedElement = mock(LocatableElement.class);
-    final Coordinates mockedCoords = mock(Coordinates.class);
-
-    when(((HasInputDevices) mockedDriver).getKeyboard())
-        .thenReturn(mockedKeyboard);
-    when(((HasInputDevices) mockedDriver).getMouse())
-        .thenReturn(mockedMouse);
-
-    when(mockedDriver.findElement(By.name("foo")))
-        .thenReturn(mockedElement);
-
-    when(mockedElement.getCoordinates())
-        .thenThrow(new ElementNotVisibleException("1"))
-        .thenThrow(new ElementNotVisibleException("2"))
-        .thenReturn(mockedCoords);
-
-    final Actions actions = new Actions(driver);
-    WebElement element = driver.findElement(By.name("foo"));
-    actions.click(element).perform();
-
-    assertThat(clock.now(), is(200L));
-    verify(mockedDriver, times(1)).findElement(By.name("foo"));
-    verify(mockedElement, times(5)).getCoordinates(); // there are 2 extra calls
-    verify(mockedMouse, times(1)).click(any(Coordinates.class));
-  }
-
 }
