@@ -17,9 +17,20 @@
 
 package ru.stqa.selenium.decorated;
 
-import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.*;
-import org.openqa.selenium.interactions.internal.Coordinates;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Coordinates;
+import org.openqa.selenium.interactions.HasInputDevices;
+import org.openqa.selenium.interactions.HasTouchScreen;
+import org.openqa.selenium.interactions.Interactive;
+import org.openqa.selenium.interactions.Keyboard;
+import org.openqa.selenium.interactions.Mouse;
+import org.openqa.selenium.interactions.Sequence;
+import org.openqa.selenium.interactions.TouchScreen;
 import org.openqa.selenium.internal.WrapsDriver;
 
 import java.util.Collection;
@@ -36,7 +47,7 @@ import java.util.Set;
  * WebDriver driver = new MyWebDriverWrapper(originalDriver, otherParameter).getDriver();</code>
  */
 public class DecoratedWebDriver extends DecoratedTopmost<WebDriver>
-    implements WebDriver, WrapsDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen, Interactive {
+  implements WebDriver, WrapsDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen, Interactive {
 
   public DecoratedWebDriver(WebDriver driver) {
     super(driver);

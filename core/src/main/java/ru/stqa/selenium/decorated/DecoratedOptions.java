@@ -23,7 +23,7 @@ import org.openqa.selenium.logging.Logs;
 
 import java.util.Set;
 
-public class DecoratedOptions extends DecoratedChild<WebDriver.Options,DecoratedWebDriver> implements WebDriver.Options {
+public class DecoratedOptions extends DecoratedChild<WebDriver.Options, DecoratedWebDriver> implements WebDriver.Options {
 
   public DecoratedOptions(final WebDriver.Options options, final DecoratedWebDriver driverWrapper) {
     super(options, driverWrapper);

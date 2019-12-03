@@ -21,7 +21,7 @@ import org.openqa.selenium.WebDriver;
 
 import java.util.concurrent.TimeUnit;
 
-public class DecoratedTimeouts extends DecoratedChild<WebDriver.Timeouts,DecoratedWebDriver> implements WebDriver.Timeouts {
+public class DecoratedTimeouts extends DecoratedChild<WebDriver.Timeouts, DecoratedWebDriver> implements WebDriver.Timeouts {
 
   public DecoratedTimeouts(final WebDriver.Timeouts timeouts, final DecoratedWebDriver driverWrapper) {
     super(timeouts, driverWrapper);

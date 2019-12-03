@@ -30,15 +30,15 @@ public class Activator<T> {
 
     final InvocationHandler handler = (proxy, method, args) -> {
       try {
-        if (! decoratedInterfaces.contains(method.getDeclaringClass())) {
+        if (!decoratedInterfaces.contains(method.getDeclaringClass())) {
           return method.invoke(decorated.getOriginal(), args);
         }
         boolean isUnwrap = method.getName().equals("getOriginal");
-        if (! isUnwrap) {
+        if (!isUnwrap) {
           decorated.beforeMethod(method, args);
         }
         Object result = decorated.callMethod(method, args);
-        if (! isUnwrap) {
+        if (!isUnwrap) {
           decorated.afterMethod(method, result, args);
         }
         return result;

@@ -90,27 +90,27 @@ public class HighlightingWebDriver extends DecoratedWebDriver {
   }
 
   private void addStyleToHeader() {
-    String script = "if (document.getElementById('" + cssElementId + "')) return; "+
-        "var highlightingWebDriverStyleElement = document.createElement('style'); " +
-        "highlightingWebDriverStyleElement.id = '"+ cssElementId +"'; " +
-        "highlightingWebDriverStyleElement.type = 'text/css'; " +
-        "var highlightingWebDriverStyle = '." + actionClass + " {" + actionStyle + "} ." + foundClass + " {" + foundStyle + "}'; " +
-        "if (highlightingWebDriverStyleElement.styleSheet) { " +
-        "highlightingWebDriverStyleElement.styleSheet.cssText = highlightingWebDriverStyle; " +
-        "} else { highlightingWebDriverStyleElement.appendChild(document.createTextNode(highlightingWebDriverStyle)); } " +
-        "var highlightingWebDriverHead = document.getElementsByTagName('head')[0]; " +
-        "highlightingWebDriverHead.appendChild(highlightingWebDriverStyleElement);";
+    String script = "if (document.getElementById('" + cssElementId + "')) return; " +
+      "var highlightingWebDriverStyleElement = document.createElement('style'); " +
+      "highlightingWebDriverStyleElement.id = '" + cssElementId + "'; " +
+      "highlightingWebDriverStyleElement.type = 'text/css'; " +
+      "var highlightingWebDriverStyle = '." + actionClass + " {" + actionStyle + "} ." + foundClass + " {" + foundStyle + "}'; " +
+      "if (highlightingWebDriverStyleElement.styleSheet) { " +
+      "highlightingWebDriverStyleElement.styleSheet.cssText = highlightingWebDriverStyle; " +
+      "} else { highlightingWebDriverStyleElement.appendChild(document.createTextNode(highlightingWebDriverStyle)); } " +
+      "var highlightingWebDriverHead = document.getElementsByTagName('head')[0]; " +
+      "highlightingWebDriverHead.appendChild(highlightingWebDriverStyleElement);";
     ((JavascriptExecutor) getOriginal()).executeScript(script);
   }
 
   private void addClass(WebElement element, String cls) {
     ((JavascriptExecutor) getOriginal()).executeScript(
-        "arguments[0].className += ' ' + arguments[1]", element, cls);
+      "arguments[0].className += ' ' + arguments[1]", element, cls);
   }
 
   private void removeClass(WebElement element, String cls) {
     ((JavascriptExecutor) getOriginal()).executeScript(
-        "arguments[0].className = arguments[0].className.replace(arguments[1], '')", element, cls);
+      "arguments[0].className = arguments[0].className.replace(arguments[1], '')", element, cls);
   }
 
   private void pause() {

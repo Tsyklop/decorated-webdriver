@@ -21,10 +21,14 @@ import java.lang.reflect.Method;
 
 public interface Decorated<T> {
   T getOriginal();
+
   T getActivated();
 
   void beforeMethod(Method method, Object[] args);
-  Object callMethod(Method method, Object[] args) throws Throwable ;
+
+  Object callMethod(Method method, Object[] args) throws Throwable;
+
   void afterMethod(Method method, Object result, Object[] args);
-  Object onError(Method method, InvocationTargetException e, Object[] args) throws Throwable ;
+
+  Object onError(Method method, InvocationTargetException e, Object[] args) throws Throwable;
 }

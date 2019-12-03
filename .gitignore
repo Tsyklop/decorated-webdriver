@@ -17,3 +17,7 @@ test-output/
 .idea/inspectionProfiles/Project_Default.xml
 .idea/sonarIssues.xml
 .flattened-pom.xml
+
+**/.idea
+**/.idea/*
+**/*.iml

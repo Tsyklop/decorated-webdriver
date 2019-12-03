@@ -17,8 +17,8 @@
 package ru.stqa.selenium.wait;
 
 import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.internal.Coordinates;
-import org.openqa.selenium.interactions.internal.Locatable;
+import org.openqa.selenium.interactions.Coordinates;
+import org.openqa.selenium.interactions.Locatable;
 import ru.stqa.selenium.decorated.*;
 import ru.stqa.trier.Clock;
 import ru.stqa.trier.LimitExceededException;

@@ -17,9 +17,15 @@
 
 package ru.stqa.selenium.decorated;
 
-import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.internal.Coordinates;
-import org.openqa.selenium.interactions.internal.Locatable;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.Rectangle;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Coordinates;
+import org.openqa.selenium.interactions.Locatable;
 import org.openqa.selenium.internal.WrapsElement;
 
 import java.util.List;
@@ -27,7 +33,7 @@ import java.util.List;
 /**
  * Simple {@link DecoratedWebElement} delegating all calls to the wrapped {@link WebElement}.
  */
-public class DecoratedWebElement extends DecoratedChild<WebElement,DecoratedWebDriver>
+public class DecoratedWebElement extends DecoratedChild<WebElement, DecoratedWebDriver>
   implements WebElement, WrapsElement, Locatable {
 
   public DecoratedWebElement(final WebElement element, final DecoratedWebDriver driverWrapper) {

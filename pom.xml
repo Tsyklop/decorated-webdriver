@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>ru.stqa.selenium</groupId>
@@ -7,7 +8,8 @@
   <packaging>pom</packaging>
 
   <name>decorated-webdriver-parent</name>
-  <description>The set of classes that helps to implement WebDriver extensions using Decorator design pattern</description>
+  <description>The set of classes that helps to implement WebDriver extensions using Decorator design pattern
+  </description>
   <url>https://github.com/barancev/decorated-webdriver</url>
 
   <modules>
@@ -46,7 +48,7 @@
       <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>selenium-java</artifactId>
-        <version>3.10.0</version>
+        <version>3.141.59</version>
         <scope>provided</scope>
         <exclusions>
           <exclusion>
@@ -111,9 +113,11 @@
       </plugins>
     </pluginManagement>
     <plugins>
+
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>flatten-maven-plugin</artifactId>
+        <version>1.1.0</version>
         <configuration>
           <flattenMode>oss</flattenMode>
         </configuration>

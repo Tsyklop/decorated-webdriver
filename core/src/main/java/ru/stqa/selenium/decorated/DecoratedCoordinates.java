@@ -18,9 +18,9 @@
 package ru.stqa.selenium.decorated;
 
 import org.openqa.selenium.Point;
-import org.openqa.selenium.interactions.internal.Coordinates;
+import org.openqa.selenium.interactions.Coordinates;
 
-public class DecoratedCoordinates extends DecoratedChild<Coordinates,DecoratedWebDriver> implements Coordinates {
+public class DecoratedCoordinates extends DecoratedChild<Coordinates, DecoratedWebDriver> implements Coordinates {
 
   public DecoratedCoordinates(final Coordinates coordinates, final DecoratedWebDriver driverWrapper) {
     super(coordinates, driverWrapper);

@@ -19,7 +19,7 @@ package ru.stqa.selenium.decorated;
 
 import org.openqa.selenium.Alert;
 
-public class DecoratedAlert extends DecoratedChild<Alert,DecoratedWebDriver> implements Alert {
+public class DecoratedAlert extends DecoratedChild<Alert, DecoratedWebDriver> implements Alert {
 
   public DecoratedAlert(final Alert alert, final DecoratedWebDriver driverWrapper) {
     super(alert, driverWrapper);

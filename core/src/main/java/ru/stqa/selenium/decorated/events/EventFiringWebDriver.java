@@ -84,11 +84,11 @@ public class EventFiringWebDriver extends DecoratedWebDriver {
 
     boolean isVoid = method.getReturnType() == Void.TYPE
       || method.getReturnType() == WebDriver.Timeouts.class;
-    int shift = isVoid  ? 0 : 1;
+    int shift = isVoid ? 0 : 1;
 
     int argsLength = args != null ? args.length : 0;
     Object[] args2 = new Object[argsLength + 1 + shift];
-    if (! isVoid) {
+    if (!isVoid) {
       args2[0] = res;
     }
     args2[shift] = target.getOriginal();
@@ -121,7 +121,7 @@ public class EventFiringWebDriver extends DecoratedWebDriver {
       return false;
     }
     for (int i = 0; i < params.length; i++) {
-      if (! Primitives.wrap(params[i]).isAssignableFrom(args[i].getClass())) {
+      if (!Primitives.wrap(params[i]).isAssignableFrom(args[i].getClass())) {
         return false;
       }
     }

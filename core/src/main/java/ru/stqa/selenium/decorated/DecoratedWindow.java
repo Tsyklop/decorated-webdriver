@@ -21,7 +21,7 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 
-public class DecoratedWindow extends DecoratedChild<WebDriver.Window,DecoratedWebDriver> implements WebDriver.Window {
+public class DecoratedWindow extends DecoratedChild<WebDriver.Window, DecoratedWebDriver> implements WebDriver.Window {
 
   public DecoratedWindow(final WebDriver.Window window, final DecoratedWebDriver driverWrapper) {
     super(window, driverWrapper);
